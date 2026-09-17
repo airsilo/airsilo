@@ -16,3 +16,5 @@
 
 /tools/*
   X-Robots-Tag: noindex
+
+connect-src 'self' https://api.decapbridge.com;
