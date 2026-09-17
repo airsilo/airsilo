@@ -15,7 +15,7 @@
     "form_endpoint": "",
     "upi": {
       "enabled": true,
-      "upi_id": "7002323028@yespop",
+      "upi_id": "7002323028@upi",
       "qr_image": "",
       "note": "Works with PhonePe, Paytm, GPay, BHIM and every UPI app.",
       "apps": [
