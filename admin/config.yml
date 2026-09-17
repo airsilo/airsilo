@@ -2,8 +2,8 @@ backend:
   name: github
   repo: airsilo/airsilo
   branch: main
-  base_url: https://airsilo.pages.dev
-  auth_endpoint: auth
+  base_url: https://decap-proxy.gbhargov9.workers.dev
+  auth_endpoint: /auth
 
 publish_mode: simple
 media_folder: "assets/uploads"
