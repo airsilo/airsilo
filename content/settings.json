@@ -16,7 +16,7 @@
     "upi": {
       "enabled": true,
       "upi_id": "7002323028@upi",
-      "qr_image": "https://ibb.co/YT8TgBH5",
+      "qr_image": "https://raw.githubusercontent.com/airsilo/airsilo/main/admin/assets/uploads/upi-qr.png",
       "note": "Works with PhonePe, Paytm, GPay, BHIM and every UPI app.",
       "apps": [
         "PhonePe",
