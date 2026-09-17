@@ -1,9 +1,12 @@
 backend:
-  name: github
+  name: git-gateway
   repo: airsilo/airsilo
   branch: main
-  base_url: https://decap-proxy.gbhargov9.workers.dev
-  auth_endpoint: /auth
+  auth_type: pkce
+  base_url: https://auth.decapbridge.com
+  auth_endpoint: /sites/d58280a6-433b-44f7-ae8f-fdf34ad86ba1/pkce
+  auth_token_endpoint: /sites/d58280a6-433b-44f7-ae8f-fdf34ad86ba1/token
+  gateway_url: https://gateway.decapbridge.com
 
 publish_mode: simple
 media_folder: "assets/uploads"
