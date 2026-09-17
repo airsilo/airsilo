@@ -1,21 +1,22 @@
-const JSON_HEADERS = { 'Content-Type': 'application/json' };
-
 export async function onRequest(context) {
-  const { request, env, params } = context;
+  const { request, env } = context;
   const url = new URL(request.url);
-  const path = (params.path || []).join('/');
+  const path = url.pathname.replace('/auth', '') || '/';
 
-  if (path === '') {
+  if (path === '/' || path === '') {
+    const clientId = env.GITHUB_CLIENT_ID;
+    if (!clientId) {
+      return new Response('GITHUB_CLIENT_ID is not set', { status: 500 });
+    }
     const redirectUri = `${url.origin}/auth/callback`;
     const authUrl = new URL('https://github.com/login/oauth/authorize');
-    authUrl.searchParams.set('client_id', env.GITHUB_CLIENT_ID);
+    authUrl.searchParams.set('client_id', clientId);
     authUrl.searchParams.set('redirect_uri', redirectUri);
     authUrl.searchParams.set('scope', 'repo,user');
-    authUrl.searchParams.set('state', crypto.randomUUID());
     return Response.redirect(authUrl.toString(), 302);
   }
 
-  if (path === 'callback') {
+  if (path === '/callback') {
     const code = url.searchParams.get('code');
     if (!code) return new Response('Missing code', { status: 400 });
 
@@ -29,7 +30,6 @@ export async function onRequest(context) {
       }),
     });
     const tokenData = await tokenRes.json();
-    if (tokenData.error) return new Response(JSON.stringify(tokenData), { status: 400, headers: JSON_HEADERS });
 
     const html = `<!doctype html><html><body><script>
       (function(){
