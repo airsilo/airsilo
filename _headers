@@ -16,3 +16,5 @@
 
 /tools/*
   X-Robots-Tag: noindex
+
+connect-src 'self' https://api.github.com https://github.com https://unpkg.com https://decap-proxy.gbhargov9.workers.dev;
