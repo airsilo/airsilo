@@ -15,10 +15,16 @@
     "form_endpoint": "",
     "upi": {
       "enabled": true,
-      "upi_id": "airsilo@upi",
+      "upi_id": "7002323028@yespop",
       "qr_image": "",
       "note": "Works with PhonePe, Paytm, GPay, BHIM and every UPI app.",
-      "apps": ["PhonePe", "Paytm", "GPay", "BHIM", "Amazon Pay"]
+      "apps": [
+        "PhonePe",
+        "Paytm",
+        "GPay",
+        "BHIM",
+        "Amazon Pay"
+      ]
     }
   },
   "contact_email": "hello@airsilo.com",
