@@ -1,1 +1,2527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0B0A0F">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;font-src https://fonts.gstatic.com;img-src 'self' data: blob:;media-src blob:;connect-src 'none';worker-src blob:;form-action 'none';base-uri 'none'">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
+<title>QR Studio · AirSilo</title>
+<style>
+:root{
+  --primary:#C4B5FD; --on-primary:#2E1065; --primary-container:#5B21B6;
+  --secondary:#6EE7B7; --on-secondary:#064E3B; --secondary-container:#065F46;
+  --tertiary:#FBCFE8; --on-tertiary:#831843; --tertiary-container:#9D174D;
+  --error:#FCA5A5; --on-error:#450A0A;
+  --surface:#0B0A0F; --surface-container-low:#12101A; --surface-container:#181624;
+  --surface-container-high:#221F30; --surface-container-highest:#2C2838;
+  --on-surface:#E8E2F0; --on-surface-variant:#C8BFD8;
+  --outline:#8B82A0; --outline-variant:#3D3650;
+  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:28px; --r-xxl:40px; --r-full:999px;
+  --ease-emph:cubic-bezier(0.05,0.7,0.1,1);
+  --t-short:200ms; --t-med:400ms;
+  --shadow-e5:0 24px 60px -12px rgba(0,0,0,.85), 0 8px 24px -8px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--surface); color:var(--on-surface);
+  font-family:'Roboto',system-ui,-apple-system,sans-serif;
+  font-size:1rem; line-height:1.6;
+  min-height:100dvh; display:flex; flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.ms{
+  font-family:'Material Symbols Outlined'; font-weight:normal; font-style:normal;
+  font-size:24px; line-height:1; letter-spacing:normal; text-transform:none;
+  display:inline-block; white-space:nowrap; word-wrap:normal; direction:ltr;
+  -webkit-font-feature-settings:'liga'; -webkit-font-smoothing:antialiased;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  user-select:none;
+}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
 
+/* ── Ambient ── */
+.mesh{position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse at top,#1A1530 0%,var(--surface) 55%)}
+.mesh::before,.mesh::after,.mesh .blob{content:"";position:absolute;border-radius:50%;filter:blur(120px);opacity:.35}
+.mesh::before{width:620px;height:620px;background:#7C3AED;top:-200px;left:-160px;animation:drift1 26s ease-in-out infinite}
+.mesh::after{width:560px;height:560px;background:#10B981;top:30%;right:-200px;animation:drift2 32s ease-in-out infinite}
+.mesh .blob{width:520px;height:520px;background:#EC4899;bottom:-180px;left:30%;animation:drift3 38s ease-in-out infinite}
+@keyframes drift1{50%{transform:translate(80px,60px) scale(1.15)}}
+@keyframes drift2{50%{transform:translate(-90px,50px) scale(1.1)}}
+@keyframes drift3{50%{transform:translate(50px,-80px) scale(1.12)}}
+.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ── Header ── */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:12px;
+  padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top));
+  background:rgba(11,10,15,.72);
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  border-bottom:1px solid var(--outline-variant);
+}
+.hdr .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;flex-shrink:0}
+.hdr .brand svg{display:block;border-radius:var(--r-md);transition:transform var(--t-med) var(--ease-emph)}
+.hdr .brand:hover svg{transform:rotate(-4deg) scale(1.06)}
+.hdr .titles{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.hdr .titles .name{font-size:1rem;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.hdr .titles .name .ms{font-size:19px;color:var(--primary)}
+.hdr .titles .sub{font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--on-surface-variant)}
+.hdr .spacer{flex:1}
+.icon-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:42px;height:42px;border-radius:var(--r-full);
+  background:var(--surface-container-high);border:1px solid var(--outline-variant);
+  color:var(--on-surface-variant);cursor:pointer;
+  transition:all var(--t-short) var(--ease-emph);
+}
+.icon-btn:hover{background:var(--surface-container-highest);color:var(--primary);transform:rotate(-4deg) scale(1.06);border-color:var(--primary)}
+.icon-btn:active{transform:scale(.94)}
+
+/* ── Shell ── */
+.shell{width:100%;max-width:1180px;margin:0 auto;padding:0 16px;flex:1}
+.badge-row{display:flex;justify-content:center;padding:18px 0 6px}
+.badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 16px;border-radius:var(--r-full);
+  background:rgba(110,231,183,.10);
+  border:1px solid rgba(110,231,183,.28);
+  color:var(--secondary);
+  font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  text-align:center;
+}
+.badge .ms{font-size:16px}
+
+.hero{padding:14px 0 8px;text-align:center}
+.hero h1{
+  margin:0;font-size:clamp(2rem,6vw,3.1rem);font-weight:900;letter-spacing:-.045em;line-height:1.02;
+  background:linear-gradient(120deg,var(--primary) 0%,var(--secondary) 45%,var(--tertiary) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p{margin:10px auto 0;max-width:56ch;color:var(--on-surface-variant);font-size:.9375rem}
+
+/* ── Tabs ── */
+.tabs{
+  display:flex;gap:6px;padding:6px;margin:20px auto 18px;
+  background:var(--surface-container);border:1px solid var(--outline-variant);
+  border-radius:var(--r-full);width:fit-content;max-width:100%;
+}
+.tab{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 22px;min-height:42px;border-radius:var(--r-full);
+  background:transparent;border:none;color:var(--on-surface-variant);
+  font-family:inherit;font-size:.875rem;font-weight:600;cursor:pointer;
+  transition:all var(--t-short) var(--ease-emph);
+}
+.tab .ms{font-size:19px}
+.tab:hover{color:var(--on-surface);background:var(--surface-container-high)}
+.tab:active{transform:scale(.96)}
+.tab[aria-selected="true"]{
+  background:linear-gradient(135deg,var(--primary),var(--tertiary));
+  color:var(--on-primary);
+}
+
+/* ── Layout ── */
+.panel{display:none;padding-bottom:40px}
+.panel.active{display:block;animation:fadeUp var(--t-med) var(--ease-emph)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.layout{display:grid;gap:16px}
+@media(min-width:920px){
+  .layout{grid-template-columns:minmax(0,1fr) 420px;grid-template-areas:"content preview" "style preview";align-items:start}
+  .area-content{grid-area:content}
+  .area-style{grid-area:style}
+  .area-preview{grid-area:preview;position:sticky;top:84px}
+}
+@media(max-width:919px){
+  .area-preview{order:-1}
+}
+
+/* ── Card ── */
+.card{
+  background:linear-gradient(145deg,rgba(28,24,38,.85),rgba(18,16,26,.7));
+  border:1px solid var(--outline-variant);
+  border-radius:var(--r-xl);
+  padding:20px;
+  transition:transform var(--t-med) var(--ease-emph),border-radius var(--t-med) var(--ease-emph),border-color var(--t-med) var(--ease-emph);
+}
+@media(hover:hover){
+  .card:hover{transform:translateY(-6px);border-radius:var(--r-xxl);border-color:rgba(196,181,253,.35)}
+}
+.card + .card{margin-top:16px}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.card-head .ic{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:var(--r-md);
+  background:var(--surface-container-high);color:var(--primary);
+  transition:all var(--t-med) var(--ease-emph);flex-shrink:0;
+}
+.card-head .ic .ms{font-size:20px}
+.card:hover .card-head .ic{border-radius:var(--r-lg);transform:rotate(-4deg) scale(1.06)}
+.card-head h2{margin:0;font-size:1.1875rem;font-weight:700;letter-spacing:-.02em}
+.card-head .hint{margin-left:auto;font-size:.75rem;color:var(--on-surface-variant)}
+
+/* ── Inputs ── */
+label.lbl{display:block;font-size:.875rem;font-weight:600;color:var(--on-surface-variant);margin:0 0 6px}
+textarea,input[type=text],input[type=number],select{
+  width:100%;padding:12px 16px;border-radius:var(--r-sm);
+  border:1px solid var(--outline-variant);
+  background:var(--surface-container-high);
+  color:var(--on-surface);font-family:inherit;font-size:.9375rem;
+  transition:all var(--t-short) var(--ease-emph);
+  outline:none;
+}
+textarea{min-height:92px;resize:vertical;line-height:1.5}
+textarea:focus,input:focus,select:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(196,181,253,.18);
+  border-radius:var(--r-md);
+}
+textarea::placeholder,input::placeholder{color:var(--outline)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23C8BFD8' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;cursor:pointer}
+
+/* ── Chips ── */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 15px;min-height:34px;border-radius:var(--r-full);
+  background:var(--surface-container-high);border:1px solid var(--outline-variant);
+  color:var(--on-surface-variant);font-family:inherit;font-size:.8125rem;font-weight:600;
+  cursor:pointer;transition:all var(--t-short) var(--ease-emph);
+}
+.chip .ms{font-size:16px}
+.chip:hover{border-color:var(--primary);color:var(--primary);background:rgba(196,181,253,.08)}
+.chip:active{transform:scale(.96)}
+.chip[aria-pressed="true"]{background:var(--primary-container);border-color:var(--primary);color:#fff}
+
+/* ── Style grid ── */
+.row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+@media(max-width:420px){.row{grid-template-columns:1fr}}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.swatch{
+  width:34px;height:34px;border-radius:var(--r-sm);border:2px solid transparent;
+  cursor:pointer;padding:0;position:relative;
+  transition:all var(--t-short) var(--ease-emph);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.swatch:hover{transform:translateY(-3px);border-radius:var(--r-md)}
+.swatch[aria-pressed="true"]{border-color:var(--primary);box-shadow:0 0 0 3px rgba(196,181,253,.22)}
+
+.color-inline{display:flex;align-items:center;gap:10px}
+input[type=color]{
+  -webkit-appearance:none;appearance:none;border:1px solid var(--outline-variant);
+  width:46px;height:40px;padding:3px;border-radius:var(--r-sm);background:var(--surface-container-high);
+  cursor:pointer;transition:all var(--t-short) var(--ease-emph);
+}
+input[type=color]:hover{border-color:var(--primary);border-radius:var(--r-md)}
+input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+input[type=color]::-webkit-color-swatch{border:none;border-radius:6px}
+input[type=color]::-moz-color-swatch{border:none;border-radius:6px}
+.color-inline .hex{
+  flex:1;min-width:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.8125rem;padding:10px 12px;
+}
+
+.switch{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;padding:4px 0}
+.switch input{position:absolute;opacity:0;pointer-events:none}
+.switch .track{
+  width:44px;height:26px;border-radius:var(--r-full);background:var(--surface-container-highest);
+  border:1px solid var(--outline-variant);position:relative;flex-shrink:0;
+  transition:all var(--t-short) var(--ease-emph);
+}
+.switch .track::after{
+  content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--outline);transition:all var(--t-short) var(--ease-emph);
+}
+.switch input:checked + .track{background:var(--secondary-container);border-color:var(--secondary)}
+.switch input:checked + .track::after{transform:translateX(18px);background:var(--secondary)}
+.switch input:focus-visible + .track{box-shadow:0 0 0 3px rgba(196,181,253,.28)}
+.switch .txt{font-size:.875rem;font-weight:600;color:var(--on-surface-variant)}
+
+/* ── Buttons ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 22px;min-height:44px;border-radius:var(--r-full);
+  font-family:inherit;font-size:.875rem;font-weight:600;
+  border:1px solid transparent;cursor:pointer;
+  transition:all var(--t-short) var(--ease-emph);
+  text-decoration:none;white-space:nowrap;
+}
+.btn .ms{font-size:19px}
+.btn:active{transform:scale(.96)}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(196,181,253,.32)}
+.btn-filled{background:linear-gradient(135deg,var(--primary),var(--tertiary));color:var(--on-primary)}
+.btn-filled:hover{filter:brightness(1.08)}
+.btn-tonal{background:var(--secondary-container);color:var(--secondary)}
+.btn-tonal:hover{filter:brightness(1.15)}
+.btn-outlined{background:transparent;border-color:var(--outline);color:var(--on-surface)}
+.btn-outlined:hover{border-color:var(--primary);color:var(--primary);background:rgba(196,181,253,.07)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;filter:none}
+.btn-sm{padding:8px 16px;min-height:38px;font-size:.8125rem}
+.btn-sm .ms{font-size:17px}
+
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+
+/* ── Preview ── */
+.preview-wrap{
+  position:relative;border-radius:var(--r-lg);padding:14px;
+  background:
+    linear-gradient(45deg,#1b1926 25%,transparent 25%,transparent 75%,#1b1926 75%) 0 0/18px 18px,
+    linear-gradient(45deg,#1b1926 25%,transparent 25%,transparent 75%,#1b1926 75%) 9px 9px/18px 18px,
+    #12101a;
+  border:1px solid var(--outline-variant);
+  display:flex;align-items:center;justify-content:center;
+  min-height:220px;overflow:hidden;
+}
+#preview{display:block;width:100%;max-width:340px;height:auto;border-radius:6px;image-rendering:auto}
+.preview-empty{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  color:var(--outline);font-size:.875rem;padding:36px 12px;text-align:center;
+}
+.preview-empty .ms{font-size:44px;opacity:.5}
+
+/* ── Dropzone ── */
+.dropzone{
+  border:2px dashed var(--outline-variant);border-radius:var(--r-lg);
+  padding:34px 20px;text-align:center;cursor:pointer;
+  transition:all var(--t-med) var(--ease-emph);
+  background:transparent;
+}
+.dropzone:hover,.dropzone.over{
+  border-color:var(--primary);background:rgba(196,181,253,.06);border-radius:var(--r-xl);
+}
+.dropzone .ms{font-size:40px;color:var(--primary);display:block;margin-bottom:8px}
+.dropzone .dz-t{font-weight:700;font-size:.9375rem;margin-bottom:3px}
+.dropzone .dz-s{font-size:.8125rem;color:var(--on-surface-variant)}
+
+/* ── Camera ── */
+.cam-wrap{
+  position:relative;border-radius:var(--r-lg);overflow:hidden;
+  background:#000;border:1px solid var(--outline-variant);
+  aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
+}
+.cam-wrap video{width:100%;height:100%;object-fit:cover;display:block}
+.cam-ph{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--outline);font-size:.875rem;padding:24px;text-align:center}
+.cam-ph .ms{font-size:46px;opacity:.55}
+.reticle{
+  position:absolute;inset:12%;border-radius:var(--r-lg);
+  border:2px solid rgba(196,181,253,.55);
+  box-shadow:0 0 0 100vmax rgba(0,0,0,.28);
+  pointer-events:none;
+}
+.reticle::before,.reticle::after{
+  content:"";position:absolute;width:34px;height:34px;border:3px solid var(--secondary);border-radius:4px;
+}
+.reticle::before{top:-3px;left:-3px;border-right:none;border-bottom:none;border-top-left-radius:14px}
+.reticle::after{bottom:-3px;right:-3px;border-left:none;border-top:none;border-bottom-right-radius:14px}
+
+/* ── Result ── */
+.result-box{
+  background:var(--surface-container-high);border:1px solid var(--outline-variant);
+  border-radius:var(--r-lg);padding:16px;
+  word-break:break-word;font-size:.9375rem;line-height:1.55;
+  max-height:260px;overflow:auto;white-space:pre-wrap;
+}
+.result-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:var(--r-full);
+  background:var(--surface-container-highest);border:1px solid var(--outline-variant);
+  font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--on-surface-variant);
+}
+.pill .ms{font-size:14px}
+.pill.ok{background:rgba(110,231,183,.12);border-color:rgba(110,231,183,.3);color:var(--secondary)}
+
+.empty-note{color:var(--on-surface-variant);font-size:.875rem;text-align:center;padding:18px 8px}
+
+/* ── Modal ── */
+.scrim{
+  position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.scrim[hidden]{display:none}
+.modal{
+  background:var(--surface-container);border:1px solid var(--outline-variant);
+  border-radius:var(--r-xl);box-shadow:var(--shadow-e5);
+  width:100%;max-width:520px;max-height:84dvh;overflow:auto;padding:24px;
+  animation:modalIn var(--t-med) var(--ease-emph);
+}
+@keyframes modalIn{from{opacity:0;transform:translateY(32px) scale(.94)}to{opacity:1;transform:none}}
+.modal h3{margin:0 0 6px;font-size:1.25rem;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.modal h3 .ms{color:var(--primary)}
+.modal p{color:var(--on-surface-variant);font-size:.9375rem;margin:0 0 14px}
+.modal ul{margin:0 0 18px;padding-left:20px;color:var(--on-surface-variant);font-size:.9375rem}
+.modal li{margin-bottom:6px}
+.modal li b{color:var(--on-surface)}
+
+/* ── Toast ── */
+.toast{
+  position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));
+  transform:translate(-50%,20px);z-index:200;
+  display:flex;align-items:center;gap:9px;
+  padding:12px 20px;border-radius:var(--r-full);
+  background:var(--surface-container-highest);border:1px solid var(--outline-variant);
+  box-shadow:var(--shadow-e5);font-size:.875rem;font-weight:600;
+  opacity:0;pointer-events:none;transition:all var(--t-med) var(--ease-emph);
+  max-width:calc(100vw - 32px);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast .ms{font-size:19px;color:var(--secondary)}
+
+/* ── Footer ── */
+footer{
+  border-top:1px solid var(--outline-variant);
+  padding:22px 16px calc(22px + env(safe-area-inset-bottom));
+  text-align:center;color:var(--on-surface-variant);font-size:.8125rem;
+  margin-top:auto;
+}
+footer .fline{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;align-items:center}
+footer a{color:var(--primary);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+footer a:hover{text-decoration:underline}
+footer .ms{font-size:16px}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  .card:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="mesh"><div class="blob"></div></div>
+<div class="grain"></div>
+
+<header class="hdr">
+  <a class="brand" href="https://airsilo.pages.dev" aria-label="AirSilo home">
+    <svg viewBox="0 0 64 64" width="34" height="34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#C4B5FD"/>
+        <stop offset="0.5" stop-color="#6EE7B7"/>
+        <stop offset="1" stop-color="#FBCFE8"/>
+      </linearGradient></defs>
+      <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+      <path d="M20 20 Q20 14 26 14 H38 Q44 14 44 20 V46 Q44 52 38 52 H26 Q20 52 20 46 Z" fill="#0B0A0F"/>
+      <rect x="24" y="24" width="16" height="2" rx="1" fill="#6EE7B7"/>
+      <rect x="24" y="32" width="16" height="2" rx="1" fill="#6EE7B7"/>
+      <rect x="24" y="40" width="16" height="2" rx="1" fill="#6EE7B7"/>
+    </svg>
+  </a>
+  <div class="titles">
+    <span class="name"><span class="ms">qr_code_2</span>QR Studio</span>
+    <span class="sub">AirSilo</span>
+  </div>
+  <div class="spacer"></div>
+  <button class="icon-btn" id="infoBtn" aria-label="About QR Studio" title="About">
+    <span class="ms">info</span>
+  </button>
+</header>
+
+<div class="shell">
+
+  <div class="badge-row">
+    <span class="badge"><span class="ms ms-fill">shield</span>100% offline · Files never leave your device</span>
+  </div>
+
+  <div class="hero">
+    <h1>QR Studio</h1>
+    <p>Generate beautiful, styled QR codes and scan them from your camera or an image — everything happens right here on your device.</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="QR Studio modes">
+    <button class="tab" id="tabCreate" role="tab" aria-selected="true" aria-controls="panelCreate">
+      <span class="ms">add_box</span>Create
+    </button>
+    <button class="tab" id="tabScan" role="tab" aria-selected="false" aria-controls="panelScan">
+      <span class="ms">qr_code_scanner</span>Scan
+    </button>
+  </div>
+
+  <!-- ══════════════ CREATE ══════════════ -->
+  <section class="panel active" id="panelCreate" role="tabpanel" aria-labelledby="tabCreate">
+    <div class="layout">
+
+      <div class="area-content">
+        <div class="card">
+          <div class="card-head">
+            <span class="ic"><span class="ms">edit_note</span></span>
+            <h2>Content</h2>
+          </div>
+          <label class="lbl sr-only" for="qrText">QR content</label>
+          <textarea id="qrText" placeholder="Paste a link, write text, or pick a template below…" spellcheck="false" autocomplete="off"></textarea>
+          <div class="chips" role="group" aria-label="Quick templates">
+            <button class="chip" data-tpl="url"><span class="ms">link</span>Link</button>
+            <button class="chip" data-tpl="text"><span class="ms">notes</span>Text</button>
+            <button class="chip" data-tpl="wifi"><span class="ms">wifi</span>Wi-Fi</button>
+            <button class="chip" data-tpl="email"><span class="ms">mail</span>Email</button>
+            <button class="chip" data-tpl="tel"><span class="ms">call</span>Phone</button>
+            <button class="chip" data-tpl="sms"><span class="ms">sms</span>SMS</button>
+            <button class="chip" data-tpl="vcard"><span class="ms">contact_page</span>Contact</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="area-preview">
+        <div class="card">
+          <div class="card-head">
+            <span class="ic"><span class="ms">visibility</span></span>
+            <h2>Preview</h2>
+            <span class="hint" id="qrMeta">—</span>
+          </div>
+
+          <div class="preview-wrap" id="previewWrap">
+            <canvas id="preview" width="700" height="700" aria-label="QR code preview"></canvas>
+            <div class="preview-empty" id="previewEmpty" hidden>
+              <span class="ms">qr_code_2</span>
+              <span>Type something to see your QR code</span>
+            </div>
+          </div>
+
+          <div class="actions" style="margin-top:16px">
+            <button class="btn btn-filled btn-sm" id="dlPng"><span class="ms">download</span>PNG</button>
+            <button class="btn btn-tonal btn-sm" id="dlSvg"><span class="ms">code</span>SVG</button>
+            <button class="btn btn-outlined btn-sm" id="copyImg"><span class="ms">content_copy</span>Copy</button>
+          </div>
+          <div id="qrError" class="empty-note" style="display:none;color:var(--error)"></div>
+        </div>
+      </div>
+
+      <div class="area-style">
+        <div class="card">
+          <div class="card-head">
+            <span class="ic"><span class="ms">palette</span></span>
+            <h2>Style</h2>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label class="lbl" for="dotStyle">Module shape</label>
+              <select id="dotStyle">
+                <option value="square">Square</option>
+                <option value="rounded" selected>Rounded</option>
+                <option value="smooth">Smooth</option>
+                <option value="dots">Dots</option>
+                <option value="diamond">Diamond</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="lbl" for="eyeStyle">Eye shape</label>
+              <select id="eyeStyle">
+                <option value="square">Square</option>
+                <option value="rounded" selected>Rounded</option>
+                <option value="circle">Circle</option>
+                <option value="leaf">Leaf</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="lbl" for="eclSel">Error correction</label>
+            <select id="eclSel">
+              <option value="L">Low — 7%</option>
+              <option value="M" selected>Medium — 15%</option>
+              <option value="Q">Quartile — 25%</option>
+              <option value="H">High — 30% (best with logo)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="lbl">Foreground</label>
+            <div class="color-inline">
+              <input type="color" id="fgColor" value="#1A1530" aria-label="Foreground colour">
+              <input type="text" class="hex" id="fgHex" value="#1A1530" spellcheck="false" aria-label="Foreground hex value">
+            </div>
+            <div class="swatches" style="margin-top:10px" id="fgSwatches" role="group" aria-label="Foreground presets"></div>
+          </div>
+
+          <div class="field">
+            <label class="switch">
+              <input type="checkbox" id="useGrad">
+              <span class="track"></span>
+              <span class="txt">Gradient foreground</span>
+            </label>
+          </div>
+
+          <div class="field" id="fg2Field" hidden>
+            <label class="lbl">Gradient end</label>
+            <div class="color-inline">
+              <input type="color" id="fg2Color" value="#9D174D" aria-label="Gradient end colour">
+              <input type="text" class="hex" id="fg2Hex" value="#9D174D" spellcheck="false" aria-label="Gradient end hex value">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="lbl">Background</label>
+            <div class="color-inline">
+              <input type="color" id="bgColor" value="#FFFFFF" aria-label="Background colour">
+              <input type="text" class="hex" id="bgHex" value="#FFFFFF" spellcheck="false" aria-label="Background hex value">
+            </div>
+            <label class="switch" style="margin-top:10px">
+              <input type="checkbox" id="transBg">
+              <span class="track"></span>
+              <span class="txt">Transparent background</span>
+            </label>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label class="lbl" for="marginSel">Quiet zone</label>
+              <select id="marginSel">
+                <option value="0">0 modules</option>
+                <option value="2">2 modules</option>
+                <option value="4" selected>4 modules</option>
+                <option value="6">6 modules</option>
+                <option value="8">8 modules</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="lbl" for="sizeSel">Export size</label>
+              <select id="sizeSel">
+                <option value="512">512 px</option>
+                <option value="1024" selected>1024 px</option>
+                <option value="2048">2048 px</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="lbl">Centre logo</label>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <button class="btn btn-outlined btn-sm" id="logoBtn"><span class="ms">add_photo_alternate</span>Choose image</button>
+              <button class="btn btn-outlined btn-sm" id="logoClear" hidden><span class="ms">close</span>Remove</button>
+              <input type="file" id="logoInput" accept="image/*" class="sr-only" aria-label="Choose logo image">
+            </div>
+            <div class="hint" style="font-size:.75rem;color:var(--on-surface-variant);margin-top:8px">
+              Logo sits on a white plate. Use High error correction for best scanning.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════ SCAN ══════════════ -->
+  <section class="panel" id="panelScan" role="tabpanel" aria-labelledby="tabScan">
+    <div class="layout" style="grid-template-columns:1fr">
+      <div class="area-content">
+        <div class="card">
+          <div class="card-head">
+            <span class="ic"><span class="ms">photo_camera</span></span>
+            <h2>Scan a QR code</h2>
+          </div>
+
+          <div class="cam-wrap" id="camWrap">
+            <video id="video" playsinline muted autoplay aria-label="Camera preview"></video>
+            <div class="cam-ph" id="camPlaceholder">
+              <span class="ms">videocam_off</span>
+              <span>Camera is off</span>
+            </div>
+            <div class="reticle" id="reticle" hidden></div>
+          </div>
+
+          <div class="actions" style="margin-top:16px">
+            <button class="btn btn-filled" id="camBtn"><span class="ms">videocam</span>Start camera</button>
+            <button class="btn btn-outlined" id="uploadBtn"><span class="ms">upload_file</span>Upload image</button>
+            <button class="btn btn-outlined" id="camSwitch" hidden><span class="ms">cameraswitch</span>Flip</button>
+          </div>
+          <input type="file" id="scanInput" accept="image/*" class="sr-only" aria-label="Upload a QR code image">
+          <div class="hint" style="font-size:.75rem;color:var(--on-surface-variant);margin-top:12px;text-align:center">
+            Works with camera frames or any image file. Nothing is uploaded — decoding runs locally.
+          </div>
+        </div>
+
+        <div class="card" id="resultCard">
+          <div class="card-head">
+            <span class="ic"><span class="ms">text_snippet</span></span>
+            <h2>Result</h2>
+          </div>
+          <div id="resultEmpty" class="empty-note">
+            <span class="ms" style="font-size:34px;display:block;margin-bottom:8px;opacity:.5">qr_code_scanner</span>
+            No code scanned yet.
+          </div>
+          <div id="resultBody" hidden>
+            <div class="result-box" id="resultText"></div>
+            <div class="result-meta" id="resultMeta"></div>
+            <div class="actions" style="margin-top:14px;justify-content:flex-start">
+              <button class="btn btn-tonal btn-sm" id="copyResult"><span class="ms">content_copy</span>Copy</button>
+              <a class="btn btn-filled btn-sm" id="openResult" target="_blank" rel="noopener noreferrer" hidden><span class="ms">open_in_new</span>Open link</a>
+              <button class="btn btn-outlined btn-sm" id="clearResult"><span class="ms">restart_alt</span>Scan again</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="ic"><span class="ms">photo_library</span></span>
+            <h2>Decode from image</h2>
+          </div>
+          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Drop or choose an image containing a QR code">
+            <span class="ms">add_photo_alternate</span>
+            <div class="dz-t">Drop an image here</div>
+            <div class="dz-s">or tap to choose · PNG, JPG, WebP, GIF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="fline">
+    <span>Made by AirSilo · 100% offline · No tracking</span>
+    <a href="https://airsilo.pages.dev"><span class="ms">arrow_back</span>Back to AirSilo</a>
+  </div>
+</footer>
+
+<!-- ══════════════ INFO MODAL ══════════════ -->
+<div class="scrim" id="scrim" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h3 id="modalTitle"><span class="ms">qr_code_2</span>About QR Studio</h3>
+    <p>A complete QR toolkit that never touches the network.</p>
+    <ul>
+      <li><b>Create</b> — links, plain text, Wi-Fi, email, phone, SMS and contact cards.</li>
+      <li><b>Style</b> — module shapes, eye shapes, solid or gradient colours, transparent background and a centre logo.</li>
+      <li><b>Scan</b> — read codes live from your camera or from any image file on your device.</li>
+      <li><b>Export</b> — crisp PNG (up to 2048 px) or scalable SVG.</li>
+    </ul>
+    <p style="font-size:.8125rem">Everything — encoding, styling and decoding — is computed in this page. No uploads, no accounts, no analytics. Works fully offline once loaded.</p>
+    <div class="actions" style="justify-content:flex-end">
+      <button class="btn btn-filled btn-sm" id="modalClose">Got it</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="ms ms-fill">check_circle</span><span id="toastText">Done</span>
+</div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════
+   QR ENCODER  (byte mode, versions 1–40, ECC L/M/Q/H)
+   ═══════════════════════════════════════════════════════════════ */
+
+var ECC_CW_PER_BLOCK = [
+[-1,7,10,15,20,26,18,20,24,30,18,20,24,26,30,22,24,28,30,28,28,28,28,30,30,26,28,30,30,30,30,30,30,30,30,30,30,30,30,30,30],
+[-1,10,16,26,18,24,16,18,22,22,26,30,22,22,24,24,28,28,26,26,26,26,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28],
+[-1,13,22,18,26,18,24,18,22,20,24,28,26,24,20,30,24,28,28,26,30,28,30,30,30,30,28,30,30,30,30,30,30,30,30,30,30,30,30,30,30],
+[-1,17,28,22,16,22,28,26,26,24,28,24,28,22,24,24,30,28,28,26,28,30,24,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30]
+];
+var NUM_ECC_BLOCKS = [
+[-1,1,1,1,1,1,2,2,2,2,4,4,4,4,4,6,6,6,6,7,8,8,9,9,10,12,12,12,13,14,15,16,17,18,19,19,20,21,22,24,25],
+[-1,1,1,1,2,2,4,4,4,5,5,5,8,9,9,10,10,11,13,14,16,17,17,18,20,21,23,25,26,28,29,31,33,35,37,38,40,43,45,47,49],
+[-1,1,1,2,2,4,4,6,6,8,8,8,10,12,16,12,17,16,18,21,20,23,23,25,27,29,34,34,35,38,40,43,45,48,51,53,56,59,62,65,68],
+[-1,1,1,2,4,4,4,5,5,8,8,11,11,16,16,18,16,19,21,25,25,25,34,30,32,35,37,40,42,45,48,51,54,57,60,63,66,70,74,77,81]
+];
+var ECL_INDEX = {L:0, M:1, Q:2, H:3};
+
+/* Galois field GF(256) */
+var GF_EXP = new Uint8Array(512), GF_LOG = new Uint8Array(256);
+(function(){
+  var x = 1;
+  for (var i = 0; i < 255; i++){ GF_EXP[i] = x; GF_LOG[x] = i; x <<= 1; if (x & 0x100) x ^= 0x11D; }
+  for (var j = 255; j < 512; j++) GF_EXP[j] = GF_EXP[j - 255];
+})();
+function gfMul(a, b){ if (a === 0 || b === 0) return 0; return GF_EXP[GF_LOG[a] + GF_LOG[b]]; }
+function gfInv(a){ return GF_EXP[255 - GF_LOG[a]]; }
+
+function getNumRawDataModules(ver){
+  var result = (16 * ver + 128) * ver + 64;
+  if (ver >= 2){
+    var numAlign = Math.floor(ver / 7) + 2;
+    result -= (25 * numAlign - 10) * numAlign - 55;
+    if (ver >= 7) result -= 36;
+  }
+  return result;
+}
+function getNumDataCodewords(ver, eclStr){
+  var e = ECL_INDEX[eclStr];
+  return Math.floor(getNumRawDataModules(ver) / 8) - ECC_CW_PER_BLOCK[e][ver] * NUM_ECC_BLOCKS[e][ver];
+}
+function getAlignPositions(version){
+  if (version === 1) return [];
+  var numAlign = Math.floor(version / 7) + 2;
+  var size = version * 4 + 17;
+  var step = (version === 32) ? 26 : Math.floor((version * 4 + numAlign * 2 + 1) / (numAlign * 2 - 2)) * 2;
+  var result = new Array(numAlign);
+  result[0] = 6;
+  for (var i = numAlign - 1, pos = size - 7; i >= 1; i--, pos -= step) result[i] = pos;
+  return result;
+}
+
+function rsGeneratorPoly(degree){
+  var poly = [1];
+  for (var i = 0; i < degree; i++){
+    var next = new Array(poly.length + 1);
+    for (var k = 0; k < next.length; k++) next[k] = 0;
+    for (var j = 0; j < poly.length; j++){
+      next[j] ^= poly[j];
+      next[j + 1] ^= gfMul(poly[j], GF_EXP[i]);
+    }
+    poly = next;
+  }
+  return poly;
+}
+function rsRemainder(data, degree, gen){
+  var res = new Array(degree);
+  for (var i = 0; i < degree; i++) res[i] = 0;
+  for (var d = 0; d < data.length; d++){
+    var factor = data[d] ^ res[0];
+    for (var s = 0; s < degree - 1; s++) res[s] = res[s + 1];
+    res[degree - 1] = 0;
+    for (var k = 0; k < degree; k++) res[k] ^= gfMul(gen[k + 1], factor);
+  }
+  return res;
+}
+
+function buildFunctionMap(version){
+  var dim = version * 4 + 17;
+  var f = [];
+  for (var i = 0; i < dim; i++) f.push(new Uint8Array(dim));
+  function mark(x, y){ if (x >= 0 && y >= 0 && x < dim && y < dim) f[y][x] = 1; }
+  for (var y = 0; y < 9; y++) for (var x = 0; x < 9; x++){ mark(x, y); mark(dim - 1 - x, y); mark(x, dim - 1 - y); }
+  for (var t = 0; t < dim; t++){ mark(6, t); mark(t, 6); }
+  var pos = getAlignPositions(version), na = pos.length;
+  for (var a = 0; a < na; a++) for (var b = 0; b < na; b++){
+    if ((a === 0 && b === 0) || (a === 0 && b === na - 1) || (a === na - 1 && b === 0)) continue;
+    var cx = pos[b], cy = pos[a];
+    for (var dy = -2; dy <= 2; dy++) for (var dx = -2; dx <= 2; dx++) mark(cx + dx, cy + dy);
+  }
+  for (var q = 0; q <= 8; q++){ mark(8, q); mark(q, 8); }
+  for (var r = 0; r < 8; r++){ mark(dim - 1 - r, 8); mark(8, dim - 1 - r); }
+  if (version >= 7){
+    for (var v = 0; v < 18; v++){
+      var aa = dim - 11 + (v % 3), bb = Math.floor(v / 3);
+      mark(aa, bb); mark(bb, aa);
+    }
+  }
+  return f;
+}
+
+function maskFn(mask, x, y){
+  switch (mask){
+    case 0: return (x + y) % 2 === 0;
+    case 1: return y % 2 === 0;
+    case 2: return x % 3 === 0;
+    case 3: return (x + y) % 3 === 0;
+    case 4: return (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0;
+    case 5: return ((x * y) % 2 + (x * y) % 3) === 0;
+    case 6: return (((x * y) % 2 + (x * y) % 3) % 2) === 0;
+    case 7: return (((x + y) % 2 + (x * y) % 3) % 2) === 0;
+  }
+  return false;
+}
+
+var FORMAT_TABLE = (function(){
+  var t = [];
+  for (var d = 0; d < 32; d++){
+    var rem = d;
+    for (var i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+    t.push((((d << 10) | rem) ^ 0x5412) & 0x7FFF);
+  }
+  return t;
+})();
+
+function generateQR(text, eclStr){
+  var bytes = Array.from(new TextEncoder().encode(text));
+  var version = 0, v;
+  for (v = 1; v <= 40; v++){
+    var capBits = getNumDataCodewords(v, eclStr) * 8;
+    var ccBits = v < 10 ? 8 : 16;
+    if (4 + ccBits + bytes.length * 8 <= capBits){ version = v; break; }
+  }
+  if (!version) throw new Error("Content is too long for a QR code");
+
+  var dataCapacityBits = getNumDataCodewords(version, eclStr) * 8;
+  var bits = [];
+  function pushBits(val, len){ for (var i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); }
+  pushBits(4, 4);
+  pushBits(bytes.length, version < 10 ? 8 : 16);
+  for (var i = 0; i < bytes.length; i++) pushBits(bytes[i], 8);
+  for (var t = 0; t < 4 && bits.length < dataCapacityBits; t++) bits.push(0);
+  while (bits.length % 8 !== 0) bits.push(0);
+  var pad = [0xEC, 0x11], pi = 0;
+  while (bits.length < dataCapacityBits) pushBits(pad[pi++ % 2], 8);
+
+  var dataCw = [];
+  for (var b = 0; b < bits.length; b += 8){
+    var byte = 0;
+    for (var k = 0; k < 8; k++) byte = (byte << 1) | bits[b + k];
+    dataCw.push(byte);
+  }
+
+  var eclIdx = ECL_INDEX[eclStr];
+  var numBlocks = NUM_ECC_BLOCKS[eclIdx][version];
+  var eccLen = ECC_CW_PER_BLOCK[eclIdx][version];
+  var rawCodewords = Math.floor(getNumRawDataModules(version) / 8);
+  var numShortBlocks = numBlocks - (rawCodewords % numBlocks);
+  var shortBlockLen = Math.floor(rawCodewords / numBlocks);
+  var gen = rsGeneratorPoly(eccLen);
+
+  var blocks = [], dk = 0;
+  for (var bi = 0; bi < numBlocks; bi++){
+    var dataLen = shortBlockLen - eccLen + (bi < numShortBlocks ? 0 : 1);
+    var dat = dataCw.slice(dk, dk + dataLen);
+    dk += dataLen;
+    var ecc = rsRemainder(dat, eccLen, gen);
+    var blk = new Array(shortBlockLen + 1);
+    for (var z = 0; z < blk.length; z++) blk[z] = 0;
+    for (var p = 0; p < dat.length; p++) blk[p] = dat[p];
+    for (var e = 0; e < eccLen; e++) blk[blk.length - eccLen + e] = ecc[e];
+    blocks.push(blk);
+  }
+  var allCw = [];
+  for (var ci = 0; ci < blocks[0].length; ci++){
+    for (var cj = 0; cj < blocks.length; cj++){
+      if (ci === shortBlockLen - eccLen && cj < numShortBlocks) continue;
+      allCw.push(blocks[cj][ci]);
+    }
+  }
+
+  /* ---- Matrix construction ---- */
+  var size = version * 4 + 17;
+  var modules = [], isFunc = [];
+  for (var yy = 0; yy < size; yy++){
+    modules.push(new Uint8Array(size));
+    isFunc.push(new Uint8Array(size));
+  }
+  function setF(x, y, val){
+    if (x < 0 || y < 0 || x >= size || y >= size) return;
+    modules[y][x] = val ? 1 : 0;
+    isFunc[y][x] = 1;
+  }
+  for (var ti = 0; ti < size; ti++){ setF(6, ti, ti % 2 === 0); setF(ti, 6, ti % 2 === 0); }
+  function drawFinder(cx, cy){
+    for (var dy = -4; dy <= 4; dy++) for (var dx = -4; dx <= 4; dx++){
+      var dist = Math.max(Math.abs(dx), Math.abs(dy));
+      setF(cx + dx, cy + dy, dist !== 2 && dist !== 4);
+    }
+  }
+  drawFinder(3, 3); drawFinder(size - 4, 3); drawFinder(3, size - 4);
+  var apos = getAlignPositions(version), na = apos.length;
+  for (var ai = 0; ai < na; ai++) for (var aj = 0; aj < na; aj++){
+    if ((ai === 0 && aj === 0) || (ai === 0 && aj === na - 1) || (ai === na - 1 && aj === 0)) continue;
+    var acx = apos[aj], acy = apos[ai];
+    for (var ady = -2; ady <= 2; ady++) for (var adx = -2; adx <= 2; adx++)
+      setF(acx + adx, acy + ady, Math.max(Math.abs(adx), Math.abs(ady)) !== 1);
+  }
+  if (version >= 7){
+    var vrem = version;
+    for (var vi = 0; vi < 12; vi++) vrem = (vrem << 1) ^ ((vrem >>> 11) * 0x1F25);
+    var vbits = (version << 12) | vrem;
+    for (var vq = 0; vq < 18; vq++){
+      var bit = (vbits >>> vq) & 1;
+      var pa = size - 11 + (vq % 3), pb = Math.floor(vq / 3);
+      setF(pa, pb, bit); setF(pb, pa, bit);
+    }
+  }
+
+  function drawFormat(mask){
+    var data = (eclIdx << 3) | mask;
+    var rem = data;
+    for (var i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+    var fb = (((data << 10) | rem) ^ 0x5412) & 0x7FFF;
+    function gb(i){ return (fb >>> i) & 1; }
+    for (var a = 0; a <= 5; a++) setF(8, a, gb(a));
+    setF(8, 7, gb(6)); setF(8, 8, gb(7)); setF(7, 8, gb(8));
+    for (var b2 = 9; b2 < 15; b2++) setF(14 - b2, 8, gb(b2));
+    for (var c = 0; c < 8; c++) setF(size - 1 - c, 8, gb(c));
+    for (var d2 = 8; d2 < 15; d2++) setF(8, size - 15 + d2, gb(d2));
+    setF(8, size - 8, 1);
+  }
+
+  /* place data */
+  function placeCodewords(){
+    var bitIdx = 0, totalBits = allCw.length * 8;
+    for (var right = size - 1; right >= 1; right -= 2){
+      if (right === 6) right = 5;
+      for (var vert = 0; vert < size; vert++){
+        for (var j = 0; j < 2; j++){
+          var x = right - j;
+          var upward = ((right + 1) & 2) === 0;
+          var y = upward ? size - 1 - vert : vert;
+          if (!isFunc[y][x] && bitIdx < totalBits){
+            modules[y][x] = (allCw[bitIdx >>> 3] >>> (7 - (bitIdx & 7))) & 1;
+            bitIdx++;
+          }
+        }
+      }
+    }
+  }
+
+  function applyMask(mask){
+    for (var y = 0; y < size; y++){
+      for (var x = 0; x < size; x++){
+        if (!isFunc[y][x] && maskFn(mask, x, y)) modules[y][x] ^= 1;
+      }
+    }
+  }
+
+  function penalty(){
+    var N1 = 3, N2 = 3, N3 = 40, N4 = 10, result = 0;
+    function addHistory(len, hist, sz){
+      if (hist[0] === 0) len += sz;
+      for (var i = hist.length - 1; i > 0; i--) hist[i] = hist[i - 1];
+      hist[0] = len;
+    }
+    function countPatterns(hist){
+      var n = hist[1];
+      var core = n > 0 && hist[2] === n && hist[3] === n * 3 && hist[4] === n && hist[5] === n;
+      return (core && hist[0] >= n * 4 && hist[6] >= n ? 1 : 0) + (core && hist[6] >= n * 4 && hist[0] >= n ? 1 : 0);
+    }
+    function terminate(color, len, hist){
+      if (color){ addHistory(len, hist, size); len = 0; }
+      len += size;
+      addHistory(len, hist, size);
+      return countPatterns(hist);
+    }
+    var x, y, hist, runColor, runLen;
+    for (y = 0; y < size; y++){
+      hist = [0,0,0,0,0,0,0]; runColor = false; runLen = 0;
+      for (x = 0; x < size; x++){
+        if (!!modules[y][x] === runColor){
+          runLen++;
+          if (runLen === 5) result += N1; else if (runLen > 5) result++;
+        } else {
+          addHistory(runLen, hist, size);
+          if (!runColor) result += countPatterns(hist) * N3;
+          runColor = !!modules[y][x];
+          runLen = 1;
+        }
+      }
+      result += terminate(runColor, runLen, hist) * N3;
+    }
+    for (x = 0; x < size; x++){
+      hist = [0,0,0,0,0,0,0]; runColor = false; runLen = 0;
+      for (y = 0; y < size; y++){
+        if (!!modules[y][x] === runColor){
+          runLen++;
+          if (runLen === 5) result += N1; else if (runLen > 5) result++;
+        } else {
+          addHistory(runLen, hist, size);
+          if (!runColor) result += countPatterns(hist) * N3;
+          runColor = !!modules[y][x];
+          runLen = 1;
+        }
+      }
+      result += terminate(runColor, runLen, hist) * N3;
+    }
+    for (y = 0; y < size - 1; y++) for (x = 0; x < size - 1; x++){
+      var c = modules[y][x];
+      if (c === modules[y][x + 1] && c === modules[y + 1][x] && c === modules[y + 1][x + 1]) result += N2;
+    }
+    var dark = 0;
+    for (y = 0; y < size; y++) for (x = 0; x < size; x++) if (modules[y][x]) dark++;
+    var total = size * size;
+    var kk = Math.floor((Math.abs(dark * 20 - total * 10) + total - 1) / total) - 1;
+    result += kk * N4;
+    return result;
+  }
+
+  /* choose best mask */
+  var bestMask = 0, bestPenalty = Infinity;
+  var saved = null;
+  for (var m = 0; m < 8; m++){
+    drawFormat(m);
+    placeCodewords();
+    applyMask(m);
+    var pen = penalty();
+    if (pen < bestPenalty){ bestPenalty = pen; bestMask = m; }
+    applyMask(m);
+  }
+  drawFormat(bestMask);
+  placeCodewords();
+  applyMask(bestMask);
+
+  return { modules: modules, size: size, version: version, mask: bestMask };
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDERING (canvas + SVG)
+   ═══════════════════════════════════════════════════════════════ */
+
+function inFinder(x, y, n){
+  return (x < 7 && y < 7) || (x >= n - 7 && y < 7) || (x < 7 && y >= n - 7);
+}
+function fmtN(v){ var r = Math.round(v * 1000) / 1000; return String(r); }
+
+function roundedRectD(x, y, w, h, tl, tr, br, bl){
+  var d = "M" + fmtN(x + tl) + " " + fmtN(y);
+  d += "H" + fmtN(x + w - tr);
+  if (tr) d += "Q" + fmtN(x + w) + " " + fmtN(y) + " " + fmtN(x + w) + " " + fmtN(y + tr);
+  d += "V" + fmtN(y + h - br);
+  if (br) d += "Q" + fmtN(x + w) + " " + fmtN(y + h) + " " + fmtN(x + w - br) + " " + fmtN(y + h);
+  d += "H" + fmtN(x + bl);
+  if (bl) d += "Q" + fmtN(x) + " " + fmtN(y + h) + " " + fmtN(x) + " " + fmtN(y + h - bl);
+  d += "V" + fmtN(y + tl);
+  if (tl) d += "Q" + fmtN(x) + " " + fmtN(y) + " " + fmtN(x + tl) + " " + fmtN(y);
+  d += "Z";
+  return d;
+}
+
+function buildModulePathD(m, n, margin, style){
+  var d = "";
+  for (var y = 0; y < n; y++){
+    for (var x = 0; x < n; x++){
+      if (!m[y][x]) continue;
+      if (inFinder(x, y, n)) continue;
+      var X = x + margin, Y = y + margin;
+      if (style === "dots"){
+        var cx = X + 0.5, cy = Y + 0.5, r = 0.44;
+        d += "M" + fmtN(cx - r) + " " + fmtN(cy) + "a" + r + " " + r + " 0 1 0 " + (r * 2) + " 0a" + r + " " + r + " 0 1 0 " + (-r * 2) + " 0Z";
+      } else if (style === "diamond"){
+        var dx0 = X + 0.5, dy0 = Y + 0.5, dr = 0.47;
+        d += "M" + fmtN(dx0) + " " + fmtN(dy0 - dr) + "L" + fmtN(dx0 + dr) + " " + fmtN(dy0) + "L" + fmtN(dx0) + " " + fmtN(dy0 + dr) + "L" + fmtN(dx0 - dr) + " " + fmtN(dy0) + "Z";
+      } else if (style === "square"){
+        d += "M" + fmtN(X) + " " + fmtN(Y) + "h1v1h-1Z";
+      } else {
+        var rr = style === "smooth" ? 0.5 : 0.28;
+        function dk(xx, yy){ return (xx >= 0 && yy >= 0 && xx < n && yy < n) ? m[yy][xx] : 0; }
+        var ctl = (!dk(x, y - 1) && !dk(x - 1, y)) ? rr : 0;
+        var ctr = (!dk(x, y - 1) && !dk(x + 1, y)) ? rr : 0;
+        var cbr = (!dk(x, y + 1) && !dk(x + 1, y)) ? rr : 0;
+        var cbl = (!dk(x, y + 1) && !dk(x - 1, y)) ? rr : 0;
+        d += roundedRectD(X, Y, 1, 1, ctl, ctr, cbr, cbl);
+      }
+    }
+  }
+  return d;
+}
+
+function eyeShapeD(x, y, size, style){
+  if (style === "circle"){
+    var cx = x + size / 2, cy = y + size / 2, r = size / 2;
+    return "M" + fmtN(cx - r) + " " + fmtN(cy) + "a" + fmtN(r) + " " + fmtN(r) + " 0 1 0 " + fmtN(r * 2) + " 0a" + fmtN(r) + " " + fmtN(r) + " 0 1 0 " + fmtN(-r * 2) + " 0Z";
+  }
+  if (style === "square"){
+    return "M" + fmtN(x) + " " + fmtN(y) + "h" + size + "v" + size + "h" + (-size) + "Z";
+  }
+  if (style === "leaf"){
+    var big = size * 0.5, small = size * 0.14;
+    return roundedRectD(x, y, size, size, small, small, big, small);
+  }
+  var rr = size * 0.28;
+  return roundedRectD(x, y, size, size, rr, rr, rr, rr);
+}
+
+function buildEyePathD(n, margin, style){
+  var d = "";
+  var corners = [[0, 0], [n - 7, 0], [0, n - 7]];
+  for (var i = 0; i < corners.length; i++){
+    var X = corners[i][0] + margin, Y = corners[i][1] + margin;
+    d += eyeShapeD(X, Y, 7, style);
+    d += eyeShapeD(X + 1, Y + 1, 5, style);
+    d += eyeShapeD(X + 2, Y + 2, 3, style);
+  }
+  return d;
+}
+
+function renderToCanvas(canvas, m, n, opts, px){
+  var margin = opts.margin;
+  var total = n + margin * 2;
+  var scale = px / total;
+  canvas.width = px; canvas.height = px;
+  var ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, px, px);
+  if (opts.bg !== "transparent"){
+    ctx.fillStyle = opts.bg;
+    ctx.fillRect(0, 0, px, px);
+  }
+  ctx.save();
+  ctx.scale(scale, scale);
+  var fill;
+  if (opts.useGradient){
+    var g = ctx.createLinearGradient(0, 0, total, total);
+    g.addColorStop(0, opts.fg);
+    g.addColorStop(1, opts.fg2);
+    fill = g;
+  } else {
+    fill = opts.fg;
+  }
+  ctx.fillStyle = fill;
+  var dMod = buildModulePathD(m, n, margin, opts.dot);
+  if (dMod) ctx.fill(new Path2D(dMod));
+  var dEye = buildEyePathD(n, margin, opts.eye);
+  ctx.fill(new Path2D(dEye), "evenodd");
+  ctx.restore();
+
+  if (opts.logoImg){
+    var logoSize = px * 0.22;
+    var lx = (px - logoSize) / 2, ly = (px - logoSize) / 2;
+    var plate = logoSize + Math.max(6, px * 0.012);
+    var pr = plate * 0.24;
+    ctx.save();
+    roundRectCtx(ctx, lx - (plate - logoSize) / 2, ly - (plate - logoSize) / 2, plate, plate, pr);
+    ctx.fillStyle = opts.bg === "transparent" ? "#FFFFFF" : opts.bg;
+    ctx.fill();
+    ctx.restore();
+    ctx.save();
+    roundRectCtx(ctx, lx, ly, logoSize, logoSize, logoSize * 0.18);
+    ctx.clip();
+    ctx.drawImage(opts.logoImg, lx, ly, logoSize, logoSize);
+    ctx.restore();
+  }
+  return canvas;
+}
+
+function roundRectCtx(ctx, x, y, w, h, r){
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function buildSVG(m, n, opts, px){
+  var margin = opts.margin;
+  var total = n + margin * 2;
+  var out = [];
+  out.push('<svg xmlns="http://www.w3.org/2000/svg" width="' + px + '" height="' + px + '" viewBox="0 0 ' + total + ' ' + total + '" shape-rendering="geometricPrecision">');
+  out.push('<defs><linearGradient id="qg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + opts.fg + '"/><stop offset="1" stop-color="' + opts.fg2 + '"/></linearGradient></defs>');
+  if (opts.bg !== "transparent") out.push('<rect width="' + total + '" height="' + total + '" fill="' + opts.bg + '"/>');
+  var fill = opts.useGradient ? "url(#qg)" : opts.fg;
+  var dMod = buildModulePathD(m, n, margin, opts.dot);
+  if (dMod) out.push('<path d="' + dMod + '" fill="' + fill + '"/>');
+  var dEye = buildEyePathD(n, margin, opts.eye);
+  out.push('<path d="' + dEye + '" fill="' + fill + '" fill-rule="evenodd"/>');
+  if (opts.logoDataUrl){
+    var logoSize = total * 0.22;
+    var lx = (total - logoSize) / 2, ly = lx;
+    var plate = logoSize + Math.max(6 / (px / total), total * 0.012);
+    out.push('<rect x="' + fmtN(lx - (plate - logoSize) / 2) + '" y="' + fmtN(ly - (plate - logoSize) / 2) + '" width="' + fmtN(plate) + '" height="' + fmtN(plate) + '" rx="' + fmtN(plate * 0.24) + '" fill="' + (opts.bg === "transparent" ? "#FFFFFF" : opts.bg) + '"/>');
+    out.push('<image href="' + opts.logoDataUrl + '" x="' + fmtN(lx) + '" y="' + fmtN(ly) + '" width="' + fmtN(logoSize) + '" height="' + fmtN(logoSize) + '" preserveAspectRatio="xMidYMid slice" clip-path="inset(0 round ' + fmtN(logoSize * 0.18) + ')"/>');
+  }
+  out.push("</svg>");
+  return out.join("");
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   QR DECODER
+   ═══════════════════════════════════════════════════════════════ */
+
+function popcount(x){ var c = 0; while (x){ c += x & 1; x >>>= 1; } return c; }
+
+function toGray(data, w, h){
+  var g = new Uint8Array(w * h);
+  for (var i = 0, j = 0; i < g.length; i++, j += 4){
+    g[i] = (data[j] * 77 + data[j + 1] * 150 + data[j + 2] * 29) >> 8;
+  }
+  return g;
+}
+
+function otsuThreshold(gray){
+  var hist = new Uint32Array(256);
+  for (var i = 0; i < gray.length; i++) hist[gray[i]]++;
+  var total = gray.length, sum = 0;
+  for (var t = 0; t < 256; t++) sum += t * hist[t];
+  var sumB = 0, wB = 0, max = 0, thr = 128;
+  for (var q = 0; q < 256; q++){
+    wB += hist[q];
+    if (wB === 0) continue;
+    var wF = total - wB;
+    if (wF === 0) break;
+    sumB += q * hist[q];
+    var mB = sumB / wB, mF = (sum - sumB) / wF;
+    var between = wB * wF * (mB - mF) * (mB - mF);
+    if (between > max){ max = between; thr = q; }
+  }
+  return thr;
+}
+
+function binarize(gray, w, h){
+  var iw = w + 1;
+  var integral = new Int32Array(iw * (h + 1));
+  for (var y = 0; y < h; y++){
+    var rowSum = 0;
+    for (var x = 0; x < w; x++){
+      rowSum += gray[y * w + x];
+      integral[(y + 1) * iw + (x + 1)] = integral[y * iw + (x + 1)] + rowSum;
+    }
+  }
+  var r = Math.max(8, Math.floor(Math.min(w, h) / 20));
+  var otsu = otsuThreshold(gray);
+  var globalThr = otsu * 0.6;
+  var bin = new Uint8Array(w * h);
+  for (var yy = 0; yy < h; yy++){
+    var y0 = Math.max(0, yy - r), y1 = Math.min(h - 1, yy + r);
+    for (var xx = 0; xx < w; xx++){
+      var x0 = Math.max(0, xx - r), x1 = Math.min(w - 1, xx + r);
+      var area = (x1 - x0 + 1) * (y1 - y0 + 1);
+      var sum = integral[(y1 + 1) * iw + (x1 + 1)] - integral[y0 * iw + (x1 + 1)] - integral[(y1 + 1) * iw + x0] + integral[y0 * iw + x0];
+      var mean = sum / area;
+      var v = gray[yy * w + xx];
+      bin[yy * w + xx] = (v < mean * 0.92 || v < globalThr) ? 1 : 0;
+    }
+  }
+  return bin;
+}
+
+function foundPatternCross(sc){
+  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
+  if (total < 7) return false;
+  var ms = total / 7, maxVar = ms / 2;
+  return Math.abs(sc[0] - ms) < maxVar && Math.abs(sc[1] - ms) < maxVar &&
+         Math.abs(sc[2] - 3 * ms) < 3 * maxVar && Math.abs(sc[3] - ms) < maxVar &&
+         Math.abs(sc[4] - ms) < maxVar;
+}
+
+function crossCheckVertical(bin, w, h, startY, centerX, maxCount, originalTotal){
+  var sc = [0, 0, 0, 0, 0];
+  var y = startY;
+  while (y >= 0 && bin[y * w + centerX] && sc[2] <= maxCount){ sc[2]++; y--; }
+  if (y < 0 || sc[2] > maxCount) return null;
+  while (y >= 0 && !bin[y * w + centerX] && sc[1] <= maxCount){ sc[1]++; y--; }
+  if (y < 0 || sc[1] > maxCount) return null;
+  while (y >= 0 && bin[y * w + centerX] && sc[0] <= maxCount){ sc[0]++; y--; }
+  if (sc[0] > maxCount) return null;
+  y = startY + 1;
+  while (y < h && bin[y * w + centerX] && sc[2] <= maxCount){ sc[2]++; y++; }
+  if (y >= h || sc[2] > maxCount) return null;
+  while (y < h && !bin[y * w + centerX] && sc[3] <= maxCount){ sc[3]++; y++; }
+  if (y >= h || sc[3] > maxCount) return null;
+  while (y < h && bin[y * w + centerX] && sc[4] <= maxCount){ sc[4]++; y++; }
+  if (sc[4] > maxCount) return null;
+  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
+  if (5 * Math.abs(total - originalTotal) >= 2 * originalTotal) return null;
+  if (!foundPatternCross(sc)) return null;
+  return y - sc[4] - sc[3] - sc[2] / 2;
+}
+
+function crossCheckHorizontal(bin, w, h, startX, centerY, maxCount, originalTotal){
+  var sc = [0, 0, 0, 0, 0];
+  var x = startX;
+  while (x >= 0 && bin[centerY * w + x] && sc[2] <= maxCount){ sc[2]++; x--; }
+  if (x < 0 || sc[2] > maxCount) return null;
+  while (x >= 0 && !bin[centerY * w + x] && sc[1] <= maxCount){ sc[1]++; x--; }
+  if (x < 0 || sc[1] > maxCount) return null;
+  while (x >= 0 && bin[centerY * w + x] && sc[0] <= maxCount){ sc[0]++; x--; }
+  if (sc[0] > maxCount) return null;
+  x = startX + 1;
+  while (x < w && bin[centerY * w + x] && sc[2] <= maxCount){ sc[2]++; x++; }
+  if (x >= w || sc[2] > maxCount) return null;
+  while (x < w && !bin[centerY * w + x] && sc[3] <= maxCount){ sc[3]++; x++; }
+  if (x >= w || sc[3] > maxCount) return null;
+  while (x < w && bin[centerY * w + x] && sc[4] <= maxCount){ sc[4]++; x++; }
+  if (sc[4] > maxCount) return null;
+  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
+  if (5 * Math.abs(total - originalTotal) >= originalTotal) return null;
+  if (!foundPatternCross(sc)) return null;
+  return x - sc[4] - sc[3] - sc[2] / 2;
+}
+
+function findFinderPatterns(bin, w, h){
+  var cands = [];
+  for (var y = 0; y < h; y++){
+    var sc = [0, 0, 0, 0, 0];
+    var st = 0;
+    var x = 0;
+    while (x < w){
+      if (bin[y * w + x]){
+        if ((st & 1) === 1) st++;
+        sc[st]++;
+        x++;
+      } else {
+        if ((st & 1) === 0){
+          if (st === 4){
+            if (foundPatternCross(sc)){
+              var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
+              var cx = x - sc[4] - sc[3] - sc[2] / 2;
+              var ms = total / 7;
+              var maxCount = Math.ceil(ms * 3);
+              var cy = crossCheckVertical(bin, w, h, y, Math.round(cx), maxCount, total);
+              if (cy !== null){
+                var cx2 = crossCheckHorizontal(bin, w, h, Math.round(cx), Math.round(cy), maxCount, total);
+                if (cx2 !== null){
+                  var found = false;
+                  for (var i = 0; i < cands.length; i++){
+                    var c = cands[i];
+                    if (Math.abs(c.x - cx2) <= ms && Math.abs(c.y - cy) <= ms){
+                      c.x = (c.x * c.count + cx2) / (c.count + 1);
+                      c.y = (c.y * c.count + cy) / (c.count + 1);
+                      c.moduleSize = (c.moduleSize * c.count + ms) / (c.count + 1);
+                      c.count++;
+                      found = true;
+                      break;
+                    }
+                  }
+                  if (!found) cands.push({ x: cx2, y: cy, moduleSize: ms, count: 1 });
+                }
+              }
+            }
+            sc = [sc[2], sc[3], sc[4], 1, 0];
+            st = 3;
+            x++;
+            continue;
+          } else {
+            st++;
+            sc[st]++;
+            x++;
+          }
+        } else {
+          sc[st]++;
+          x++;
+        }
+      }
+    }
+  }
+  cands.sort(function(a, b){ return b.count - a.count; });
+  return cands.slice(0, 24);
+}
+
+function selectTriple(cands){
+  var best = null;
+  var n = cands.length;
+  if (n < 3) return null;
+  for (var i = 0; i < n; i++){
+    for (var j = i + 1; j < n; j++){
+      for (var k = j + 1; k < n; k++){
+        var a = cands[i], b = cands[j], c = cands[k];
+        var msMin = Math.min(a.moduleSize, b.moduleSize, c.moduleSize);
+        var msMax = Math.max(a.moduleSize, b.moduleSize, c.moduleSize);
+        if (msMax / msMin > 1.7) continue;
+        var dAB = Math.hypot(a.x - b.x, a.y - b.y);
+        var dBC = Math.hypot(b.x - c.x, b.y - c.y);
+        var dCA = Math.hypot(c.x - a.x, c.y - a.y);
+        var arr = [{ d: dAB, p: [a, b] }, { d: dBC, p: [b, c] }, { d: dCA, p: [c, a] }];
+        arr.sort(function(p, q){ return q.d - p.d; });
+        var hyp = arr[0].d, l1 = arr[1].d, l2 = arr[2].d;
+        if (l1 < 2 || l2 < 2) continue;
+        var legRatio = Math.abs(l1 - l2) / Math.max(l1, l2);
+        if (legRatio > 0.4) continue;
+        var hypErr = Math.abs(hyp * hyp - (l1 * l1 + l2 * l2)) / (hyp * hyp);
+        if (hypErr > 0.4) continue;
+        var hp = arr[0].p;
+        var tl = (a === hp[0] || a === hp[1]) ? ((b === hp[0] || b === hp[1]) ? c : b) : a;
+        var o1 = hp[0], o2 = hp[1];
+        var cross = (o1.x - tl.x) * (o2.y - tl.y) - (o1.y - tl.y) * (o2.x - tl.x);
+        var tr, bl;
+        if (cross > 0){ tr = o1; bl = o2; } else { tr = o2; bl = o1; }
+        var score = hypErr + legRatio + (3 - Math.min(3, a.count + b.count + c.count)) * 0.05;
+        if (!best || score < best.score){
+          best = { score: score, tl: tl, tr: tr, bl: bl };
+        }
+      }
+    }
+  }
+  return best;
+}
+
+function findAlignmentPattern(bin, w, h, estX, estY, moduleSize){
+  var allowance = Math.max(6, Math.ceil(moduleSize * 5));
+  var x0 = Math.max(0, Math.floor(estX - allowance));
+  var x1 = Math.min(w - 1, Math.ceil(estX + allowance));
+  var y0 = Math.max(0, Math.floor(estY - allowance));
+  var y1 = Math.min(h - 1, Math.ceil(estY + allowance));
+  var best = null;
+  for (var y = y0; y <= y1; y++){
+    var runs = [];
+    var cur = bin[y * w + x0], len = 1, start = x0;
+    for (var x = x0 + 1; x <= x1; x++){
+      var v = bin[y * w + x];
+      if (v === cur) len++;
+      else { runs.push({ color: cur, len: len, start: start }); cur = v; len = 1; start = x; }
+    }
+    runs.push({ color: cur, len: len, start: start });
+    for (var i = 0; i + 4 < runs.length; i++){
+      if (runs[i].color !== 1) continue;
+      var r5 = [runs[i], runs[i + 1], runs[i + 2], runs[i + 3], runs[i + 4]];
+      if (r5[1].color !== 0 || r5[3].color !== 0) continue;
+      var total = r5[0].len + r5[1].len + r5[2].len + r5[3].len + r5[4].len;
+      if (total < 5) continue;
+      var m = total / 5;
+      if (m < moduleSize * 0.4 || m > moduleSize * 2.4) continue;
+      var ok = true;
+      for (var q = 0; q < 5; q++){ if (Math.abs(r5[q].len - m) > m * 0.85){ ok = false; break; } }
+      if (!ok) continue;
+      var cx = Math.round(runs[i].start + total / 2);
+      var cy = crossCheckAlignV(bin, w, h, cx, y, Math.ceil(m * 3));
+      if (cy === null) continue;
+      var cx2 = crossCheckAlignH(bin, w, h, cx, Math.round(cy), Math.ceil(m * 3));
+      if (cx2 === null) continue;
+      var dist = Math.hypot(cx2 - estX, cy - estY);
+      if (!best || dist < best.dist) best = { x: cx2, y: cy, dist: dist };
+    }
+  }
+  return best;
+}
+
+function crossCheckAlignV(bin, w, h, cx, cy, maxCount){
+  var sc = [0, 0, 0, 0, 0];
+  var y = cy;
+  while (y >= 0 && bin[y * w + cx] && sc[2] <= maxCount){ sc[2]++; y--; }
+  if (y < 0 || sc[2] > maxCount) return null;
+  while (y >= 0 && !bin[y * w + cx] && sc[1] <= maxCount){ sc[1]++; y--; }
+  if (y < 0 || sc[1] > maxCount) return null;
+  while (y >= 0 && bin[y * w + cx] && sc[0] <= maxCount){ sc[0]++; y--; }
+  if (sc[0] > maxCount) return null;
+  y = cy + 1;
+  while (y < h && bin[y * w + cx] && sc[2] <= maxCount){ sc[2]++; y++; }
+  if (y >= h || sc[2] > maxCount) return null;
+  while (y < h && !bin[y * w + cx] && sc[3] <= maxCount){ sc[3]++; y++; }
+  if (y >= h || sc[3] > maxCount) return null;
+  while (y < h && bin[y * w + cx] && sc[4] <= maxCount){ sc[4]++; y++; }
+  if (sc[4] > maxCount) return null;
+  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
+  var m = total / 5;
+  if (m < 1) return null;
+  for (var i = 0; i < 5; i++){ if (Math.abs(sc[i] - m) > m * 1.0) return null; }
+  return y - sc[4] - sc[3] - sc[2] / 2;
+}
+
+function crossCheckAlignH(bin, w, h, cx, cy, maxCount){
+  var sc = [0, 0, 0, 0, 0];
+  var x = cx;
+  while (x >= 0 && bin[cy * w + x] && sc[2] <= maxCount){ sc[2]++; x--; }
+  if (x < 0 || sc[2] > maxCount) return null;
+  while (x >= 0 && !bin[cy * w + x] && sc[1] <= maxCount){ sc[1]++; x--; }
+  if (x < 0 || sc[1] > maxCount) return null;
+  while (x >= 0 && bin[cy * w + x] && sc[0] <= maxCount){ sc[0]++; x--; }
+  if (sc[0] > maxCount) return null;
+  x = cx + 1;
+  while (x < w && bin[cy * w + x] && sc[2] <= maxCount){ sc[2]++; x++; }
+  if (x >= w || sc[2] > maxCount) return null;
+  while (x < w && !bin[cy * w + x] && sc[3] <= maxCount){ sc[3]++; x++; }
+  if (x >= w || sc[3] > maxCount) return null;
+  while (x < w && bin[cy * w + x] && sc[4] <= maxCount){ sc[4]++; x++; }
+  if (sc[4] > maxCount) return null;
+  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
+  var m = total / 5;
+  if (m < 1) return null;
+  for (var i = 0; i < 5; i++){ if (Math.abs(sc[i] - m) > m * 1.0) return null; }
+  return x - sc[4] - sc[3] - sc[2] / 2;
+}
+
+/* --- perspective helpers --- */
+function matMul3(a, b){
+  var r = new Array(9);
+  for (var i = 0; i < 3; i++){
+    for (var j = 0; j < 3; j++){
+      r[i * 3 + j] = a[i * 3] * b[j] + a[i * 3 + 1] * b[3 + j] + a[i * 3 + 2] * b[6 + j];
+    }
+  }
+  return r;
+}
+function adjugate3(m){
+  var a = m[0], b = m[1], c = m[2], d = m[3], e = m[4], f = m[5], g = m[6], h = m[7], i = m[8];
+  return [
+    e * i - f * h, c * h - b * i, b * f - c * e,
+    f * g - d * i, a * i - c * g, c * d - a * f,
+    d * h - e * g, b * g - a * h, a * e - b * d
+  ];
+}
+function squareToQuad(x0, y0, x1, y1, x2, y2, x3, y3){
+  var dx3 = x0 - x1 + x2 - x3;
+  var dy3 = y0 - y1 + y2 - y3;
+  if (dx3 === 0 && dy3 === 0){
+    return [x1 - x0, x3 - x0, x0, y1 - y0, y3 - y0, y0, 0, 0, 1];
+  }
+  var dx1 = x1 - x2, dx2 = x3 - x2, dy1 = y1 - y2, dy2 = y3 - y2;
+  var den = dx1 * dy2 - dx2 * dy1;
+  if (den === 0) return [1, 0, 0, 0, 1, 0, 0, 0, 1];
+  var a13 = (dx3 * dy2 - dx2 * dy3) / den;
+  var a23 = (dx1 * dy3 - dx3 * dy1) / den;
+  return [
+    x1 - x0 + a13 * x1, x3 - x0 + a23 * x3, x0,
+    y1 - y0 + a13 * y1, y3 - y0 + a23 * y3, y0,
+    a13, a23, 1
+  ];
+}
+function quadToQuad(sx0, sy0, sx1, sy1, sx2, sy2, sx3, sy3, dx0, dy0, dx1, dy1, dx2, dy2, dx3, dy3){
+  var sToQ = squareToQuad(dx0, dy0, dx1, dy1, dx2, dy2, dx3, dy3);
+  var qToS = adjugate3(squareToQuad(sx0, sy0, sx1, sy1, sx2, sy2, sx3, sy3));
+  return matMul3(sToQ, qToS);
+}
+function applyT(t, x, y){
+  var d = t[6] * x + t[7] * y + t[8];
+  if (d === 0) d = 1e-9;
+  return [(t[0] * x + t[1] * y + t[2]) / d, (t[3] * x + t[4] * y + t[5]) / d];
+}
+function createTransform(tl, tr, bl, al, dim){
+  var dimMinusThree = dim - 3.5;
+  var brX, brY, srcBRX, srcBRY;
+  if (al){
+    brX = al.x; brY = al.y;
+    srcBRX = dimMinusThree - 3.0; srcBRY = srcBRX;
+  } else {
+    brX = tr.x - tl.x + bl.x;
+    brY = tr.y - tl.y + bl.y;
+    srcBRX = dimMinusThree; srcBRY = dimMinusThree;
+  }
+  return quadToQuad(
+    3.5, 3.5, dimMinusThree, 3.5, srcBRX, srcBRY, 3.5, dimMinusThree,
+    tl.x, tl.y, tr.x, tr.y, brX, brY, bl.x, bl.y
+  );
+}
+
+function sampleGrid(bin, w, h, t, dim){
+  var m = [];
+  for (var y = 0; y < dim; y++){
+    var row = new Uint8Array(dim);
+    for (var x = 0; x < dim; x++){
+      var p = applyT(t, x + 0.5, y + 0.5);
+      var px = Math.round(p[0]), py = Math.round(p[1]);
+      if (px < 0 || py < 0 || px >= w || py >= h) return null;
+      row[x] = bin[py * w + px];
+    }
+    m.push(row);
+  }
+  return m;
+}
+
+/* --- format reading --- */
+function readFormatBits1(m, dim){
+  var order = [[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[7,8],[8,8],[8,7],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0]];
+  var bits = 0;
+  for (var i = 0; i < 15; i++){
+    var x = order[i][0], y = order[i][1];
+    bits = (bits << 1) | (m[y][x] ? 1 : 0);
+  }
+  return bits;
+}
+function readFormatBits2(m, dim){
+  var bits = 0, j;
+  for (j = dim - 1; j >= dim - 7; j--) bits = (bits << 1) | (m[j][8] ? 1 : 0);
+  for (var i = dim - 8; i < dim; i++) bits = (bits << 1) | (m[8][i] ? 1 : 0);
+  return bits;
+}
+
+/* --- Reed–Solomon decoder --- */
+function GFPoly(c){
+  var first = 0;
+  while (first < c.length - 1 && c[first] === 0) first++;
+  this.c = c.slice(first);
+}
+GFPoly.prototype.degree = function(){ return this.c.length - 1; };
+GFPoly.prototype.isZero = function(){ return this.c[0] === 0; };
+GFPoly.prototype.getCoefficient = function(deg){ return this.c[this.c.length - 1 - deg]; };
+GFPoly.prototype.evaluateAt = function(a){
+  if (a === 0) return this.getCoefficient(0);
+  if (a === 1){ var r = 0; for (var i = 0; i < this.c.length; i++) r ^= this.c[i]; return r; }
+  var result = this.c[0];
+  for (var j = 1; j < this.c.length; j++) result = gfMul(a, result) ^ this.c[j];
+  return result;
+};
+GFPoly.prototype.addOrSubtract = function(other){
+  if (this.isZero()) return other;
+  if (other.isZero()) return this;
+  var small = this.c, large = other.c;
+  if (small.length > large.length){ var t = small; small = large; large = t; }
+  var sum = new Array(large.length);
+  var diff = large.length - small.length;
+  for (var i = 0; i < diff; i++) sum[i] = large[i];
+  for (var j = diff; j < large.length; j++) sum[j] = small[j - diff] ^ large[j];
+  return new GFPoly(sum);
+};
+GFPoly.prototype.multiply = function(other){
+  if (this.isZero() || other.isZero()) return new GFPoly([0]);
+  var a = this.c, b = other.c;
+  var product = new Array(a.length + b.length - 1);
+  for (var i = 0; i < product.length; i++) product[i] = 0;
+  for (var p = 0; p < a.length; p++){
+    if (a[p] === 0) continue;
+    for (var q = 0; q < b.length; q++) product[p + q] ^= gfMul(a[p], b[q]);
+  }
+  return new GFPoly(product);
+};
+GFPoly.prototype.multiplyScalar = function(s){
+  if (s === 0) return new GFPoly([0]);
+  if (s === 1) return this;
+  var p = new Array(this.c.length);
+  for (var i = 0; i < p.length; i++) p[i] = gfMul(this.c[i], s);
+  return new GFPoly(p);
+};
+GFPoly.prototype.multiplyByMonomial = function(degree, coefficient){
+  if (coefficient === 0) return new GFPoly([0]);
+  var p = new Array(this.c.length + degree);
+  for (var i = 0; i < p.length; i++) p[i] = 0;
+  for (var j = 0; j < this.c.length; j++) p[j] = gfMul(this.c[j], coefficient);
+  return new GFPoly(p);
+};
+function buildMonomial(degree, coefficient){
+  if (coefficient === 0) return new GFPoly([0]);
+  var c = new Array(degree + 1);
+  for (var i = 0; i < c.length; i++) c[i] = 0;
+  c[0] = coefficient;
+  return new GFPoly(c);
+}
+
+function runEuclidean(a, b, R){
+  if (a.degree() < b.degree()){ var t = a; a = b; b = t; }
+  var rLast = a, r = b;
+  var tLast = new GFPoly([0]), t = new GFPoly([1]);
+  while (2 * r.degree() >= R){
+    var rLastLast = rLast, tLastLast = tLast;
+    rLast = r; tLast = t;
+    if (rLast.isZero()) throw new Error("rLast zero");
+    r = rLastLast;
+    var q = new GFPoly([0]);
+    var denomLT = rLast.getCoefficient(rLast.degree());
+    var dltInv = gfInv(denomLT);
+    while (r.degree() >= rLast.degree() && !r.isZero()){
+      var degreeDiff = r.degree() - rLast.degree();
+      var scale = gfMul(r.getCoefficient(r.degree()), dltInv);
+      q = q.addOrSubtract(buildMonomial(degreeDiff, scale));
+      r = r.addOrSubtract(rLast.multiplyByMonomial(degreeDiff, scale));
+    }
+    t = q.multiply(tLast).addOrSubtract(tLastLast);
+    if (r.degree() >= rLast.degree()) throw new Error("div failed");
+  }
+  var sigmaTildeAtZero = t.getCoefficient(0);
+  if (sigmaTildeAtZero === 0) throw new Error("sigma(0)=0");
+  var inv = gfInv(sigmaTildeAtZero);
+  return [t.multiplyScalar(inv), r.multiplyScalar(inv)];
+}
+function findErrorLocations(sigma){
+  var numErrors = sigma.degree();
+  if (numErrors === 1) return [sigma.getCoefficient(1)];
+  var result = [];
+  for (var i = 1; i < 256 && result.length < numErrors; i++){
+    if (sigma.evaluateAt(i) === 0) result.push(gfInv(i));
+  }
+  if (result.length !== numErrors) throw new Error("bad locations");
+  return result;
+}
+function findErrorMagnitudes(omega, locations){
+  var s = locations.length, result = new Array(s);
+  for (var i = 0; i < s; i++){
+    var xiInv = gfInv(locations[i]);
+    var denom = 1;
+    for (var j = 0; j < s; j++){
+      if (i !== j){
+        var term = gfMul(locations[j], xiInv);
+        denom = gfMul(denom, term ^ 1);
+      }
+    }
+    result[i] = gfMul(omega.evaluateAt(xiInv), gfInv(denom));
+  }
+  return result;
+}
+function rsDecode(received, twoS){
+  var poly = new GFPoly(received.slice());
+  var syn = new Array(twoS);
+  var noError = true;
+  for (var i = 0; i < twoS; i++){
+    var ev = poly.evaluateAt(GF_EXP[i]);
+    syn[twoS - 1 - i] = ev;
+    if (ev !== 0) noError = false;
+  }
+  if (noError) return received;
+  var syndrome = new GFPoly(syn);
+  var so = runEuclidean(buildMonomial(twoS, 1), syndrome, twoS);
+  var sigma = so[0], omega = so[1];
+  var locations = findErrorLocations(sigma);
+  var magnitudes = findErrorMagnitudes(omega, locations);
+  var result = received.slice();
+  for (var k = 0; k < locations.length; k++){
+    var position = result.length - 1 - GF_LOG[locations[k]];
+    if (position < 0) throw new Error("bad error location");
+    result[position] ^= magnitudes[k];
+  }
+  return result;
+}
+
+/* --- codeword reading & correction --- */
+function readCodewordsRaw(m, dim, version){
+  var fmap = buildFunctionMap(version);
+  var bits = [];
+  var up = true;
+  for (var col = dim - 1; col > 0; col -= 2){
+    if (col === 6) col = 5;
+    for (var i = 0; i < dim; i++){
+      var y = up ? dim - 1 - i : i;
+      for (var c = 0; c < 2; c++){
+        var x = col - c;
+        if (x < 0) continue;
+        if (fmap[y][x]) continue;
+        bits.push(m[y][x] ? 1 : 0);
+      }
+    }
+    up = !up;
+  }
+  var bytes = [];
+  for (var b = 0; b + 8 <= bits.length; b += 8){
+    var v = 0;
+    for (var j = 0; j < 8; j++) v = (v << 1) | bits[b + j];
+    bytes.push(v);
+  }
+  return bytes;
+}
+
+function correctAndDeinterleave(raw, version, eclStr){
+  var e = ECL_INDEX[eclStr];
+  var numBlocks = NUM_ECC_BLOCKS[e][version];
+  var blockEccLen = ECC_CW_PER_BLOCK[e][version];
+  var rawCodewords = Math.floor(getNumRawDataModules(version) / 8);
+  if (raw.length < rawCodewords) return null;
+  var numShortBlocks = numBlocks - (rawCodewords % numBlocks);
+  var shortBlockLen = Math.floor(rawCodewords / numBlocks);
+  var blocks = [];
+  for (var i = 0; i < numBlocks; i++){
+    var dataLen = shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1);
+    var d = new Array(dataLen), ec = new Array(blockEccLen);
+    for (var a = 0; a < dataLen; a++) d[a] = 0;
+    for (var b = 0; b < blockEccLen; b++) ec[b] = 0;
+    blocks.push({ data: d, ecc: ec, dataLen: dataLen });
+  }
+  var k = 0;
+  for (var ci = 0; ci <= shortBlockLen; ci++){
+    for (var cj = 0; cj < numBlocks; cj++){
+      if (ci === shortBlockLen - blockEccLen && cj < numShortBlocks) continue;
+      if (k >= raw.length) return null;
+      if (ci <= shortBlockLen - blockEccLen){
+        blocks[cj].data[ci] = raw[k++];
+      } else {
+        blocks[cj].ecc[ci - (shortBlockLen + 1 - blockEccLen)] = raw[k++];
+      }
+    }
+  }
+  var out = [];
+  for (var bi = 0; bi < blocks.length; bi++){
+    var blk = blocks[bi];
+    var full = blk.data.concat(blk.ecc);
+    var corrected;
+    try { corrected = rsDecode(full, blockEccLen); }
+    catch (err){ return null; }
+    for (var q = 0; q < blk.dataLen; q++) out.push(corrected[q]);
+  }
+  return out;
+}
+
+/* --- data parsing --- */
+function parseBitstream(cw, version){
+  var totalBits = cw.length * 8;
+  var pos = 0;
+  function readBits(n){
+    var v = 0;
+    for (var i = 0; i < n; i++){
+      if (pos >= totalBits) throw new Error("eof");
+      var byteIdx = pos >> 3;
+      v = (v << 1) | ((cw[byteIdx] >> (7 - (pos & 7))) & 1);
+      pos++;
+    }
+    return v;
+  }
+  var result = "";
+  var ALPHA = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
+  while (pos + 4 <= totalBits){
+    var mode = readBits(4);
+    if (mode === 0) break;
+    if (mode === 1){
+      var cnt = readBits(version < 10 ? 10 : 12);
+      var i2 = 0;
+      while (i2 + 3 <= cnt){ var v3 = readBits(10); result += String(v3).padStart(3, "0"); i2 += 3; }
+      if (cnt - i2 === 2){ var v2 = readBits(7); result += String(v2).padStart(2, "0"); }
+      else if (cnt - i2 === 1){ var v1 = readBits(4); result += String(v1); }
+    } else if (mode === 2){
+      var ac = readBits(version < 10 ? 9 : 11);
+      var ai = 0;
+      while (ai + 2 <= ac){ var av = readBits(11); result += ALPHA[Math.floor(av / 45)] + ALPHA[av % 45]; ai += 2; }
+      if (ai < ac){ var last = readBits(6); result += ALPHA[last]; }
+    } else if (mode === 4){
+      var bc = readBits(version < 10 ? 8 : 16);
+      var arr = [];
+      for (var bi = 0; bi < bc; bi++) arr.push(readBits(8));
+      var u8 = new Uint8Array(arr);
+      var decoded = null;
+      try { decoded = new TextDecoder("utf-8", { fatal: true }).decode(u8); } catch (e1){ decoded = null; }
+      if (decoded === null){
+        try { decoded = new TextDecoder("utf-8").decode(u8); } catch (e2){ decoded = null; }
+      }
+      if (decoded === null){
+        var s = "";
+        for (var q = 0; q < arr.length; q++) s += String.fromCharCode(arr[q]);
+        decoded = s;
+      }
+      result += decoded;
+    } else if (mode === 7){
+      var first = readBits(8);
+      if ((first & 0x80) === 0){ /* 1 byte */ }
+      else if ((first & 0xC0) === 0x80){ readBits(8); }
+      else { readBits(16); }
+    } else if (mode === 8){
+      var kc = readBits(version < 10 ? 8 : 10);
+      var kb = [];
+      for (var ki = 0; ki < kc; ki++){
+        var kv = readBits(13);
+        var kcVal = Math.floor(kv / 0xC0) * 0x100 + (kv % 0xC0);
+        kb.push((kcVal >> 8) & 0xFF, kcVal & 0xFF);
+      }
+      try { result += new TextDecoder("shift-jis").decode(new Uint8Array(kb)); }
+      catch (e3){ result += "\uFFFD"; }
+    } else {
+      break;
+    }
+  }
+  return result;
+}
+
+function decodeMatrix(m, dim){
+  if (!m) return null;
+  var version = (dim - 17) / 4;
+  if (version !== Math.floor(version) || version < 1 || version > 40) return null;
+
+  var f1 = readFormatBits1(m, dim);
+  var f2 = readFormatBits2(m, dim);
+  var bestData = -1, bestDist = 4;
+  var cands = [f1, f2];
+  for (var ci = 0; ci < 2; ci++){
+    for (var d = 0; d < 32; d++){
+      var dist = popcount(cands[ci] ^ FORMAT_TABLE[d]);
+      if (dist < bestDist){ bestDist = dist; bestData = d; }
+    }
+  }
+  if (bestData < 0) return null;
+  var eclBits = bestData >> 3;
+  var mask = bestData & 7;
+  var eclStr = ["M", "L", "H", "Q"][eclBits];
+  var versionFromFormat = version;
+  if (versionFromFormat < 1 || versionFromFormat > 40) return null;
+
+  var fmap = buildFunctionMap(versionFromFormat);
+  var un = [];
+  for (var y = 0; y < dim; y++){
+    var row = new Uint8Array(dim);
+    for (var x = 0; x < dim; x++){
+      var v = m[y][x] ? 1 : 0;
+      if (!fmap[y][x] && maskFn(mask, x, y)) v ^= 1;
+      row[x] = v;
+    }
+    un.push(row);
+  }
+
+  var raw;
+  try { raw = readCodewordsRaw(un, dim, versionFromFormat); }
+  catch (e){ return null; }
+  var dataCw = correctAndDeinterleave(raw, versionFromFormat, eclStr);
+  if (!dataCw) return null;
+  var text;
+  try { text = parseBitstream(dataCw, versionFromFormat); }
+  catch (e){ return null; }
+  if (!text) return null;
+  return { text: text, version: versionFromFormat, ecl: eclStr, mask: mask };
+}
+
+function decodeQR(bin, w, h){
+  var cands = findFinderPatterns(bin, w, h);
+  if (cands.length < 3) return null;
+  var tri = selectTriple(cands);
+  if (!tri) return null;
+  var tl = tri.tl, tr = tri.tr, bl = tri.bl;
+  var moduleSize = (tl.moduleSize + tr.moduleSize + bl.moduleSize) / 3;
+  if (!(moduleSize > 0.8)) return null;
+  var dTR = Math.hypot(tr.x - tl.x, tr.y - tl.y);
+  var dBL = Math.hypot(bl.x - tl.x, bl.y - tl.y);
+  var estDim = (dTR / moduleSize + dBL / moduleSize) / 2 + 7;
+  var vGuess = Math.round((estDim - 17) / 4);
+  vGuess = Math.max(1, Math.min(40, vGuess));
+
+  var dimsToTry = [vGuess];
+  if (vGuess > 1) dimsToTry.push(vGuess - 1);
+  if (vGuess < 40) dimsToTry.push(vGuess + 1);
+
+  for (var di = 0; di < dimsToTry.length; di++){
+    var dim = dimsToTry[di] * 4 + 17;
+    var al = null;
+    if (dim > 21){
+      var fr = (dim - 6.5 - 3.5) / (dim - 7);
+      var ex = tl.x + fr * (tr.x - tl.x) + fr * (bl.x - tl.x);
+      var ey = tl.y + fr * (tr.y - tl.y) + fr * (bl.y - tl.y);
+      al = findAlignmentPattern(bin, w, h, ex, ey, moduleSize);
+    }
+    var t = createTransform(tl, tr, bl, al, dim);
+    var grid = sampleGrid(bin, w, h, t, dim);
+    if (!grid) continue;
+    var res = decodeMatrix(grid, dim);
+    if (res) return res;
+  }
+  return null;
+}
+
+function scanImageData(imgData, w, h){
+  var gray, bin, res;
+  try {
+    gray = toGray(imgData.data, w, h);
+    bin = binarize(gray, w, h);
+    res = decodeQR(bin, w, h);
+    if (res) return res;
+    var inv = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) inv[i] = bin[i] ^ 1;
+    return decodeQR(inv, w, h);
+  } catch (e){
+    return null;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UI
+   ═══════════════════════════════════════════════════════════════ */
+
+var $ = function(id){ return document.getElementById(id); };
+var previewCanvas = $("preview");
+var previewEmpty = $("previewEmpty");
+var qrMeta = $("qrMeta");
+var qrError = $("qrError");
+
+var state = {
+  logoImg: null,
+  logoDataUrl: null,
+  currentMatrix: null,
+  currentSize: 0,
+  currentText: ""
+};
+
+function getOpts(){
+  var bg = $("transBg").checked ? "transparent" : $("bgColor").value;
+  return {
+    ecl: $("eclSel").value,
+    dot: $("dotStyle").value,
+    eye: $("eyeStyle").value,
+    fg: $("fgColor").value,
+    fg2: $("fg2Color").value,
+    bg: bg,
+    useGradient: $("useGrad").checked,
+    margin: parseInt($("marginSel").value, 10),
+    logoImg: state.logoImg,
+    logoDataUrl: state.logoDataUrl
+  };
+}
+
+function renderPreview(){
+  var text = $("qrText").value;
+  qrError.style.display = "none";
+  if (!text){
+    previewEmpty.hidden = false;
+    previewCanvas.style.display = "none";
+    qrMeta.textContent = "—";
+    state.currentMatrix = null;
+    return;
+  }
+  var opts = getOpts();
+  var qr;
+  try {
+    qr = generateQR(text, opts.ecl);
+  } catch (err){
+    previewEmpty.hidden = false;
+    previewCanvas.style.display = "none";
+    qrMeta.textContent = "—";
+    qrError.textContent = err.message;
+    qrError.style.display = "block";
+    state.currentMatrix = null;
+    return;
+  }
+  state.currentMatrix = qr.modules;
+  state.currentSize = qr.size;
+  previewEmpty.hidden = true;
+  previewCanvas.style.display = "block";
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var px = Math.round(Math.min(680, 340 * dpr * 2));
+  px = 700;
+  renderToCanvas(previewCanvas, qr.modules, qr.size, opts, px);
+  qrMeta.textContent = "v" + qr.version + " · " + qr.size + "×" + qr.size;
+}
+
+var renderTimer = null;
+function scheduleRender(){
+  if (renderTimer) clearTimeout(renderTimer);
+  renderTimer = setTimeout(renderPreview, 140);
+}
+
+/* ---------- Colour helpers ---------- */
+var FG_PRESETS = ["#1A1530", "#2E1065", "#5B21B6", "#9D174D", "#065F46", "#0F172A", "#000000", "#A78BFA", "#F472B6", "#22D3EE"];
+(function buildSwatches(){
+  var host = $("fgSwatches");
+  FG_PRESETS.forEach(function(col, idx){
+    var b = document.createElement("button");
+    b.className = "swatch";
+    b.type = "button";
+    b.style.background = col;
+    b.setAttribute("aria-label", "Use colour " + col);
+    b.setAttribute("aria-pressed", idx === 0 ? "true" : "false");
+    b.addEventListener("click", function(){
+      setColour("fg", col);
+      syncSwatches();
+    });
+    host.appendChild(b);
+  });
+})();
+function syncSwatches(){
+  var cur = $("fgColor").value.toLowerCase();
+  var kids = $("fgSwatches").children;
+  for (var i = 0; i < kids.length; i++){
+    var c = kids[i].style.background;
+    var pressed = rgbToHex(c) === cur;
+    kids[i].setAttribute("aria-pressed", pressed ? "true" : "false");
+  }
+}
+function rgbToHex(rgb){
+  if (rgb.charAt(0) === "#") return rgb.toLowerCase();
+  var m = rgb.match(/\d+/g);
+  if (!m) return "";
+  return "#" + m.slice(0, 3).map(function(v){ return ("0" + parseInt(v, 10).toString(16)).slice(-2); }).join("");
+}
+function setColour(which, val){
+  val = val.toLowerCase();
+  if (which === "fg"){ $("fgColor").value = val; $("fgHex").value = val.toUpperCase(); }
+  if (which === "fg2"){ $("fg2Color").value = val; $("fg2Hex").value = val.toUpperCase(); }
+  if (which === "bg"){ $("bgColor").value = val; $("bgHex").value = val.toUpperCase(); }
+  scheduleRender();
+}
+var HEX_RE = /^#?([0-9a-fA-F]{6})$/;
+function bindColourPair(colorId, hexId, which){
+  $(colorId).addEventListener("input", function(){
+    $(hexId).value = this.value.toUpperCase();
+    if (which === "fg") syncSwatches();
+    scheduleRender();
+  });
+  $(hexId).addEventListener("input", function(){
+    var v = this.value.trim();
+    var m = HEX_RE.exec(v);
+    if (m){
+      $(colorId).value = "#" + m[1].toLowerCase();
+      if (which === "fg") syncSwatches();
+      scheduleRender();
+    }
+  });
+  $(hexId).addEventListener("blur", function(){
+    var v = this.value.trim();
+    var m = HEX_RE.exec(v);
+    if (m) this.value = ("#" + m[1]).toUpperCase();
+    else this.value = $(colorId).value.toUpperCase();
+  });
+}
+bindColourPair("fgColor", "fgHex", "fg");
+bindColourPair("fg2Color", "fg2Hex", "fg2");
+bindColourPair("bgColor", "bgHex", "bg");
+
+/* ---------- Toast ---------- */
+var toastTimer = null;
+function toast(msg, icon){
+  $("toastText").textContent = msg;
+  var t = $("toast");
+  var ic = t.querySelector(".ms");
+  ic.textContent = icon || "check_circle";
+  t.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2400);
+}
+
+/* ---------- Templates ---------- */
+var TEMPLATES = {
+  url: "https://airsilo.pages.dev",
+  text: "Hello from AirSilo QR Studio!",
+  wifi: "WIFI:T:WPA;S:MyNetwork;P:MyPassword;H:false;;",
+  email: "mailto:hello@example.com?subject=Hi&body=Hello%20there",
+  tel: "tel:+15551234567",
+  sms: "SMSTO:+15551234567:Hey there!",
+  vcard: "BEGIN:VCARD\nVERSION:3.0\nN:Doe;Jane\nFN:Jane Doe\nORG:AirSilo\nTEL:+15551234567\nEMAIL:jane@example.com\nURL:https://airsilo.pages.dev\nEND:VCARD"
+};
+document.querySelectorAll(".chip[data-tpl]").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var key = btn.getAttribute("data-tpl");
+    var ta = $("qrText");
+    if (key === "url" || key === "text"){
+      ta.value = TEMPLATES[key];
+    } else {
+      ta.value = TEMPLATES[key];
+    }
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+    scheduleRender();
+  });
+});
+
+/* ---------- Inputs ---------- */
+$("qrText").addEventListener("input", scheduleRender);
+["dotStyle", "eyeStyle", "eclSel", "marginSel", "sizeSel"].forEach(function(id){
+  $(id).addEventListener("change", scheduleRender);
+});
+$("useGrad").addEventListener("change", function(){
+  $("fg2Field").hidden = !this.checked;
+  scheduleRender();
+});
+$("transBg").addEventListener("change", scheduleRender);
+
+/* ---------- Logo ---------- */
+$("logoBtn").addEventListener("click", function(){ $("logoInput").click(); });
+$("logoInput").addEventListener("change", function(){
+  var f = this.files && this.files[0];
+  if (!f) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    var img = new Image();
+    img.onload = function(){
+      state.logoImg = img;
+      state.logoDataUrl = reader.result;
+      $("logoClear").hidden = false;
+      if ($("eclSel").value !== "H"){ $("eclSel").value = "H"; }
+      scheduleRender();
+      toast("Logo added — error correction set to High");
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(f);
+  this.value = "";
+});
+$("logoClear").addEventListener("click", function(){
+  state.logoImg = null;
+  state.logoDataUrl = null;
+  this.hidden = true;
+  scheduleRender();
+  toast("Logo removed");
+});
+
+/* ---------- Export ---------- */
+function download(blob, filename){
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+}
+
+$("dlPng").addEventListener("click", function(){
+  if (!state.currentMatrix){ toast("Nothing to export", "error"); return; }
+  var opts = getOpts();
+  var px = parseInt($("sizeSel").value, 10);
+  var c = document.createElement("canvas");
+  renderToCanvas(c, state.currentMatrix, state.currentSize, opts, px);
+  c.toBlob(function(blob){
+    if (!blob){ toast("Export failed", "error"); return; }
+    download(blob, "airsilo-qr-" + px + ".png");
+    toast("PNG downloaded");
+  }, "image/png");
+});
+
+$("dlSvg").addEventListener("click", function(){
+  if (!state.currentMatrix){ toast("Nothing to export", "error"); return; }
+  var opts = getOpts();
+  var px = parseInt($("sizeSel").value, 10);
+  var svg = buildSVG(state.currentMatrix, state.currentSize, opts, px);
+  download(new Blob([svg], { type: "image/svg+xml" }), "airsilo-qr.svg");
+  toast("SVG downloaded");
+});
+
+$("copyImg").addEventListener("click", function(){
+  if (!state.currentMatrix){ toast("Nothing to copy", "error"); return; }
+  var opts = getOpts();
+  var px = 1024;
+  var c = document.createElement("canvas");
+  renderToCanvas(c, state.currentMatrix, state.currentSize, opts, px);
+  if (!navigator.clipboard || !window.ClipboardItem){
+    c.toBlob(function(blob){ download(blob, "airsilo-qr.png"); toast("Clipboard unsupported — downloaded instead"); });
+    return;
+  }
+  c.toBlob(function(blob){
+    if (!blob){ toast("Copy failed", "error"); return; }
+    try {
+      navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]).then(
+        function(){ toast("Image copied"); },
+        function(){ download(blob, "airsilo-qr.png"); toast("Copy blocked — downloaded instead"); }
+      );
+    } catch (e){
+      download(blob, "airsilo-qr.png");
+      toast("Copy blocked — downloaded instead");
+    }
+  }, "image/png");
+});
+
+/* ---------- Tabs ---------- */
+var tabCreate = $("tabCreate"), tabScan = $("tabScan");
+var panelCreate = $("panelCreate"), panelScan = $("panelScan");
+function selectTab(which){
+  var isCreate = which === "create";
+  tabCreate.setAttribute("aria-selected", isCreate ? "true" : "false");
+  tabScan.setAttribute("aria-selected", isCreate ? "false" : "true");
+  panelCreate.classList.toggle("active", isCreate);
+  panelScan.classList.toggle("active", !isCreate);
+  if (!isCreate){ scheduleRender(); }
+  else { stopCamera(); }
+}
+tabCreate.addEventListener("click", function(){ selectTab("create"); });
+tabScan.addEventListener("click", function(){ selectTab("scan"); });
+
+/* ---------- Info modal ---------- */
+var scrim = $("scrim");
+function openModal(){ scrim.hidden = false; $("modalClose").focus(); }
+function closeModal(){ scrim.hidden = true; $("infoBtn").focus(); }
+$("infoBtn").addEventListener("click", openModal);
+$("modalClose").addEventListener("click", closeModal);
+scrim.addEventListener("click", function(e){ if (e.target === scrim) closeModal(); });
+document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !scrim.hidden) closeModal(); });
+
+/* ---------- Scanner ---------- */
+var video = $("video");
+var camPlaceholder = $("camPlaceholder");
+var reticle = $("reticle");
+var camBtn = $("camBtn");
+var camSwitch = $("camSwitch");
+var scanInput = $("scanInput");
+var stream = null;
+var scanning = false;
+var lastScanTime = 0;
+var scanCanvas = document.createElement("canvas");
+var scanCtx = scanCanvas.getContext("2d", { willReadFrequently: true });
+var facing = "environment";
+
+function stopCamera(){
+  scanning = false;
+  if (stream){
+    stream.getTracks().forEach(function(t){ t.stop(); });
+    stream = null;
+  }
+  video.srcObject = null;
+  camPlaceholder.hidden = false;
+  camPlaceholder.querySelector("span:last-child").textContent = "Camera is off";
+  reticle.hidden = true;
+  camBtn.innerHTML = '<span class="ms">videocam</span>Start camera';
+  camSwitch.hidden = true;
+}
+
+async function startCamera(){
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    camPlaceholder.querySelector("span:last-child").textContent = "Camera not supported in this browser";
+    toast("Camera unavailable", "error");
+    return;
+  }
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false
+    });
+    video.srcObject = stream;
+    await video.play();
+    camPlaceholder.hidden = true;
+    reticle.hidden = false;
+    camBtn.innerHTML = '<span class="ms">stop_circle</span>Stop camera';
+    camSwitch.hidden = false;
+    scanning = true;
+    lastScanTime = 0;
+    requestAnimationFrame(scanLoop);
+  } catch (err){
+    camPlaceholder.hidden = false;
+    camPlaceholder.querySelector("span:last-child").textContent = "Camera blocked or unavailable";
+    toast("Camera error: " + (err && err.message ? err.message : "unknown"), "error");
+    stopCamera();
+  }
+}
+
+function scanLoop(){
+  if (!scanning) return;
+  var now = performance.now();
+  if (now - lastScanTime < 130){
+    requestAnimationFrame(scanLoop);
+    return;
+  }
+  lastScanTime = now;
+  if (video.readyState >= 2 && video.videoWidth > 0){
+    var vw = video.videoWidth, vh = video.videoHeight;
+    var scale = Math.min(1, 760 / Math.max(vw, vh));
+    var cw = Math.max(1, Math.round(vw * scale));
+    var ch = Math.max(1, Math.round(vh * scale));
+    if (scanCanvas.width !== cw || scanCanvas.height !== ch){
+      scanCanvas.width = cw; scanCanvas.height = ch;
+    }
+    scanCtx.drawImage(video, 0, 0, cw, ch);
+    var imgData;
+    try { imgData = scanCtx.getImageData(0, 0, cw, ch); }
+    catch (e){ imgData = null; }
+    if (imgData){
+      var res = scanImageData(imgData, cw, ch);
+      if (res){
+        onScanSuccess(res);
+        return;
+      }
+    }
+  }
+  requestAnimationFrame(scanLoop);
+}
+
+function onScanSuccess(res){
+  scanning = false;
+  if (stream){
+    stream.getTracks().forEach(function(t){ t.stop(); });
+    stream = null;
+  }
+  video.srcObject = null;
+  camPlaceholder.hidden = false;
+  camPlaceholder.querySelector("span:last-child").textContent = "Code found";
+  reticle.hidden = true;
+  camBtn.innerHTML = '<span class="ms">videocam</span>Start camera';
+  camSwitch.hidden = true;
+  showResult(res);
+  if (navigator.vibrate) { try { navigator.vibrate(40); } catch (e){} }
+  toast("QR code decoded");
+}
+
+var lastResultText = "";
+function showResult(res){
+  lastResultText = res.text;
+  $("resultEmpty").hidden = true;
+  $("resultBody").hidden = false;
+  $("resultText").textContent = res.text;
+  var meta = $("resultMeta");
+  meta.innerHTML = "";
+  function addPill(icon, label, ok){
+    var s = document.createElement("span");
+    s.className = "pill" + (ok ? " ok" : "");
+    s.innerHTML = '<span class="ms">' + icon + '</span>' + label;
+    meta.appendChild(s);
+  }
+  addPill("check_circle", "Decoded", true);
+  addPill("layers", "Version " + res.version);
+  addPill("healing", "ECC " + res.ecl);
+  addPill("grid_on", res.text.length + " chars");
+  var url = null;
+  var t = res.text.trim();
+  if (/^https?:\/\/\S+$/i.test(t)) url = t;
+  else if (/^www\.\S+\.\S+$/i.test(t)) url = "https://" + t;
+  else if (/^mailto:\S+$/i.test(t)) url = t;
+  else if (/^tel:\S+$/i.test(t)) url = t;
+  var openBtn = $("openResult");
+  if (url){
+    openBtn.href = url;
+    openBtn.hidden = false;
+    addPill("link", "Link", false);
+  } else {
+    openBtn.hidden = true;
+  }
+  $("resultCard").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+camBtn.addEventListener("click", function(){
+  if (scanning) stopCamera();
+  else startCamera();
+});
+camSwitch.addEventListener("click", function(){
+  facing = facing === "environment" ? "user" : "environment";
+  if (scanning){ stopCamera(); startCamera(); }
+});
+
+$("copyResult").addEventListener("click", function(){
+  if (!lastResultText) return;
+  copyText(lastResultText);
+});
+function copyText(txt){
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(
+      function(){ toast("Copied to clipboard"); },
+      function(){ fallbackCopy(txt); }
+    );
+  } else fallbackCopy(txt);
+}
+function fallbackCopy(txt){
+  var ta = document.createElement("textarea");
+  ta.value = txt;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); toast("Copied to clipboard"); }
+  catch (e){ toast("Copy not available", "error"); }
+  document.body.removeChild(ta);
+}
+$("clearResult").addEventListener("click", function(){
+  lastResultText = "";
+  $("resultBody").hidden = true;
+  $("resultEmpty").hidden = false;
+  $("resultText").textContent = "";
+  $("resultMeta").innerHTML = "";
+  if (panelScan.classList.contains("active")) startCamera();
+});
+
+/* ---------- Image upload / drop ---------- */
+$("uploadBtn").addEventListener("click", function(){ scanInput.click(); });
+$("dropzone").addEventListener("click", function(){ scanInput.click(); });
+$("dropzone").addEventListener("keydown", function(e){
+  if (e.key === "Enter" || e.key === " "){ e.preventDefault(); scanInput.click(); }
+});
+scanInput.addEventListener("change", function(){
+  var f = this.files && this.files[0];
+  if (f) handleImageFile(f);
+  this.value = "";
+});
+
+var dz = $("dropzone");
+["dragenter", "dragover"].forEach(function(ev){
+  dz.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); dz.classList.add("over"); });
+});
+["dragleave", "drop"].forEach(function(ev){
+  dz.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); dz.classList.remove("over"); });
+});
+dz.addEventListener("drop", function(e){
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) handleImageFile(f);
+});
+
+function handleImageFile(file){
+  if (!file.type.startsWith("image/")){ toast("Please choose an image file", "error"); return; }
+  var reader = new FileReader();
+  reader.onload = function(){
+    var img = new Image();
+    img.onload = function(){
+      var maxSide = 1600;
+      var scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      var cw = Math.max(1, Math.round(img.width * scale));
+      var ch = Math.max(1, Math.round(img.height * scale));
+      var c = document.createElement("canvas");
+      c.width = cw; c.height = ch;
+      var cx = c.getContext("2d", { willReadFrequently: true });
+      cx.drawImage(img, 0, 0, cw, ch);
+      var data;
+      try { data = cx.getImageData(0, 0, cw, ch); }
+      catch (e){ toast("Could not read image", "error"); return; }
+      toast("Scanning image…", "hourglass_top");
+      setTimeout(function(){
+        var res = scanImageData(data, cw, ch);
+        if (res){ showResult(res); toast("QR code decoded"); }
+        else { toast("No QR code found in that image", "error"); }
+      }, 30);
+    };
+    img.onerror = function(){ toast("Could not load image", "error"); };
+    img.src = reader.result;
+  };
+  reader.onerror = function(){ toast("Could not read file", "error"); };
+  reader.readAsDataURL(file);
+}
+
+/* ---------- Init ---------- */
+window.addEventListener("resize", function(){
+  if (panelCreate.classList.contains("active")) scheduleRender();
+});
+document.addEventListener("visibilitychange", function(){
+  if (document.hidden) stopCamera();
+});
+window.addEventListener("beforeunload", function(){ stopCamera(); });
+
+syncSwatches();
+$("fg2Field").hidden = true;
+renderPreview();
+setTimeout(function(){ $("qrText").focus(); }, 200);
+</script>
+</body>
+</html>
