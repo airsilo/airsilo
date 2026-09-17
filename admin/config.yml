@@ -1,0 +1,93 @@
+backend:
+  name: github
+  repo: airsilo/airsilo
+  branch: main
+  base_url: https://airsilo.pages.dev
+  auth_endpoint: auth
+
+publish_mode: simple
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+site_url: https://airsilo.pages.dev
+display_url: https://airsilo.pages.dev
+
+collections:
+
+  - name: settings
+    label: "Site Settings"
+    files:
+      - name: general
+        label: "General & Donation"
+        file: "content/settings.json"
+        fields:
+          - { label: "Site name", name: "site_name", widget: "string" }
+          - { label: "Tagline", name: "tagline", widget: "string" }
+          - label: "Hero"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Title line 1", name: "title_line1", widget: "string" }
+              - { label: "Title line 2", name: "title_line2", widget: "string" }
+              - { label: "Subtitle", name: "subtitle", widget: "text" }
+          - label: "Donation"
+            name: "donation"
+            widget: "object"
+            fields:
+              - { label: "Heading", name: "heading", widget: "string" }
+              - { label: "Subheading", name: "subheading", widget: "text" }
+              - { label: "Buy Me a Coffee URL", name: "bmc_url", widget: "string", required: false }
+              - { label: "Ko-fi URL", name: "kofi_url", widget: "string", required: false }
+              - label: "UPI"
+                name: "upi"
+                widget: "object"
+                fields:
+                  - { label: "Enable UPI", name: "enabled", widget: "boolean", default: true }
+                  - { label: "UPI ID", name: "upi_id", widget: "string" }
+                  - { label: "QR code image", name: "qr_image", widget: "image", required: false }
+                  - { label: "Supported apps", name: "apps", widget: "list", default: ["PhonePe","Paytm","GPay","BHIM"] }
+          - { label: "Contact email", name: "contact_email", widget: "string", required: false }
+          - { label: "GitHub URL", name: "github_url", widget: "string", required: false }
+
+  - name: tools
+    label: "Tools"
+    files:
+      - name: list
+        label: "All tools"
+        file: "content/tools.json"
+        fields:
+          - label: "Tools"
+            name: "tools"
+            widget: "list"
+            summary: "{{fields.name}} — {{fields.status}}"
+            fields:
+              - { label: "ID", name: "id", widget: "string", hint: "e.g. image-converter" }
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+              - label: "Icon"
+                name: "icon"
+                widget: "select"
+                options:
+                  - image-converter
+                  - image-resizer
+                  - document-converter
+                  - qr-studio
+                  - hasher-password
+                  - color-studio
+                  - video-converter
+                  - pdf-toolkit
+                  - audio-converter
+              - { label: "Category", name: "category", widget: "string" }
+              - { label: "Version", name: "version", widget: "string", required: false }
+              - { label: "File size", name: "size", widget: "string", required: false, hint: "e.g. ~120 KB" }
+              - { label: "SHA-256", name: "sha256", widget: "string", required: false }
+              - label: "Status"
+                name: "status"
+                widget: "select"
+                options: ["available", "coming-soon"]
+                default: "available"
+              - { label: "Featured", name: "featured", widget: "boolean", default: false, required: false }
+              - { label: "Accent color", name: "accent", widget: "color", required: false, default: "#C4B5FD" }
+              - { label: "Download URL", name: "download_url", widget: "string", required: false }
+              - { label: "Screenshot", name: "screenshot", widget: "image", required: false }
+              - { label: "Changelog", name: "changelog", widget: "text", required: false }

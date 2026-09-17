@@ -1,0 +1,17 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: geolocation=(), microphone=(), camera=(self)
+  Content-Security-Policy: default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://api.github.com https://github.com; media-src blob:; worker-src blob:; form-action 'self'; base-uri 'none'
+
+/content/*
+  Cache-Control: public, max-age=300
+
+/tools/*
+  X-Robots-Tag: noindex
+
+/admin/*
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex
+  Cache-Control: no-store

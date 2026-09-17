@@ -1,0 +1,26 @@
+{
+  "site_name": "AirSilo",
+  "title": "AirSilo — Utilities, unplugged.",
+  "tagline": "Private tools. Zero uploads.",
+  "hero": {
+    "title_line1": "Utilities,",
+    "title_line2": "unplugged.",
+    "subtitle": "A collection of handy utilities that run entirely in your browser. Your files never leave your device."
+  },
+  "donation": {
+    "heading": "Keep it free. Keep it ad-free.",
+    "subheading": "AirSilo will always be free, private, and ad-free. If a tool saved you time today, a small tip keeps the lights on.",
+    "bmc_url": "https://buymeacoffee.com/airsilo",
+    "kofi_url": "https://ko-fi.com/airsilo",
+    "form_endpoint": "",
+    "upi": {
+      "enabled": true,
+      "upi_id": "airsilo@upi",
+      "qr_image": "",
+      "note": "Works with PhonePe, Paytm, GPay, BHIM and every UPI app.",
+      "apps": ["PhonePe", "Paytm", "GPay", "BHIM", "Amazon Pay"]
+    }
+  },
+  "contact_email": "hello@airsilo.com",
+  "github_url": "https://github.com/airsilo"
+}
