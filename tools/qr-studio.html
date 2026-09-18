@@ -100,13 +100,51 @@ body{
 }
 .badge .ms{font-size:16px}
 
-.hero{padding:14px 0 8px;text-align:center}
+/* ── Hero ── */
+.hero{padding:22px 0 8px;text-align:center}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:var(--r-full);
+  background:rgba(196,181,253,.10);
+  border:1px solid rgba(196,181,253,.28);
+  color:var(--primary);
+  font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:18px;
+}
+.hero-eyebrow .ms{font-size:15px}
 .hero h1{
-  margin:0;font-size:clamp(2rem,6vw,3.1rem);font-weight:900;letter-spacing:-.045em;line-height:1.02;
-  background:linear-gradient(120deg,var(--primary) 0%,var(--secondary) 45%,var(--tertiary) 100%);
+  margin:0;
+  color:var(--on-surface);
+  font-size:clamp(2.8rem,7.4vw,4.6rem);
+  font-weight:900;letter-spacing:-.05em;line-height:.98;
+}
+.hero h1 span{display:inline-block;padding:0 .05em}
+.hero-word-1{
+  background:linear-gradient(120deg,#C4B5FD 0%,#A78BFA 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.hero p{margin:10px auto 0;max-width:56ch;color:var(--on-surface-variant);font-size:.9375rem}
+.hero-word-2{
+  background:linear-gradient(120deg,#6EE7B7 0%,#22D3EE 55%,#FBCFE8 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p{
+  margin:16px auto 0;max-width:56ch;
+  color:var(--on-surface-variant);font-size:1rem;line-height:1.6;
+}
+.hero p b{color:var(--on-surface);font-weight:600}
+.hero-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:var(--r-full);
+  background:var(--surface-container);border:1px solid var(--outline-variant);
+  color:var(--on-surface-variant);
+  font-size:.75rem;font-weight:600;
+  transition:all var(--t-short) var(--ease-emph);
+}
+.hero-pill .ms{font-size:15px;color:var(--primary)}
+@media(hover:hover){
+  .hero-pill:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px)}
+}
 
 /* ── Layout ── */
 .layout{display:grid;gap:16px;padding-bottom:40px;margin-top:18px}
@@ -359,8 +397,14 @@ footer .ms{font-size:16px}
   </div>
 
   <div class="hero">
-    <h1>QR Studio</h1>
-    <p>Generate beautiful, styled QR codes for links, text, Wi-Fi, contacts and more — everything happens right here on your device.</p>
+    <span class="hero-eyebrow"><span class="ms ms-fill">auto_awesome</span>Offline QR toolkit</span>
+    <h1><span class="hero-word-1">QR</span> <span class="hero-word-2">Studio</span></h1>
+    <p>Design and export beautiful QR codes for <b>links, text, Wi-Fi, contacts</b> and more — entirely on your device.</p>
+    <div class="hero-pills">
+      <span class="hero-pill"><span class="ms">bolt</span>Instant preview</span>
+      <span class="hero-pill"><span class="ms">palette</span>Full styling</span>
+      <span class="hero-pill"><span class="ms">download</span>PNG &amp; SVG</span>
+    </div>
   </div>
 
   <div class="layout">
