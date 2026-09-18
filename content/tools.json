@@ -97,6 +97,15 @@
       "category": "Design"
     },
     {
+      "id": "audio-converter",
+      "name": "Audio Converter",
+      "description": "MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.",
+      "icon": "audio-converter",
+      "category": "Media",
+      "status": "available",
+      "accent": "#A3E635"
+    },
+    {
       "id": "video-converter",
       "name": "Video Converter",
       "description": "Convert between common video formats right in your browser. Works offline once loaded.",
@@ -113,15 +122,6 @@
       "category": "Documents",
       "status": "coming-soon",
       "accent": "#FB923C"
-    },
-    {
-      "id": "audio-converter",
-      "name": "Audio Converter",
-      "description": "MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.",
-      "icon": "audio-converter",
-      "category": "Media",
-      "status": "available",
-      "accent": "#A3E635"
     }
   ]
 }
