@@ -27,6 +27,7 @@
   --shadow-e5:0 24px 60px -12px rgba(0,0,0,.85), 0 8px 24px -8px rgba(0,0,0,.6);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none !important}
 html,body{margin:0;padding:0}
 body{
   background:var(--surface); color:var(--on-surface);
@@ -107,33 +108,8 @@ body{
 }
 .hero p{margin:10px auto 0;max-width:56ch;color:var(--on-surface-variant);font-size:.9375rem}
 
-/* ── Tabs ── */
-.tabs{
-  display:flex;gap:6px;padding:6px;margin:20px auto 18px;
-  background:var(--surface-container);border:1px solid var(--outline-variant);
-  border-radius:var(--r-full);width:fit-content;max-width:100%;
-}
-.tab{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:10px 22px;min-height:42px;border-radius:var(--r-full);
-  background:transparent;border:none;color:var(--on-surface-variant);
-  font-family:inherit;font-size:.875rem;font-weight:600;cursor:pointer;
-  transition:all var(--t-short) var(--ease-emph);
-}
-.tab .ms{font-size:19px}
-.tab:hover{color:var(--on-surface);background:var(--surface-container-high)}
-.tab:active{transform:scale(.96)}
-.tab[aria-selected="true"]{
-  background:linear-gradient(135deg,var(--primary),var(--tertiary));
-  color:var(--on-primary);
-}
-
 /* ── Layout ── */
-.panel{display:none;padding-bottom:40px}
-.panel.active{display:block;animation:fadeUp var(--t-med) var(--ease-emph)}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-
-.layout{display:grid;gap:16px}
+.layout{display:grid;gap:16px;padding-bottom:40px;margin-top:18px}
 @media(min-width:920px){
   .layout{grid-template-columns:minmax(0,1fr) 420px;grid-template-areas:"content preview" "style preview";align-items:start}
   .area-content{grid-area:content}
@@ -199,7 +175,6 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 .chip .ms{font-size:16px}
 .chip:hover{border-color:var(--primary);color:var(--primary);background:rgba(196,181,253,.08)}
 .chip:active{transform:scale(.96)}
-.chip[aria-pressed="true"]{background:var(--primary-container);border-color:var(--primary);color:#fff}
 
 /* ── Style grid ── */
 .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
@@ -281,76 +256,24 @@ input[type=color]::-moz-color-swatch{border:none;border-radius:6px}
     #12101a;
   border:1px solid var(--outline-variant);
   display:flex;align-items:center;justify-content:center;
-  min-height:220px;overflow:hidden;
+  aspect-ratio:1 / 1;
+  width:100%;
+  overflow:hidden;
 }
-#preview{display:block;width:100%;max-width:340px;height:auto;border-radius:6px;image-rendering:auto}
+#preview{display:block;width:100%;height:100%;max-width:100%;max-height:100%;border-radius:6px;image-rendering:auto}
 .preview-empty{
   display:flex;flex-direction:column;align-items:center;gap:10px;
   color:var(--outline);font-size:.875rem;padding:36px 12px;text-align:center;
+  position:absolute;inset:0;justify-content:center;
 }
 .preview-empty .ms{font-size:44px;opacity:.5}
-
-/* ── Dropzone ── */
-.dropzone{
-  border:2px dashed var(--outline-variant);border-radius:var(--r-lg);
-  padding:34px 20px;text-align:center;cursor:pointer;
-  transition:all var(--t-med) var(--ease-emph);
-  background:transparent;
-}
-.dropzone:hover,.dropzone.over{
-  border-color:var(--primary);background:rgba(196,181,253,.06);border-radius:var(--r-xl);
-}
-.dropzone .ms{font-size:40px;color:var(--primary);display:block;margin-bottom:8px}
-.dropzone .dz-t{font-weight:700;font-size:.9375rem;margin-bottom:3px}
-.dropzone .dz-s{font-size:.8125rem;color:var(--on-surface-variant)}
-
-/* ── Camera ── */
-.cam-wrap{
-  position:relative;border-radius:var(--r-lg);overflow:hidden;
-  background:#000;border:1px solid var(--outline-variant);
-  aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
-}
-.cam-wrap video{width:100%;height:100%;object-fit:cover;display:block}
-.cam-ph{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--outline);font-size:.875rem;padding:24px;text-align:center}
-.cam-ph .ms{font-size:46px;opacity:.55}
-.reticle{
-  position:absolute;inset:12%;border-radius:var(--r-lg);
-  border:2px solid rgba(196,181,253,.55);
-  box-shadow:0 0 0 100vmax rgba(0,0,0,.28);
-  pointer-events:none;
-}
-.reticle::before,.reticle::after{
-  content:"";position:absolute;width:34px;height:34px;border:3px solid var(--secondary);border-radius:4px;
-}
-.reticle::before{top:-3px;left:-3px;border-right:none;border-bottom:none;border-top-left-radius:14px}
-.reticle::after{bottom:-3px;right:-3px;border-left:none;border-top:none;border-bottom-right-radius:14px}
-
-/* ── Result ── */
-.result-box{
-  background:var(--surface-container-high);border:1px solid var(--outline-variant);
-  border-radius:var(--r-lg);padding:16px;
-  word-break:break-word;font-size:.9375rem;line-height:1.55;
-  max-height:260px;overflow:auto;white-space:pre-wrap;
-}
-.result-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.pill{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:5px 12px;border-radius:var(--r-full);
-  background:var(--surface-container-highest);border:1px solid var(--outline-variant);
-  font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
-  color:var(--on-surface-variant);
-}
-.pill .ms{font-size:14px}
-.pill.ok{background:rgba(110,231,183,.12);border-color:rgba(110,231,183,.3);color:var(--secondary)}
-
-.empty-note{color:var(--on-surface-variant);font-size:.875rem;text-align:center;padding:18px 8px}
 
 /* ── Modal ── */
 .scrim{
   position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
   padding:20px;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
-.scrim[hidden]{display:none}
+.scrim[hidden]{display:none !important}
 .modal{
   background:var(--surface-container);border:1px solid var(--outline-variant);
   border-radius:var(--r-xl);box-shadow:var(--shadow-e5);
@@ -437,247 +360,170 @@ footer .ms{font-size:16px}
 
   <div class="hero">
     <h1>QR Studio</h1>
-    <p>Generate beautiful, styled QR codes and scan them from your camera or an image — everything happens right here on your device.</p>
+    <p>Generate beautiful, styled QR codes for links, text, Wi-Fi, contacts and more — everything happens right here on your device.</p>
   </div>
 
-  <div class="tabs" role="tablist" aria-label="QR Studio modes">
-    <button class="tab" id="tabCreate" role="tab" aria-selected="true" aria-controls="panelCreate">
-      <span class="ms">add_box</span>Create
-    </button>
-    <button class="tab" id="tabScan" role="tab" aria-selected="false" aria-controls="panelScan">
-      <span class="ms">qr_code_scanner</span>Scan
-    </button>
-  </div>
+  <div class="layout">
 
-  <!-- ══════════════ CREATE ══════════════ -->
-  <section class="panel active" id="panelCreate" role="tabpanel" aria-labelledby="tabCreate">
-    <div class="layout">
-
-      <div class="area-content">
-        <div class="card">
-          <div class="card-head">
-            <span class="ic"><span class="ms">edit_note</span></span>
-            <h2>Content</h2>
-          </div>
-          <label class="lbl sr-only" for="qrText">QR content</label>
-          <textarea id="qrText" placeholder="Paste a link, write text, or pick a template below…" spellcheck="false" autocomplete="off"></textarea>
-          <div class="chips" role="group" aria-label="Quick templates">
-            <button class="chip" data-tpl="url"><span class="ms">link</span>Link</button>
-            <button class="chip" data-tpl="text"><span class="ms">notes</span>Text</button>
-            <button class="chip" data-tpl="wifi"><span class="ms">wifi</span>Wi-Fi</button>
-            <button class="chip" data-tpl="email"><span class="ms">mail</span>Email</button>
-            <button class="chip" data-tpl="tel"><span class="ms">call</span>Phone</button>
-            <button class="chip" data-tpl="sms"><span class="ms">sms</span>SMS</button>
-            <button class="chip" data-tpl="vcard"><span class="ms">contact_page</span>Contact</button>
-          </div>
+    <div class="area-content">
+      <div class="card">
+        <div class="card-head">
+          <span class="ic"><span class="ms">edit_note</span></span>
+          <h2>Content</h2>
+        </div>
+        <label class="lbl sr-only" for="qrText">QR content</label>
+        <textarea id="qrText" placeholder="Paste a link, write text, or pick a template below…" spellcheck="false" autocomplete="off"></textarea>
+        <div class="chips" role="group" aria-label="Quick templates">
+          <button class="chip" data-tpl="url"><span class="ms">link</span>Link</button>
+          <button class="chip" data-tpl="text"><span class="ms">notes</span>Text</button>
+          <button class="chip" data-tpl="wifi"><span class="ms">wifi</span>Wi-Fi</button>
+          <button class="chip" data-tpl="email"><span class="ms">mail</span>Email</button>
+          <button class="chip" data-tpl="tel"><span class="ms">call</span>Phone</button>
+          <button class="chip" data-tpl="sms"><span class="ms">sms</span>SMS</button>
+          <button class="chip" data-tpl="vcard"><span class="ms">contact_page</span>Contact</button>
         </div>
       </div>
+    </div>
 
-      <div class="area-preview">
-        <div class="card">
-          <div class="card-head">
-            <span class="ic"><span class="ms">visibility</span></span>
-            <h2>Preview</h2>
-            <span class="hint" id="qrMeta">—</span>
-          </div>
-
-          <div class="preview-wrap" id="previewWrap">
-            <canvas id="preview" width="700" height="700" aria-label="QR code preview"></canvas>
-            <div class="preview-empty" id="previewEmpty" hidden>
-              <span class="ms">qr_code_2</span>
-              <span>Type something to see your QR code</span>
-            </div>
-          </div>
-
-          <div class="actions" style="margin-top:16px">
-            <button class="btn btn-filled btn-sm" id="dlPng"><span class="ms">download</span>PNG</button>
-            <button class="btn btn-tonal btn-sm" id="dlSvg"><span class="ms">code</span>SVG</button>
-            <button class="btn btn-outlined btn-sm" id="copyImg"><span class="ms">content_copy</span>Copy</button>
-          </div>
-          <div id="qrError" class="empty-note" style="display:none;color:var(--error)"></div>
+    <div class="area-preview">
+      <div class="card">
+        <div class="card-head">
+          <span class="ic"><span class="ms">visibility</span></span>
+          <h2>Preview</h2>
+          <span class="hint" id="qrMeta">—</span>
         </div>
+
+        <div class="preview-wrap" id="previewWrap">
+          <canvas id="preview" width="700" height="700" aria-label="QR code preview"></canvas>
+          <div class="preview-empty" id="previewEmpty" hidden>
+            <span class="ms">qr_code_2</span>
+            <span>Type something to see your QR code</span>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:16px">
+          <button class="btn btn-filled btn-sm" id="dlPng"><span class="ms">download</span>PNG</button>
+          <button class="btn btn-tonal btn-sm" id="dlSvg"><span class="ms">code</span>SVG</button>
+          <button class="btn btn-outlined btn-sm" id="copyImg"><span class="ms">content_copy</span>Copy</button>
+        </div>
+        <div id="qrError" class="empty-note" style="display:none;color:var(--error);text-align:center;font-size:.875rem;padding:12px 8px 0"></div>
       </div>
+    </div>
 
-      <div class="area-style">
-        <div class="card">
-          <div class="card-head">
-            <span class="ic"><span class="ms">palette</span></span>
-            <h2>Style</h2>
-          </div>
+    <div class="area-style">
+      <div class="card">
+        <div class="card-head">
+          <span class="ic"><span class="ms">palette</span></span>
+          <h2>Style</h2>
+        </div>
 
-          <div class="row">
-            <div class="field">
-              <label class="lbl" for="dotStyle">Module shape</label>
-              <select id="dotStyle">
-                <option value="square">Square</option>
-                <option value="rounded" selected>Rounded</option>
-                <option value="smooth">Smooth</option>
-                <option value="dots">Dots</option>
-                <option value="diamond">Diamond</option>
-              </select>
-            </div>
-            <div class="field">
-              <label class="lbl" for="eyeStyle">Eye shape</label>
-              <select id="eyeStyle">
-                <option value="square">Square</option>
-                <option value="rounded" selected>Rounded</option>
-                <option value="circle">Circle</option>
-                <option value="leaf">Leaf</option>
-              </select>
-            </div>
-          </div>
-
+        <div class="row">
           <div class="field">
-            <label class="lbl" for="eclSel">Error correction</label>
-            <select id="eclSel">
-              <option value="L">Low — 7%</option>
-              <option value="M" selected>Medium — 15%</option>
-              <option value="Q">Quartile — 25%</option>
-              <option value="H">High — 30% (best with logo)</option>
+            <label class="lbl" for="dotStyle">Module shape</label>
+            <select id="dotStyle">
+              <option value="square">Square</option>
+              <option value="rounded" selected>Rounded</option>
+              <option value="smooth">Smooth</option>
+              <option value="dots">Dots</option>
+              <option value="diamond">Diamond</option>
             </select>
           </div>
-
           <div class="field">
-            <label class="lbl">Foreground</label>
-            <div class="color-inline">
-              <input type="color" id="fgColor" value="#1A1530" aria-label="Foreground colour">
-              <input type="text" class="hex" id="fgHex" value="#1A1530" spellcheck="false" aria-label="Foreground hex value">
-            </div>
-            <div class="swatches" style="margin-top:10px" id="fgSwatches" role="group" aria-label="Foreground presets"></div>
-          </div>
-
-          <div class="field">
-            <label class="switch">
-              <input type="checkbox" id="useGrad">
-              <span class="track"></span>
-              <span class="txt">Gradient foreground</span>
-            </label>
-          </div>
-
-          <div class="field" id="fg2Field" hidden>
-            <label class="lbl">Gradient end</label>
-            <div class="color-inline">
-              <input type="color" id="fg2Color" value="#9D174D" aria-label="Gradient end colour">
-              <input type="text" class="hex" id="fg2Hex" value="#9D174D" spellcheck="false" aria-label="Gradient end hex value">
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="lbl">Background</label>
-            <div class="color-inline">
-              <input type="color" id="bgColor" value="#FFFFFF" aria-label="Background colour">
-              <input type="text" class="hex" id="bgHex" value="#FFFFFF" spellcheck="false" aria-label="Background hex value">
-            </div>
-            <label class="switch" style="margin-top:10px">
-              <input type="checkbox" id="transBg">
-              <span class="track"></span>
-              <span class="txt">Transparent background</span>
-            </label>
-          </div>
-
-          <div class="row">
-            <div class="field">
-              <label class="lbl" for="marginSel">Quiet zone</label>
-              <select id="marginSel">
-                <option value="0">0 modules</option>
-                <option value="2">2 modules</option>
-                <option value="4" selected>4 modules</option>
-                <option value="6">6 modules</option>
-                <option value="8">8 modules</option>
-              </select>
-            </div>
-            <div class="field">
-              <label class="lbl" for="sizeSel">Export size</label>
-              <select id="sizeSel">
-                <option value="512">512 px</option>
-                <option value="1024" selected>1024 px</option>
-                <option value="2048">2048 px</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="lbl">Centre logo</label>
-            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-              <button class="btn btn-outlined btn-sm" id="logoBtn"><span class="ms">add_photo_alternate</span>Choose image</button>
-              <button class="btn btn-outlined btn-sm" id="logoClear" hidden><span class="ms">close</span>Remove</button>
-              <input type="file" id="logoInput" accept="image/*" class="sr-only" aria-label="Choose logo image">
-            </div>
-            <div class="hint" style="font-size:.75rem;color:var(--on-surface-variant);margin-top:8px">
-              Logo sits on a white plate. Use High error correction for best scanning.
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ══════════════ SCAN ══════════════ -->
-  <section class="panel" id="panelScan" role="tabpanel" aria-labelledby="tabScan">
-    <div class="layout" style="grid-template-columns:1fr">
-      <div class="area-content">
-        <div class="card">
-          <div class="card-head">
-            <span class="ic"><span class="ms">photo_camera</span></span>
-            <h2>Scan a QR code</h2>
-          </div>
-
-          <div class="cam-wrap" id="camWrap">
-            <video id="video" playsinline muted autoplay aria-label="Camera preview"></video>
-            <div class="cam-ph" id="camPlaceholder">
-              <span class="ms">videocam_off</span>
-              <span>Camera is off</span>
-            </div>
-            <div class="reticle" id="reticle" hidden></div>
-          </div>
-
-          <div class="actions" style="margin-top:16px">
-            <button class="btn btn-filled" id="camBtn"><span class="ms">videocam</span>Start camera</button>
-            <button class="btn btn-outlined" id="uploadBtn"><span class="ms">upload_file</span>Upload image</button>
-            <button class="btn btn-outlined" id="camSwitch" hidden><span class="ms">cameraswitch</span>Flip</button>
-          </div>
-          <input type="file" id="scanInput" accept="image/*" class="sr-only" aria-label="Upload a QR code image">
-          <div class="hint" style="font-size:.75rem;color:var(--on-surface-variant);margin-top:12px;text-align:center">
-            Works with camera frames or any image file. Nothing is uploaded — decoding runs locally.
+            <label class="lbl" for="eyeStyle">Eye shape</label>
+            <select id="eyeStyle">
+              <option value="square">Square</option>
+              <option value="rounded" selected>Rounded</option>
+              <option value="circle">Circle</option>
+              <option value="leaf">Leaf</option>
+            </select>
           </div>
         </div>
 
-        <div class="card" id="resultCard">
-          <div class="card-head">
-            <span class="ic"><span class="ms">text_snippet</span></span>
-            <h2>Result</h2>
+        <div class="field">
+          <label class="lbl" for="eclSel">Error correction</label>
+          <select id="eclSel">
+            <option value="L">Low — 7%</option>
+            <option value="M" selected>Medium — 15%</option>
+            <option value="Q">Quartile — 25%</option>
+            <option value="H">High — 30% (best with logo)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="lbl">Foreground</label>
+          <div class="color-inline">
+            <input type="color" id="fgColor" value="#1A1530" aria-label="Foreground colour">
+            <input type="text" class="hex" id="fgHex" value="#1A1530" spellcheck="false" aria-label="Foreground hex value">
           </div>
-          <div id="resultEmpty" class="empty-note">
-            <span class="ms" style="font-size:34px;display:block;margin-bottom:8px;opacity:.5">qr_code_scanner</span>
-            No code scanned yet.
-          </div>
-          <div id="resultBody" hidden>
-            <div class="result-box" id="resultText"></div>
-            <div class="result-meta" id="resultMeta"></div>
-            <div class="actions" style="margin-top:14px;justify-content:flex-start">
-              <button class="btn btn-tonal btn-sm" id="copyResult"><span class="ms">content_copy</span>Copy</button>
-              <a class="btn btn-filled btn-sm" id="openResult" target="_blank" rel="noopener noreferrer" hidden><span class="ms">open_in_new</span>Open link</a>
-              <button class="btn btn-outlined btn-sm" id="clearResult"><span class="ms">restart_alt</span>Scan again</button>
-            </div>
+          <div class="swatches" style="margin-top:10px" id="fgSwatches" role="group" aria-label="Foreground presets"></div>
+        </div>
+
+        <div class="field">
+          <label class="switch">
+            <input type="checkbox" id="useGrad">
+            <span class="track"></span>
+            <span class="txt">Gradient foreground</span>
+          </label>
+        </div>
+
+        <div class="field" id="fg2Field" hidden>
+          <label class="lbl">Gradient end</label>
+          <div class="color-inline">
+            <input type="color" id="fg2Color" value="#9D174D" aria-label="Gradient end colour">
+            <input type="text" class="hex" id="fg2Hex" value="#9D174D" spellcheck="false" aria-label="Gradient end hex value">
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-head">
-            <span class="ic"><span class="ms">photo_library</span></span>
-            <h2>Decode from image</h2>
+        <div class="field">
+          <label class="lbl">Background</label>
+          <div class="color-inline">
+            <input type="color" id="bgColor" value="#FFFFFF" aria-label="Background colour">
+            <input type="text" class="hex" id="bgHex" value="#FFFFFF" spellcheck="false" aria-label="Background hex value">
           </div>
-          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Drop or choose an image containing a QR code">
-            <span class="ms">add_photo_alternate</span>
-            <div class="dz-t">Drop an image here</div>
-            <div class="dz-s">or tap to choose · PNG, JPG, WebP, GIF</div>
+          <label class="switch" style="margin-top:10px">
+            <input type="checkbox" id="transBg">
+            <span class="track"></span>
+            <span class="txt">Transparent background</span>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label class="lbl" for="marginSel">Quiet zone</label>
+            <select id="marginSel">
+              <option value="0">0 modules</option>
+              <option value="2">2 modules</option>
+              <option value="4" selected>4 modules</option>
+              <option value="6">6 modules</option>
+              <option value="8">8 modules</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="lbl" for="sizeSel">Export size</label>
+            <select id="sizeSel">
+              <option value="512">512 px</option>
+              <option value="1024" selected>1024 px</option>
+              <option value="2048">2048 px</option>
+            </select>
           </div>
         </div>
+
+        <div class="field">
+          <label class="lbl">Centre logo</label>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-outlined btn-sm" id="logoBtn"><span class="ms">add_photo_alternate</span>Choose image</button>
+            <button class="btn btn-outlined btn-sm" id="logoClear" hidden><span class="ms">close</span>Remove</button>
+            <input type="file" id="logoInput" accept="image/*" class="sr-only" aria-label="Choose logo image">
+          </div>
+          <div style="font-size:.75rem;color:var(--on-surface-variant);margin-top:8px">
+            Logo sits on a white plate. Use High error correction for best scanning.
+          </div>
+        </div>
+
       </div>
     </div>
-  </section>
+
+  </div>
 
 </div>
 
@@ -692,14 +538,13 @@ footer .ms{font-size:16px}
 <div class="scrim" id="scrim" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <h3 id="modalTitle"><span class="ms">qr_code_2</span>About QR Studio</h3>
-    <p>A complete QR toolkit that never touches the network.</p>
+    <p>A complete QR generator that never touches the network.</p>
     <ul>
       <li><b>Create</b> — links, plain text, Wi-Fi, email, phone, SMS and contact cards.</li>
       <li><b>Style</b> — module shapes, eye shapes, solid or gradient colours, transparent background and a centre logo.</li>
-      <li><b>Scan</b> — read codes live from your camera or from any image file on your device.</li>
       <li><b>Export</b> — crisp PNG (up to 2048 px) or scalable SVG.</li>
     </ul>
-    <p style="font-size:.8125rem">Everything — encoding, styling and decoding — is computed in this page. No uploads, no accounts, no analytics. Works fully offline once loaded.</p>
+    <p style="font-size:.8125rem">Everything — encoding and styling — is computed in this page. No uploads, no accounts, no analytics. Works fully offline once loaded.</p>
     <div class="actions" style="justify-content:flex-end">
       <button class="btn btn-filled btn-sm" id="modalClose">Got it</button>
     </div>
@@ -738,7 +583,6 @@ var GF_EXP = new Uint8Array(512), GF_LOG = new Uint8Array(256);
   for (var j = 255; j < 512; j++) GF_EXP[j] = GF_EXP[j - 255];
 })();
 function gfMul(a, b){ if (a === 0 || b === 0) return 0; return GF_EXP[GF_LOG[a] + GF_LOG[b]]; }
-function gfInv(a){ return GF_EXP[255 - GF_LOG[a]]; }
 
 function getNumRawDataModules(ver){
   var result = (16 * ver + 128) * ver + 64;
@@ -945,7 +789,6 @@ function generateQR(text, eclStr){
     setF(8, size - 8, 1);
   }
 
-  /* place data */
   function placeCodewords(){
     var bitIdx = 0, totalBits = allCw.length * 8;
     for (var right = size - 1; right >= 1; right -= 2){
@@ -1033,9 +876,7 @@ function generateQR(text, eclStr){
     return result;
   }
 
-  /* choose best mask */
   var bestMask = 0, bestPenalty = Infinity;
-  var saved = null;
   for (var m = 0; m < 8; m++){
     drawFormat(m);
     placeCodewords();
@@ -1218,763 +1059,6 @@ function buildSVG(m, n, opts, px){
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   QR DECODER
-   ═══════════════════════════════════════════════════════════════ */
-
-function popcount(x){ var c = 0; while (x){ c += x & 1; x >>>= 1; } return c; }
-
-function toGray(data, w, h){
-  var g = new Uint8Array(w * h);
-  for (var i = 0, j = 0; i < g.length; i++, j += 4){
-    g[i] = (data[j] * 77 + data[j + 1] * 150 + data[j + 2] * 29) >> 8;
-  }
-  return g;
-}
-
-function otsuThreshold(gray){
-  var hist = new Uint32Array(256);
-  for (var i = 0; i < gray.length; i++) hist[gray[i]]++;
-  var total = gray.length, sum = 0;
-  for (var t = 0; t < 256; t++) sum += t * hist[t];
-  var sumB = 0, wB = 0, max = 0, thr = 128;
-  for (var q = 0; q < 256; q++){
-    wB += hist[q];
-    if (wB === 0) continue;
-    var wF = total - wB;
-    if (wF === 0) break;
-    sumB += q * hist[q];
-    var mB = sumB / wB, mF = (sum - sumB) / wF;
-    var between = wB * wF * (mB - mF) * (mB - mF);
-    if (between > max){ max = between; thr = q; }
-  }
-  return thr;
-}
-
-function binarize(gray, w, h){
-  var iw = w + 1;
-  var integral = new Int32Array(iw * (h + 1));
-  for (var y = 0; y < h; y++){
-    var rowSum = 0;
-    for (var x = 0; x < w; x++){
-      rowSum += gray[y * w + x];
-      integral[(y + 1) * iw + (x + 1)] = integral[y * iw + (x + 1)] + rowSum;
-    }
-  }
-  var r = Math.max(8, Math.floor(Math.min(w, h) / 20));
-  var otsu = otsuThreshold(gray);
-  var globalThr = otsu * 0.6;
-  var bin = new Uint8Array(w * h);
-  for (var yy = 0; yy < h; yy++){
-    var y0 = Math.max(0, yy - r), y1 = Math.min(h - 1, yy + r);
-    for (var xx = 0; xx < w; xx++){
-      var x0 = Math.max(0, xx - r), x1 = Math.min(w - 1, xx + r);
-      var area = (x1 - x0 + 1) * (y1 - y0 + 1);
-      var sum = integral[(y1 + 1) * iw + (x1 + 1)] - integral[y0 * iw + (x1 + 1)] - integral[(y1 + 1) * iw + x0] + integral[y0 * iw + x0];
-      var mean = sum / area;
-      var v = gray[yy * w + xx];
-      bin[yy * w + xx] = (v < mean * 0.92 || v < globalThr) ? 1 : 0;
-    }
-  }
-  return bin;
-}
-
-function foundPatternCross(sc){
-  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
-  if (total < 7) return false;
-  var ms = total / 7, maxVar = ms / 2;
-  return Math.abs(sc[0] - ms) < maxVar && Math.abs(sc[1] - ms) < maxVar &&
-         Math.abs(sc[2] - 3 * ms) < 3 * maxVar && Math.abs(sc[3] - ms) < maxVar &&
-         Math.abs(sc[4] - ms) < maxVar;
-}
-
-function crossCheckVertical(bin, w, h, startY, centerX, maxCount, originalTotal){
-  var sc = [0, 0, 0, 0, 0];
-  var y = startY;
-  while (y >= 0 && bin[y * w + centerX] && sc[2] <= maxCount){ sc[2]++; y--; }
-  if (y < 0 || sc[2] > maxCount) return null;
-  while (y >= 0 && !bin[y * w + centerX] && sc[1] <= maxCount){ sc[1]++; y--; }
-  if (y < 0 || sc[1] > maxCount) return null;
-  while (y >= 0 && bin[y * w + centerX] && sc[0] <= maxCount){ sc[0]++; y--; }
-  if (sc[0] > maxCount) return null;
-  y = startY + 1;
-  while (y < h && bin[y * w + centerX] && sc[2] <= maxCount){ sc[2]++; y++; }
-  if (y >= h || sc[2] > maxCount) return null;
-  while (y < h && !bin[y * w + centerX] && sc[3] <= maxCount){ sc[3]++; y++; }
-  if (y >= h || sc[3] > maxCount) return null;
-  while (y < h && bin[y * w + centerX] && sc[4] <= maxCount){ sc[4]++; y++; }
-  if (sc[4] > maxCount) return null;
-  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
-  if (5 * Math.abs(total - originalTotal) >= 2 * originalTotal) return null;
-  if (!foundPatternCross(sc)) return null;
-  return y - sc[4] - sc[3] - sc[2] / 2;
-}
-
-function crossCheckHorizontal(bin, w, h, startX, centerY, maxCount, originalTotal){
-  var sc = [0, 0, 0, 0, 0];
-  var x = startX;
-  while (x >= 0 && bin[centerY * w + x] && sc[2] <= maxCount){ sc[2]++; x--; }
-  if (x < 0 || sc[2] > maxCount) return null;
-  while (x >= 0 && !bin[centerY * w + x] && sc[1] <= maxCount){ sc[1]++; x--; }
-  if (x < 0 || sc[1] > maxCount) return null;
-  while (x >= 0 && bin[centerY * w + x] && sc[0] <= maxCount){ sc[0]++; x--; }
-  if (sc[0] > maxCount) return null;
-  x = startX + 1;
-  while (x < w && bin[centerY * w + x] && sc[2] <= maxCount){ sc[2]++; x++; }
-  if (x >= w || sc[2] > maxCount) return null;
-  while (x < w && !bin[centerY * w + x] && sc[3] <= maxCount){ sc[3]++; x++; }
-  if (x >= w || sc[3] > maxCount) return null;
-  while (x < w && bin[centerY * w + x] && sc[4] <= maxCount){ sc[4]++; x++; }
-  if (sc[4] > maxCount) return null;
-  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
-  if (5 * Math.abs(total - originalTotal) >= originalTotal) return null;
-  if (!foundPatternCross(sc)) return null;
-  return x - sc[4] - sc[3] - sc[2] / 2;
-}
-
-function findFinderPatterns(bin, w, h){
-  var cands = [];
-  for (var y = 0; y < h; y++){
-    var sc = [0, 0, 0, 0, 0];
-    var st = 0;
-    var x = 0;
-    while (x < w){
-      if (bin[y * w + x]){
-        if ((st & 1) === 1) st++;
-        sc[st]++;
-        x++;
-      } else {
-        if ((st & 1) === 0){
-          if (st === 4){
-            if (foundPatternCross(sc)){
-              var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
-              var cx = x - sc[4] - sc[3] - sc[2] / 2;
-              var ms = total / 7;
-              var maxCount = Math.ceil(ms * 3);
-              var cy = crossCheckVertical(bin, w, h, y, Math.round(cx), maxCount, total);
-              if (cy !== null){
-                var cx2 = crossCheckHorizontal(bin, w, h, Math.round(cx), Math.round(cy), maxCount, total);
-                if (cx2 !== null){
-                  var found = false;
-                  for (var i = 0; i < cands.length; i++){
-                    var c = cands[i];
-                    if (Math.abs(c.x - cx2) <= ms && Math.abs(c.y - cy) <= ms){
-                      c.x = (c.x * c.count + cx2) / (c.count + 1);
-                      c.y = (c.y * c.count + cy) / (c.count + 1);
-                      c.moduleSize = (c.moduleSize * c.count + ms) / (c.count + 1);
-                      c.count++;
-                      found = true;
-                      break;
-                    }
-                  }
-                  if (!found) cands.push({ x: cx2, y: cy, moduleSize: ms, count: 1 });
-                }
-              }
-            }
-            sc = [sc[2], sc[3], sc[4], 1, 0];
-            st = 3;
-            x++;
-            continue;
-          } else {
-            st++;
-            sc[st]++;
-            x++;
-          }
-        } else {
-          sc[st]++;
-          x++;
-        }
-      }
-    }
-  }
-  cands.sort(function(a, b){ return b.count - a.count; });
-  return cands.slice(0, 24);
-}
-
-function selectTriple(cands){
-  var best = null;
-  var n = cands.length;
-  if (n < 3) return null;
-  for (var i = 0; i < n; i++){
-    for (var j = i + 1; j < n; j++){
-      for (var k = j + 1; k < n; k++){
-        var a = cands[i], b = cands[j], c = cands[k];
-        var msMin = Math.min(a.moduleSize, b.moduleSize, c.moduleSize);
-        var msMax = Math.max(a.moduleSize, b.moduleSize, c.moduleSize);
-        if (msMax / msMin > 1.7) continue;
-        var dAB = Math.hypot(a.x - b.x, a.y - b.y);
-        var dBC = Math.hypot(b.x - c.x, b.y - c.y);
-        var dCA = Math.hypot(c.x - a.x, c.y - a.y);
-        var arr = [{ d: dAB, p: [a, b] }, { d: dBC, p: [b, c] }, { d: dCA, p: [c, a] }];
-        arr.sort(function(p, q){ return q.d - p.d; });
-        var hyp = arr[0].d, l1 = arr[1].d, l2 = arr[2].d;
-        if (l1 < 2 || l2 < 2) continue;
-        var legRatio = Math.abs(l1 - l2) / Math.max(l1, l2);
-        if (legRatio > 0.4) continue;
-        var hypErr = Math.abs(hyp * hyp - (l1 * l1 + l2 * l2)) / (hyp * hyp);
-        if (hypErr > 0.4) continue;
-        var hp = arr[0].p;
-        var tl = (a === hp[0] || a === hp[1]) ? ((b === hp[0] || b === hp[1]) ? c : b) : a;
-        var o1 = hp[0], o2 = hp[1];
-        var cross = (o1.x - tl.x) * (o2.y - tl.y) - (o1.y - tl.y) * (o2.x - tl.x);
-        var tr, bl;
-        if (cross > 0){ tr = o1; bl = o2; } else { tr = o2; bl = o1; }
-        var score = hypErr + legRatio + (3 - Math.min(3, a.count + b.count + c.count)) * 0.05;
-        if (!best || score < best.score){
-          best = { score: score, tl: tl, tr: tr, bl: bl };
-        }
-      }
-    }
-  }
-  return best;
-}
-
-function findAlignmentPattern(bin, w, h, estX, estY, moduleSize){
-  var allowance = Math.max(6, Math.ceil(moduleSize * 5));
-  var x0 = Math.max(0, Math.floor(estX - allowance));
-  var x1 = Math.min(w - 1, Math.ceil(estX + allowance));
-  var y0 = Math.max(0, Math.floor(estY - allowance));
-  var y1 = Math.min(h - 1, Math.ceil(estY + allowance));
-  var best = null;
-  for (var y = y0; y <= y1; y++){
-    var runs = [];
-    var cur = bin[y * w + x0], len = 1, start = x0;
-    for (var x = x0 + 1; x <= x1; x++){
-      var v = bin[y * w + x];
-      if (v === cur) len++;
-      else { runs.push({ color: cur, len: len, start: start }); cur = v; len = 1; start = x; }
-    }
-    runs.push({ color: cur, len: len, start: start });
-    for (var i = 0; i + 4 < runs.length; i++){
-      if (runs[i].color !== 1) continue;
-      var r5 = [runs[i], runs[i + 1], runs[i + 2], runs[i + 3], runs[i + 4]];
-      if (r5[1].color !== 0 || r5[3].color !== 0) continue;
-      var total = r5[0].len + r5[1].len + r5[2].len + r5[3].len + r5[4].len;
-      if (total < 5) continue;
-      var m = total / 5;
-      if (m < moduleSize * 0.4 || m > moduleSize * 2.4) continue;
-      var ok = true;
-      for (var q = 0; q < 5; q++){ if (Math.abs(r5[q].len - m) > m * 0.85){ ok = false; break; } }
-      if (!ok) continue;
-      var cx = Math.round(runs[i].start + total / 2);
-      var cy = crossCheckAlignV(bin, w, h, cx, y, Math.ceil(m * 3));
-      if (cy === null) continue;
-      var cx2 = crossCheckAlignH(bin, w, h, cx, Math.round(cy), Math.ceil(m * 3));
-      if (cx2 === null) continue;
-      var dist = Math.hypot(cx2 - estX, cy - estY);
-      if (!best || dist < best.dist) best = { x: cx2, y: cy, dist: dist };
-    }
-  }
-  return best;
-}
-
-function crossCheckAlignV(bin, w, h, cx, cy, maxCount){
-  var sc = [0, 0, 0, 0, 0];
-  var y = cy;
-  while (y >= 0 && bin[y * w + cx] && sc[2] <= maxCount){ sc[2]++; y--; }
-  if (y < 0 || sc[2] > maxCount) return null;
-  while (y >= 0 && !bin[y * w + cx] && sc[1] <= maxCount){ sc[1]++; y--; }
-  if (y < 0 || sc[1] > maxCount) return null;
-  while (y >= 0 && bin[y * w + cx] && sc[0] <= maxCount){ sc[0]++; y--; }
-  if (sc[0] > maxCount) return null;
-  y = cy + 1;
-  while (y < h && bin[y * w + cx] && sc[2] <= maxCount){ sc[2]++; y++; }
-  if (y >= h || sc[2] > maxCount) return null;
-  while (y < h && !bin[y * w + cx] && sc[3] <= maxCount){ sc[3]++; y++; }
-  if (y >= h || sc[3] > maxCount) return null;
-  while (y < h && bin[y * w + cx] && sc[4] <= maxCount){ sc[4]++; y++; }
-  if (sc[4] > maxCount) return null;
-  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
-  var m = total / 5;
-  if (m < 1) return null;
-  for (var i = 0; i < 5; i++){ if (Math.abs(sc[i] - m) > m * 1.0) return null; }
-  return y - sc[4] - sc[3] - sc[2] / 2;
-}
-
-function crossCheckAlignH(bin, w, h, cx, cy, maxCount){
-  var sc = [0, 0, 0, 0, 0];
-  var x = cx;
-  while (x >= 0 && bin[cy * w + x] && sc[2] <= maxCount){ sc[2]++; x--; }
-  if (x < 0 || sc[2] > maxCount) return null;
-  while (x >= 0 && !bin[cy * w + x] && sc[1] <= maxCount){ sc[1]++; x--; }
-  if (x < 0 || sc[1] > maxCount) return null;
-  while (x >= 0 && bin[cy * w + x] && sc[0] <= maxCount){ sc[0]++; x--; }
-  if (sc[0] > maxCount) return null;
-  x = cx + 1;
-  while (x < w && bin[cy * w + x] && sc[2] <= maxCount){ sc[2]++; x++; }
-  if (x >= w || sc[2] > maxCount) return null;
-  while (x < w && !bin[cy * w + x] && sc[3] <= maxCount){ sc[3]++; x++; }
-  if (x >= w || sc[3] > maxCount) return null;
-  while (x < w && bin[cy * w + x] && sc[4] <= maxCount){ sc[4]++; x++; }
-  if (sc[4] > maxCount) return null;
-  var total = sc[0] + sc[1] + sc[2] + sc[3] + sc[4];
-  var m = total / 5;
-  if (m < 1) return null;
-  for (var i = 0; i < 5; i++){ if (Math.abs(sc[i] - m) > m * 1.0) return null; }
-  return x - sc[4] - sc[3] - sc[2] / 2;
-}
-
-/* --- perspective helpers --- */
-function matMul3(a, b){
-  var r = new Array(9);
-  for (var i = 0; i < 3; i++){
-    for (var j = 0; j < 3; j++){
-      r[i * 3 + j] = a[i * 3] * b[j] + a[i * 3 + 1] * b[3 + j] + a[i * 3 + 2] * b[6 + j];
-    }
-  }
-  return r;
-}
-function adjugate3(m){
-  var a = m[0], b = m[1], c = m[2], d = m[3], e = m[4], f = m[5], g = m[6], h = m[7], i = m[8];
-  return [
-    e * i - f * h, c * h - b * i, b * f - c * e,
-    f * g - d * i, a * i - c * g, c * d - a * f,
-    d * h - e * g, b * g - a * h, a * e - b * d
-  ];
-}
-function squareToQuad(x0, y0, x1, y1, x2, y2, x3, y3){
-  var dx3 = x0 - x1 + x2 - x3;
-  var dy3 = y0 - y1 + y2 - y3;
-  if (dx3 === 0 && dy3 === 0){
-    return [x1 - x0, x3 - x0, x0, y1 - y0, y3 - y0, y0, 0, 0, 1];
-  }
-  var dx1 = x1 - x2, dx2 = x3 - x2, dy1 = y1 - y2, dy2 = y3 - y2;
-  var den = dx1 * dy2 - dx2 * dy1;
-  if (den === 0) return [1, 0, 0, 0, 1, 0, 0, 0, 1];
-  var a13 = (dx3 * dy2 - dx2 * dy3) / den;
-  var a23 = (dx1 * dy3 - dx3 * dy1) / den;
-  return [
-    x1 - x0 + a13 * x1, x3 - x0 + a23 * x3, x0,
-    y1 - y0 + a13 * y1, y3 - y0 + a23 * y3, y0,
-    a13, a23, 1
-  ];
-}
-function quadToQuad(sx0, sy0, sx1, sy1, sx2, sy2, sx3, sy3, dx0, dy0, dx1, dy1, dx2, dy2, dx3, dy3){
-  var sToQ = squareToQuad(dx0, dy0, dx1, dy1, dx2, dy2, dx3, dy3);
-  var qToS = adjugate3(squareToQuad(sx0, sy0, sx1, sy1, sx2, sy2, sx3, sy3));
-  return matMul3(sToQ, qToS);
-}
-function applyT(t, x, y){
-  var d = t[6] * x + t[7] * y + t[8];
-  if (d === 0) d = 1e-9;
-  return [(t[0] * x + t[1] * y + t[2]) / d, (t[3] * x + t[4] * y + t[5]) / d];
-}
-function createTransform(tl, tr, bl, al, dim){
-  var dimMinusThree = dim - 3.5;
-  var brX, brY, srcBRX, srcBRY;
-  if (al){
-    brX = al.x; brY = al.y;
-    srcBRX = dimMinusThree - 3.0; srcBRY = srcBRX;
-  } else {
-    brX = tr.x - tl.x + bl.x;
-    brY = tr.y - tl.y + bl.y;
-    srcBRX = dimMinusThree; srcBRY = dimMinusThree;
-  }
-  return quadToQuad(
-    3.5, 3.5, dimMinusThree, 3.5, srcBRX, srcBRY, 3.5, dimMinusThree,
-    tl.x, tl.y, tr.x, tr.y, brX, brY, bl.x, bl.y
-  );
-}
-
-function sampleGrid(bin, w, h, t, dim){
-  var m = [];
-  for (var y = 0; y < dim; y++){
-    var row = new Uint8Array(dim);
-    for (var x = 0; x < dim; x++){
-      var p = applyT(t, x + 0.5, y + 0.5);
-      var px = Math.round(p[0]), py = Math.round(p[1]);
-      if (px < 0 || py < 0 || px >= w || py >= h) return null;
-      row[x] = bin[py * w + px];
-    }
-    m.push(row);
-  }
-  return m;
-}
-
-/* --- format reading --- */
-function readFormatBits1(m, dim){
-  var order = [[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[7,8],[8,8],[8,7],[8,5],[8,4],[8,3],[8,2],[8,1],[8,0]];
-  var bits = 0;
-  for (var i = 0; i < 15; i++){
-    var x = order[i][0], y = order[i][1];
-    bits = (bits << 1) | (m[y][x] ? 1 : 0);
-  }
-  return bits;
-}
-function readFormatBits2(m, dim){
-  var bits = 0, j;
-  for (j = dim - 1; j >= dim - 7; j--) bits = (bits << 1) | (m[j][8] ? 1 : 0);
-  for (var i = dim - 8; i < dim; i++) bits = (bits << 1) | (m[8][i] ? 1 : 0);
-  return bits;
-}
-
-/* --- Reed–Solomon decoder --- */
-function GFPoly(c){
-  var first = 0;
-  while (first < c.length - 1 && c[first] === 0) first++;
-  this.c = c.slice(first);
-}
-GFPoly.prototype.degree = function(){ return this.c.length - 1; };
-GFPoly.prototype.isZero = function(){ return this.c[0] === 0; };
-GFPoly.prototype.getCoefficient = function(deg){ return this.c[this.c.length - 1 - deg]; };
-GFPoly.prototype.evaluateAt = function(a){
-  if (a === 0) return this.getCoefficient(0);
-  if (a === 1){ var r = 0; for (var i = 0; i < this.c.length; i++) r ^= this.c[i]; return r; }
-  var result = this.c[0];
-  for (var j = 1; j < this.c.length; j++) result = gfMul(a, result) ^ this.c[j];
-  return result;
-};
-GFPoly.prototype.addOrSubtract = function(other){
-  if (this.isZero()) return other;
-  if (other.isZero()) return this;
-  var small = this.c, large = other.c;
-  if (small.length > large.length){ var t = small; small = large; large = t; }
-  var sum = new Array(large.length);
-  var diff = large.length - small.length;
-  for (var i = 0; i < diff; i++) sum[i] = large[i];
-  for (var j = diff; j < large.length; j++) sum[j] = small[j - diff] ^ large[j];
-  return new GFPoly(sum);
-};
-GFPoly.prototype.multiply = function(other){
-  if (this.isZero() || other.isZero()) return new GFPoly([0]);
-  var a = this.c, b = other.c;
-  var product = new Array(a.length + b.length - 1);
-  for (var i = 0; i < product.length; i++) product[i] = 0;
-  for (var p = 0; p < a.length; p++){
-    if (a[p] === 0) continue;
-    for (var q = 0; q < b.length; q++) product[p + q] ^= gfMul(a[p], b[q]);
-  }
-  return new GFPoly(product);
-};
-GFPoly.prototype.multiplyScalar = function(s){
-  if (s === 0) return new GFPoly([0]);
-  if (s === 1) return this;
-  var p = new Array(this.c.length);
-  for (var i = 0; i < p.length; i++) p[i] = gfMul(this.c[i], s);
-  return new GFPoly(p);
-};
-GFPoly.prototype.multiplyByMonomial = function(degree, coefficient){
-  if (coefficient === 0) return new GFPoly([0]);
-  var p = new Array(this.c.length + degree);
-  for (var i = 0; i < p.length; i++) p[i] = 0;
-  for (var j = 0; j < this.c.length; j++) p[j] = gfMul(this.c[j], coefficient);
-  return new GFPoly(p);
-};
-function buildMonomial(degree, coefficient){
-  if (coefficient === 0) return new GFPoly([0]);
-  var c = new Array(degree + 1);
-  for (var i = 0; i < c.length; i++) c[i] = 0;
-  c[0] = coefficient;
-  return new GFPoly(c);
-}
-
-function runEuclidean(a, b, R){
-  if (a.degree() < b.degree()){ var t = a; a = b; b = t; }
-  var rLast = a, r = b;
-  var tLast = new GFPoly([0]), t = new GFPoly([1]);
-  while (2 * r.degree() >= R){
-    var rLastLast = rLast, tLastLast = tLast;
-    rLast = r; tLast = t;
-    if (rLast.isZero()) throw new Error("rLast zero");
-    r = rLastLast;
-    var q = new GFPoly([0]);
-    var denomLT = rLast.getCoefficient(rLast.degree());
-    var dltInv = gfInv(denomLT);
-    while (r.degree() >= rLast.degree() && !r.isZero()){
-      var degreeDiff = r.degree() - rLast.degree();
-      var scale = gfMul(r.getCoefficient(r.degree()), dltInv);
-      q = q.addOrSubtract(buildMonomial(degreeDiff, scale));
-      r = r.addOrSubtract(rLast.multiplyByMonomial(degreeDiff, scale));
-    }
-    t = q.multiply(tLast).addOrSubtract(tLastLast);
-    if (r.degree() >= rLast.degree()) throw new Error("div failed");
-  }
-  var sigmaTildeAtZero = t.getCoefficient(0);
-  if (sigmaTildeAtZero === 0) throw new Error("sigma(0)=0");
-  var inv = gfInv(sigmaTildeAtZero);
-  return [t.multiplyScalar(inv), r.multiplyScalar(inv)];
-}
-function findErrorLocations(sigma){
-  var numErrors = sigma.degree();
-  if (numErrors === 1) return [sigma.getCoefficient(1)];
-  var result = [];
-  for (var i = 1; i < 256 && result.length < numErrors; i++){
-    if (sigma.evaluateAt(i) === 0) result.push(gfInv(i));
-  }
-  if (result.length !== numErrors) throw new Error("bad locations");
-  return result;
-}
-function findErrorMagnitudes(omega, locations){
-  var s = locations.length, result = new Array(s);
-  for (var i = 0; i < s; i++){
-    var xiInv = gfInv(locations[i]);
-    var denom = 1;
-    for (var j = 0; j < s; j++){
-      if (i !== j){
-        var term = gfMul(locations[j], xiInv);
-        denom = gfMul(denom, term ^ 1);
-      }
-    }
-    result[i] = gfMul(omega.evaluateAt(xiInv), gfInv(denom));
-  }
-  return result;
-}
-function rsDecode(received, twoS){
-  var poly = new GFPoly(received.slice());
-  var syn = new Array(twoS);
-  var noError = true;
-  for (var i = 0; i < twoS; i++){
-    var ev = poly.evaluateAt(GF_EXP[i]);
-    syn[twoS - 1 - i] = ev;
-    if (ev !== 0) noError = false;
-  }
-  if (noError) return received;
-  var syndrome = new GFPoly(syn);
-  var so = runEuclidean(buildMonomial(twoS, 1), syndrome, twoS);
-  var sigma = so[0], omega = so[1];
-  var locations = findErrorLocations(sigma);
-  var magnitudes = findErrorMagnitudes(omega, locations);
-  var result = received.slice();
-  for (var k = 0; k < locations.length; k++){
-    var position = result.length - 1 - GF_LOG[locations[k]];
-    if (position < 0) throw new Error("bad error location");
-    result[position] ^= magnitudes[k];
-  }
-  return result;
-}
-
-/* --- codeword reading & correction --- */
-function readCodewordsRaw(m, dim, version){
-  var fmap = buildFunctionMap(version);
-  var bits = [];
-  var up = true;
-  for (var col = dim - 1; col > 0; col -= 2){
-    if (col === 6) col = 5;
-    for (var i = 0; i < dim; i++){
-      var y = up ? dim - 1 - i : i;
-      for (var c = 0; c < 2; c++){
-        var x = col - c;
-        if (x < 0) continue;
-        if (fmap[y][x]) continue;
-        bits.push(m[y][x] ? 1 : 0);
-      }
-    }
-    up = !up;
-  }
-  var bytes = [];
-  for (var b = 0; b + 8 <= bits.length; b += 8){
-    var v = 0;
-    for (var j = 0; j < 8; j++) v = (v << 1) | bits[b + j];
-    bytes.push(v);
-  }
-  return bytes;
-}
-
-function correctAndDeinterleave(raw, version, eclStr){
-  var e = ECL_INDEX[eclStr];
-  var numBlocks = NUM_ECC_BLOCKS[e][version];
-  var blockEccLen = ECC_CW_PER_BLOCK[e][version];
-  var rawCodewords = Math.floor(getNumRawDataModules(version) / 8);
-  if (raw.length < rawCodewords) return null;
-  var numShortBlocks = numBlocks - (rawCodewords % numBlocks);
-  var shortBlockLen = Math.floor(rawCodewords / numBlocks);
-  var blocks = [];
-  for (var i = 0; i < numBlocks; i++){
-    var dataLen = shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1);
-    var d = new Array(dataLen), ec = new Array(blockEccLen);
-    for (var a = 0; a < dataLen; a++) d[a] = 0;
-    for (var b = 0; b < blockEccLen; b++) ec[b] = 0;
-    blocks.push({ data: d, ecc: ec, dataLen: dataLen });
-  }
-  var k = 0;
-  for (var ci = 0; ci <= shortBlockLen; ci++){
-    for (var cj = 0; cj < numBlocks; cj++){
-      if (ci === shortBlockLen - blockEccLen && cj < numShortBlocks) continue;
-      if (k >= raw.length) return null;
-      if (ci <= shortBlockLen - blockEccLen){
-        blocks[cj].data[ci] = raw[k++];
-      } else {
-        blocks[cj].ecc[ci - (shortBlockLen + 1 - blockEccLen)] = raw[k++];
-      }
-    }
-  }
-  var out = [];
-  for (var bi = 0; bi < blocks.length; bi++){
-    var blk = blocks[bi];
-    var full = blk.data.concat(blk.ecc);
-    var corrected;
-    try { corrected = rsDecode(full, blockEccLen); }
-    catch (err){ return null; }
-    for (var q = 0; q < blk.dataLen; q++) out.push(corrected[q]);
-  }
-  return out;
-}
-
-/* --- data parsing --- */
-function parseBitstream(cw, version){
-  var totalBits = cw.length * 8;
-  var pos = 0;
-  function readBits(n){
-    var v = 0;
-    for (var i = 0; i < n; i++){
-      if (pos >= totalBits) throw new Error("eof");
-      var byteIdx = pos >> 3;
-      v = (v << 1) | ((cw[byteIdx] >> (7 - (pos & 7))) & 1);
-      pos++;
-    }
-    return v;
-  }
-  var result = "";
-  var ALPHA = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
-  while (pos + 4 <= totalBits){
-    var mode = readBits(4);
-    if (mode === 0) break;
-    if (mode === 1){
-      var cnt = readBits(version < 10 ? 10 : 12);
-      var i2 = 0;
-      while (i2 + 3 <= cnt){ var v3 = readBits(10); result += String(v3).padStart(3, "0"); i2 += 3; }
-      if (cnt - i2 === 2){ var v2 = readBits(7); result += String(v2).padStart(2, "0"); }
-      else if (cnt - i2 === 1){ var v1 = readBits(4); result += String(v1); }
-    } else if (mode === 2){
-      var ac = readBits(version < 10 ? 9 : 11);
-      var ai = 0;
-      while (ai + 2 <= ac){ var av = readBits(11); result += ALPHA[Math.floor(av / 45)] + ALPHA[av % 45]; ai += 2; }
-      if (ai < ac){ var last = readBits(6); result += ALPHA[last]; }
-    } else if (mode === 4){
-      var bc = readBits(version < 10 ? 8 : 16);
-      var arr = [];
-      for (var bi = 0; bi < bc; bi++) arr.push(readBits(8));
-      var u8 = new Uint8Array(arr);
-      var decoded = null;
-      try { decoded = new TextDecoder("utf-8", { fatal: true }).decode(u8); } catch (e1){ decoded = null; }
-      if (decoded === null){
-        try { decoded = new TextDecoder("utf-8").decode(u8); } catch (e2){ decoded = null; }
-      }
-      if (decoded === null){
-        var s = "";
-        for (var q = 0; q < arr.length; q++) s += String.fromCharCode(arr[q]);
-        decoded = s;
-      }
-      result += decoded;
-    } else if (mode === 7){
-      var first = readBits(8);
-      if ((first & 0x80) === 0){ /* 1 byte */ }
-      else if ((first & 0xC0) === 0x80){ readBits(8); }
-      else { readBits(16); }
-    } else if (mode === 8){
-      var kc = readBits(version < 10 ? 8 : 10);
-      var kb = [];
-      for (var ki = 0; ki < kc; ki++){
-        var kv = readBits(13);
-        var kcVal = Math.floor(kv / 0xC0) * 0x100 + (kv % 0xC0);
-        kb.push((kcVal >> 8) & 0xFF, kcVal & 0xFF);
-      }
-      try { result += new TextDecoder("shift-jis").decode(new Uint8Array(kb)); }
-      catch (e3){ result += "\uFFFD"; }
-    } else {
-      break;
-    }
-  }
-  return result;
-}
-
-function decodeMatrix(m, dim){
-  if (!m) return null;
-  var version = (dim - 17) / 4;
-  if (version !== Math.floor(version) || version < 1 || version > 40) return null;
-
-  var f1 = readFormatBits1(m, dim);
-  var f2 = readFormatBits2(m, dim);
-  var bestData = -1, bestDist = 4;
-  var cands = [f1, f2];
-  for (var ci = 0; ci < 2; ci++){
-    for (var d = 0; d < 32; d++){
-      var dist = popcount(cands[ci] ^ FORMAT_TABLE[d]);
-      if (dist < bestDist){ bestDist = dist; bestData = d; }
-    }
-  }
-  if (bestData < 0) return null;
-  var eclBits = bestData >> 3;
-  var mask = bestData & 7;
-  var eclStr = ["M", "L", "H", "Q"][eclBits];
-  var versionFromFormat = version;
-  if (versionFromFormat < 1 || versionFromFormat > 40) return null;
-
-  var fmap = buildFunctionMap(versionFromFormat);
-  var un = [];
-  for (var y = 0; y < dim; y++){
-    var row = new Uint8Array(dim);
-    for (var x = 0; x < dim; x++){
-      var v = m[y][x] ? 1 : 0;
-      if (!fmap[y][x] && maskFn(mask, x, y)) v ^= 1;
-      row[x] = v;
-    }
-    un.push(row);
-  }
-
-  var raw;
-  try { raw = readCodewordsRaw(un, dim, versionFromFormat); }
-  catch (e){ return null; }
-  var dataCw = correctAndDeinterleave(raw, versionFromFormat, eclStr);
-  if (!dataCw) return null;
-  var text;
-  try { text = parseBitstream(dataCw, versionFromFormat); }
-  catch (e){ return null; }
-  if (!text) return null;
-  return { text: text, version: versionFromFormat, ecl: eclStr, mask: mask };
-}
-
-function decodeQR(bin, w, h){
-  var cands = findFinderPatterns(bin, w, h);
-  if (cands.length < 3) return null;
-  var tri = selectTriple(cands);
-  if (!tri) return null;
-  var tl = tri.tl, tr = tri.tr, bl = tri.bl;
-  var moduleSize = (tl.moduleSize + tr.moduleSize + bl.moduleSize) / 3;
-  if (!(moduleSize > 0.8)) return null;
-  var dTR = Math.hypot(tr.x - tl.x, tr.y - tl.y);
-  var dBL = Math.hypot(bl.x - tl.x, bl.y - tl.y);
-  var estDim = (dTR / moduleSize + dBL / moduleSize) / 2 + 7;
-  var vGuess = Math.round((estDim - 17) / 4);
-  vGuess = Math.max(1, Math.min(40, vGuess));
-
-  var dimsToTry = [vGuess];
-  if (vGuess > 1) dimsToTry.push(vGuess - 1);
-  if (vGuess < 40) dimsToTry.push(vGuess + 1);
-
-  for (var di = 0; di < dimsToTry.length; di++){
-    var dim = dimsToTry[di] * 4 + 17;
-    var al = null;
-    if (dim > 21){
-      var fr = (dim - 6.5 - 3.5) / (dim - 7);
-      var ex = tl.x + fr * (tr.x - tl.x) + fr * (bl.x - tl.x);
-      var ey = tl.y + fr * (tr.y - tl.y) + fr * (bl.y - tl.y);
-      al = findAlignmentPattern(bin, w, h, ex, ey, moduleSize);
-    }
-    var t = createTransform(tl, tr, bl, al, dim);
-    var grid = sampleGrid(bin, w, h, t, dim);
-    if (!grid) continue;
-    var res = decodeMatrix(grid, dim);
-    if (res) return res;
-  }
-  return null;
-}
-
-function scanImageData(imgData, w, h){
-  var gray, bin, res;
-  try {
-    gray = toGray(imgData.data, w, h);
-    bin = binarize(gray, w, h);
-    res = decodeQR(bin, w, h);
-    if (res) return res;
-    var inv = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) inv[i] = bin[i] ^ 1;
-    return decodeQR(inv, w, h);
-  } catch (e){
-    return null;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════
    UI
    ═══════════════════════════════════════════════════════════════ */
 
@@ -2033,11 +1117,10 @@ function renderPreview(){
   }
   state.currentMatrix = qr.modules;
   state.currentSize = qr.size;
+  state.currentText = text;
   previewEmpty.hidden = true;
   previewCanvas.style.display = "block";
-  var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var px = Math.round(Math.min(680, 340 * dpr * 2));
-  px = 700;
+  var px = 900;
   renderToCanvas(previewCanvas, qr.modules, qr.size, opts, px);
   qrMeta.textContent = "v" + qr.version + " · " + qr.size + "×" + qr.size;
 }
@@ -2141,11 +1224,7 @@ document.querySelectorAll(".chip[data-tpl]").forEach(function(btn){
   btn.addEventListener("click", function(){
     var key = btn.getAttribute("data-tpl");
     var ta = $("qrText");
-    if (key === "url" || key === "text"){
-      ta.value = TEMPLATES[key];
-    } else {
-      ta.value = TEMPLATES[key];
-    }
+    ta.value = TEMPLATES[key];
     ta.focus();
     ta.setSelectionRange(ta.value.length, ta.value.length);
     scheduleRender();
@@ -2250,21 +1329,6 @@ $("copyImg").addEventListener("click", function(){
   }, "image/png");
 });
 
-/* ---------- Tabs ---------- */
-var tabCreate = $("tabCreate"), tabScan = $("tabScan");
-var panelCreate = $("panelCreate"), panelScan = $("panelScan");
-function selectTab(which){
-  var isCreate = which === "create";
-  tabCreate.setAttribute("aria-selected", isCreate ? "true" : "false");
-  tabScan.setAttribute("aria-selected", isCreate ? "false" : "true");
-  panelCreate.classList.toggle("active", isCreate);
-  panelScan.classList.toggle("active", !isCreate);
-  if (!isCreate){ scheduleRender(); }
-  else { stopCamera(); }
-}
-tabCreate.addEventListener("click", function(){ selectTab("create"); });
-tabScan.addEventListener("click", function(){ selectTab("scan"); });
-
 /* ---------- Info modal ---------- */
 var scrim = $("scrim");
 function openModal(){ scrim.hidden = false; $("modalClose").focus(); }
@@ -2274,249 +1338,8 @@ $("modalClose").addEventListener("click", closeModal);
 scrim.addEventListener("click", function(e){ if (e.target === scrim) closeModal(); });
 document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !scrim.hidden) closeModal(); });
 
-/* ---------- Scanner ---------- */
-var video = $("video");
-var camPlaceholder = $("camPlaceholder");
-var reticle = $("reticle");
-var camBtn = $("camBtn");
-var camSwitch = $("camSwitch");
-var scanInput = $("scanInput");
-var stream = null;
-var scanning = false;
-var lastScanTime = 0;
-var scanCanvas = document.createElement("canvas");
-var scanCtx = scanCanvas.getContext("2d", { willReadFrequently: true });
-var facing = "environment";
-
-function stopCamera(){
-  scanning = false;
-  if (stream){
-    stream.getTracks().forEach(function(t){ t.stop(); });
-    stream = null;
-  }
-  video.srcObject = null;
-  camPlaceholder.hidden = false;
-  camPlaceholder.querySelector("span:last-child").textContent = "Camera is off";
-  reticle.hidden = true;
-  camBtn.innerHTML = '<span class="ms">videocam</span>Start camera';
-  camSwitch.hidden = true;
-}
-
-async function startCamera(){
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    camPlaceholder.querySelector("span:last-child").textContent = "Camera not supported in this browser";
-    toast("Camera unavailable", "error");
-    return;
-  }
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 720 } },
-      audio: false
-    });
-    video.srcObject = stream;
-    await video.play();
-    camPlaceholder.hidden = true;
-    reticle.hidden = false;
-    camBtn.innerHTML = '<span class="ms">stop_circle</span>Stop camera';
-    camSwitch.hidden = false;
-    scanning = true;
-    lastScanTime = 0;
-    requestAnimationFrame(scanLoop);
-  } catch (err){
-    camPlaceholder.hidden = false;
-    camPlaceholder.querySelector("span:last-child").textContent = "Camera blocked or unavailable";
-    toast("Camera error: " + (err && err.message ? err.message : "unknown"), "error");
-    stopCamera();
-  }
-}
-
-function scanLoop(){
-  if (!scanning) return;
-  var now = performance.now();
-  if (now - lastScanTime < 130){
-    requestAnimationFrame(scanLoop);
-    return;
-  }
-  lastScanTime = now;
-  if (video.readyState >= 2 && video.videoWidth > 0){
-    var vw = video.videoWidth, vh = video.videoHeight;
-    var scale = Math.min(1, 760 / Math.max(vw, vh));
-    var cw = Math.max(1, Math.round(vw * scale));
-    var ch = Math.max(1, Math.round(vh * scale));
-    if (scanCanvas.width !== cw || scanCanvas.height !== ch){
-      scanCanvas.width = cw; scanCanvas.height = ch;
-    }
-    scanCtx.drawImage(video, 0, 0, cw, ch);
-    var imgData;
-    try { imgData = scanCtx.getImageData(0, 0, cw, ch); }
-    catch (e){ imgData = null; }
-    if (imgData){
-      var res = scanImageData(imgData, cw, ch);
-      if (res){
-        onScanSuccess(res);
-        return;
-      }
-    }
-  }
-  requestAnimationFrame(scanLoop);
-}
-
-function onScanSuccess(res){
-  scanning = false;
-  if (stream){
-    stream.getTracks().forEach(function(t){ t.stop(); });
-    stream = null;
-  }
-  video.srcObject = null;
-  camPlaceholder.hidden = false;
-  camPlaceholder.querySelector("span:last-child").textContent = "Code found";
-  reticle.hidden = true;
-  camBtn.innerHTML = '<span class="ms">videocam</span>Start camera';
-  camSwitch.hidden = true;
-  showResult(res);
-  if (navigator.vibrate) { try { navigator.vibrate(40); } catch (e){} }
-  toast("QR code decoded");
-}
-
-var lastResultText = "";
-function showResult(res){
-  lastResultText = res.text;
-  $("resultEmpty").hidden = true;
-  $("resultBody").hidden = false;
-  $("resultText").textContent = res.text;
-  var meta = $("resultMeta");
-  meta.innerHTML = "";
-  function addPill(icon, label, ok){
-    var s = document.createElement("span");
-    s.className = "pill" + (ok ? " ok" : "");
-    s.innerHTML = '<span class="ms">' + icon + '</span>' + label;
-    meta.appendChild(s);
-  }
-  addPill("check_circle", "Decoded", true);
-  addPill("layers", "Version " + res.version);
-  addPill("healing", "ECC " + res.ecl);
-  addPill("grid_on", res.text.length + " chars");
-  var url = null;
-  var t = res.text.trim();
-  if (/^https?:\/\/\S+$/i.test(t)) url = t;
-  else if (/^www\.\S+\.\S+$/i.test(t)) url = "https://" + t;
-  else if (/^mailto:\S+$/i.test(t)) url = t;
-  else if (/^tel:\S+$/i.test(t)) url = t;
-  var openBtn = $("openResult");
-  if (url){
-    openBtn.href = url;
-    openBtn.hidden = false;
-    addPill("link", "Link", false);
-  } else {
-    openBtn.hidden = true;
-  }
-  $("resultCard").scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
-
-camBtn.addEventListener("click", function(){
-  if (scanning) stopCamera();
-  else startCamera();
-});
-camSwitch.addEventListener("click", function(){
-  facing = facing === "environment" ? "user" : "environment";
-  if (scanning){ stopCamera(); startCamera(); }
-});
-
-$("copyResult").addEventListener("click", function(){
-  if (!lastResultText) return;
-  copyText(lastResultText);
-});
-function copyText(txt){
-  if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(txt).then(
-      function(){ toast("Copied to clipboard"); },
-      function(){ fallbackCopy(txt); }
-    );
-  } else fallbackCopy(txt);
-}
-function fallbackCopy(txt){
-  var ta = document.createElement("textarea");
-  ta.value = txt;
-  ta.style.position = "fixed";
-  ta.style.opacity = "0";
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand("copy"); toast("Copied to clipboard"); }
-  catch (e){ toast("Copy not available", "error"); }
-  document.body.removeChild(ta);
-}
-$("clearResult").addEventListener("click", function(){
-  lastResultText = "";
-  $("resultBody").hidden = true;
-  $("resultEmpty").hidden = false;
-  $("resultText").textContent = "";
-  $("resultMeta").innerHTML = "";
-  if (panelScan.classList.contains("active")) startCamera();
-});
-
-/* ---------- Image upload / drop ---------- */
-$("uploadBtn").addEventListener("click", function(){ scanInput.click(); });
-$("dropzone").addEventListener("click", function(){ scanInput.click(); });
-$("dropzone").addEventListener("keydown", function(e){
-  if (e.key === "Enter" || e.key === " "){ e.preventDefault(); scanInput.click(); }
-});
-scanInput.addEventListener("change", function(){
-  var f = this.files && this.files[0];
-  if (f) handleImageFile(f);
-  this.value = "";
-});
-
-var dz = $("dropzone");
-["dragenter", "dragover"].forEach(function(ev){
-  dz.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); dz.classList.add("over"); });
-});
-["dragleave", "drop"].forEach(function(ev){
-  dz.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); dz.classList.remove("over"); });
-});
-dz.addEventListener("drop", function(e){
-  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-  if (f) handleImageFile(f);
-});
-
-function handleImageFile(file){
-  if (!file.type.startsWith("image/")){ toast("Please choose an image file", "error"); return; }
-  var reader = new FileReader();
-  reader.onload = function(){
-    var img = new Image();
-    img.onload = function(){
-      var maxSide = 1600;
-      var scale = Math.min(1, maxSide / Math.max(img.width, img.height));
-      var cw = Math.max(1, Math.round(img.width * scale));
-      var ch = Math.max(1, Math.round(img.height * scale));
-      var c = document.createElement("canvas");
-      c.width = cw; c.height = ch;
-      var cx = c.getContext("2d", { willReadFrequently: true });
-      cx.drawImage(img, 0, 0, cw, ch);
-      var data;
-      try { data = cx.getImageData(0, 0, cw, ch); }
-      catch (e){ toast("Could not read image", "error"); return; }
-      toast("Scanning image…", "hourglass_top");
-      setTimeout(function(){
-        var res = scanImageData(data, cw, ch);
-        if (res){ showResult(res); toast("QR code decoded"); }
-        else { toast("No QR code found in that image", "error"); }
-      }, 30);
-    };
-    img.onerror = function(){ toast("Could not load image", "error"); };
-    img.src = reader.result;
-  };
-  reader.onerror = function(){ toast("Could not read file", "error"); };
-  reader.readAsDataURL(file);
-}
-
 /* ---------- Init ---------- */
-window.addEventListener("resize", function(){
-  if (panelCreate.classList.contains("active")) scheduleRender();
-});
-document.addEventListener("visibilitychange", function(){
-  if (document.hidden) stopCamera();
-});
-window.addEventListener("beforeunload", function(){ stopCamera(); });
+window.addEventListener("resize", function(){ scheduleRender(); });
 
 syncSwatches();
 $("fg2Field").hidden = true;
