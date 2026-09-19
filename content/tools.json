@@ -97,14 +97,15 @@
       "category": "Design"
     },
     {
-      "id": "audio-converter",
-      "name": "Audio Converter",
-      "description": "MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.",
-      "icon": "audio-converter",
-      "category": "Media",
-      "status": "available",
+      "screenshot": "https://airsilo.pages.dev/admin/assets/uploads/aud-conv.png",
       "accent": "#A3E635",
-      "download_url": "/tools/audio-converter.html"
+      "name": "Audio Converter",
+      "status": "available",
+      "download_url": "/tools/audio-converter.html",
+      "icon": "audio-converter",
+      "id": "audio-converter",
+      "description": "MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.",
+      "category": "Media"
     },
     {
       "id": "video-converter",
