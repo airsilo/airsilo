@@ -205,7 +205,7 @@ button{font-family:inherit}
       <span>100% offline · Files never leave your device</span>
     </div>
     <h1>Convert audio, right in your browser.</h1>
-    <p>Drop any audio file — convert it to MP3, AAC, Opus, Ogg, FLAC, WAV or AIFF. Runs entirely on your device, fully inline, no uploads, no tracking, no server.</p>
+    <p>Drop any audio file — convert it to MP3, M4A, AAC, Opus, WebM, WAV or AIFF. Runs entirely on your device, fully inline, no uploads, no tracking, no server.</p>
   </section>
 
   <section class="card hoverable section" aria-label="File input">
@@ -393,9 +393,9 @@ button{font-family:inherit}
     <div class="modal-body">
       <p>A fully offline, single-file audio converter. Everything runs in your browser — no uploads, no servers, no network calls.</p>
       <ul>
-        <li><strong>Inputs:</strong> MP3, WAV, OGG, FLAC, M4A, AAC, OPUS, AIFF, WMA, APE, WV and more</li>
-        <li><strong>Outputs:</strong> MP3, AAC, Opus, Ogg Vorbis, FLAC, WAV, AIFF</li>
-        <li><strong>Engines:</strong> WebCodecs (AAC, Opus) · lamejs (MP3) · libflacjs (FLAC) · ogg-vorbis-encoder-js (Ogg) · pure JS (WAV, AIFF)</li>
+        <li><strong>Inputs:</strong> MP3, WAV, OGG, FLAC, M4A, AAC, OPUS, AIFF, WMA, APE, WV and more — whatever your browser can decode</li>
+        <li><strong>Outputs:</strong> MP3, M4A, AAC, Opus, WebM, WAV, AIFF</li>
+        <li><strong>Engines:</strong> WebCodecs (AAC, Opus, MP3) · lamejs fallback (MP3) · pure JS containers for M4A and WebM · native PCM writers (WAV, AIFF)</li>
         <li><strong>Privacy:</strong> Your files never leave your device</li>
       </ul>
       <p style="font-size:.8125rem;opacity:.85">MIT &amp; LGPL-licensed components</p>
