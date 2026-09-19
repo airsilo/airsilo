@@ -1590,17 +1590,30 @@ async function ensurePdfJs(){
     if (!workerUrl) workerUrl = './vendor/pdf.worker.min.js';
     window.pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
-    /* On file:// the page origin is null. Chrome blocks both data: and blob:
-       Web Workers from an opaque origin. Force pdf.js into its built-in
-       main-thread fallback by making the Worker constructor throw — pdf.js
-       catches this and runs the worker code inline via a <script> tag instead,
-       which works with blob: URLs even on file://. */
+    /* On file://, Chrome blocks Web Workers spawned from an opaque origin — both
+       data: and blob: URLs fail. Rather than let pdf.js attempt a real Worker
+       (which throws an uncatchable NetworkError inside the worker), we patch
+       PDFWorker._initialize to go straight to its built-in main-thread fallback.
+       This is the same code path pdf.js uses when Worker is unavailable. */
     if (location.protocol === 'file:'){
       try {
-        window.Worker = function(){
-          throw new DOMException('Web Workers disabled on file:// — using main thread', 'SecurityError');
-        };
-      } catch(e){}
+        if (window.pdfjsLib.PDFWorker && window.pdfjsLib.PDFWorker.prototype){
+          window.pdfjsLib.PDFWorker.prototype._initialize = function(){
+            if (typeof this._setupFakeWorker === 'function'){
+              this._setupFakeWorker();
+            } else {
+              /* Extremely defensive: if this pdf.js version doesn't have
+                 _setupFakeWorker, fall back to the original behaviour. */
+              this._readyCapability = this._readyCapability || {};
+              if (this._readyCapability.reject){
+                this._readyCapability.reject(new Error('Worker unavailable'));
+              }
+            }
+          };
+        }
+      } catch(e){
+        console.warn('[DocForge] could not patch PDFWorker for file://', e);
+      }
     }
   }
 
