@@ -104,7 +104,7 @@
       "category": "Media",
       "status": "available",
       "accent": "#A3E635",
-      "download_url": "https://airsilo.pages.dev/tools/audio-converter"
+      "download_url": "/tools/audio-converter.html"
     },
     {
       "id": "video-converter",
