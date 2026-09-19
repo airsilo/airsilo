@@ -1004,8 +1004,70 @@ function encodeAIFF(channels, sampleRate, format) {
   return { buffer, mime: 'audio/aiff', ext: 'aiff' };
 }
 
-/* ---------- MP3 via lamejs ---------- */
+/* ---------- MP3 via lamejs && Webencoder ---------- */
 async function encodeMP3(channels, sampleRate, kbps) {
+  // Prefer WebCodecs native MP3 encoder when available
+  if (typeof AudioEncoder !== 'undefined') {
+    try {
+      return await encodeMP3WebCodecs(channels, sampleRate, kbps);
+    } catch (e) {
+      console.warn('WebCodecs MP3 unavailable, falling back to lamejs:', e.message);
+    }
+  }
+  // Fallback: lamejs
+  return encodeMP3Lamejs(channels, sampleRate, kbps);
+}
+
+async function encodeMP3WebCodecs(channels, sampleRate, kbps) {
+  const numChannels = Math.min(channels.length, 2);
+  const config = {
+    codec: 'mp3',
+    sampleRate,
+    numberOfChannels: numChannels,
+    bitrate: parseInt(kbps, 10) * 1000,
+  };
+
+  const support = await AudioEncoder.isConfigSupported(config);
+  if (!support.supported) throw new Error('mp3 not supported');
+
+  const chunks = [];
+  let err = null;
+  const encoder = new AudioEncoder({
+    output: (chunk) => { const b = new Uint8Array(chunk.byteLength); chunk.copyTo(b); chunks.push(b); },
+    error: (e) => { err = e; },
+  });
+  encoder.configure(support.config || config);
+
+  const frameSize = 1152;
+  const numFrames = channels[0].length;
+  for (let off = 0; off < numFrames; off += frameSize) {
+    const count = Math.min(frameSize, numFrames - off);
+    const interleaved = new Float32Array(count * numChannels);
+    for (let i = 0; i < count; i++) {
+      for (let ch = 0; ch < numChannels; ch++) interleaved[i * numChannels + ch] = channels[ch][off + i];
+    }
+    const audioData = new AudioData({
+      format: 'f32', sampleRate,
+      numberOfFrames: count, numberOfChannels: numChannels,
+      timestamp: Math.round((off / sampleRate) * 1e6),
+      data: interleaved,
+    });
+    encoder.encode(audioData);
+    audioData.close();
+  }
+  await encoder.flush();
+  encoder.close();
+  if (err) throw err;
+  if (!chunks.length) throw new Error('MP3 encoder produced no output');
+
+  const total = chunks.reduce((a, b) => a + b.length, 0);
+  const out = new Uint8Array(total);
+  let o = 0;
+  for (const c of chunks) { out.set(c, o); o += c.length; }
+  return { buffer: out.buffer, mime: 'audio/mpeg', ext: 'mp3' };
+}
+
+async function encodeMP3Lamejs(channels, sampleRate, kbps) {
   const lamejs = loadInlineLib('lib-lamejs', 'lamejs');
   const numChannels = Math.min(channels.length, 2);
   const encoder = new lamejs.Mp3Encoder(numChannels, sampleRate, parseInt(kbps, 10));
@@ -1016,7 +1078,7 @@ async function encodeMP3(channels, sampleRate, kbps) {
   const chunks = [];
 
   for (let i = 0; i < total; i += blockSize) {
-    const left = int16[0].subarray(i, i + blockSize);
+    const left  = int16[0].subarray(i, i + blockSize);
     const right = numChannels === 2 ? int16[1].subarray(i, i + blockSize) : null;
     const buf = right ? encoder.encodeBuffer(left, right) : encoder.encodeBuffer(left);
     if (buf.length > 0) chunks.push(new Uint8Array(buf));
@@ -1155,6 +1217,88 @@ function concatChunks(chunks) {
   const out = new Uint8Array(total);
   let o = 0;
   for (const c of chunks) { out.set(c, o); o += c.length; }
+  return out;
+}
+/* Minimal Ogg Opus muxer — produces a valid .opus file */
+function wrapOggOpus(opusData, sampleRate, channels) {
+  function crc32(buf) {
+    let crc = 0xFFFFFFFF;
+    for (let i = 0; i < buf.length; i++) {
+      crc ^= buf[i];
+      for (let j = 0; j < 8; j++) crc = (crc >>> 1) ^ (0xEDB88320 & -(crc & 1));
+    }
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  function page(headerType, granule, serial, seq, packets) {
+    const segs = [];
+    const body = [];
+    for (const p of packets) {
+      let len = p.length;
+      while (len >= 255) { segs.push(255); len -= 255; }
+      segs.push(len);
+      body.push(p);
+    }
+    const header = new Uint8Array(27 + segs.length);
+    header[0] = 0x4F; header[1] = 0x67; header[2] = 0x67; header[3] = 0x53; // "OggS"
+    header[4] = 0;
+    header[5] = headerType;
+    const g = new DataView(header.buffer);
+    g.setUint32(6, 0, true);
+    g.setUint32(10, 0, true);
+    g.setUint32(14, serial, true);
+    g.setUint32(18, seq, true);
+    g.setUint32(22, 0, true);
+    g.setUint8(26, segs.length);
+    for (let i = 0; i < segs.length; i++) header[27 + i] = segs[i];
+
+    const bodyLen = body.reduce((a, p) => a + p.length, 0);
+    const out = new Uint8Array(header.length + bodyLen);
+    out.set(header, 0);
+    let o = header.length;
+    for (const p of body) { out.set(p, o); o += p.length; }
+
+    g.setUint32(22, 0, true);
+    g.setUint32(22, crc32(out), true);
+    return out;
+  }
+
+  // OpusHead identification header
+  const opusHead = new Uint8Array(19);
+  opusHead.set([0x4F,0x70,0x75,0x73,0x48,0x65,0x61,0x64], 0); // "OpusHead"
+  opusHead[8] = 1;                     // version
+  opusHead[9] = channels;
+  new DataView(opusHead.buffer).setUint16(10, 312, true);       // pre-skip
+  new DataView(opusHead.buffer).setUint32(12, sampleRate, true);
+  new DataView(opusHead.buffer).setUint16(16, 0, true);         // output gain
+  opusHead[18] = 0;                    // channel mapping
+
+  // OpusTags comment header
+  const vendor = new TextEncoder().encode('AirSilo');
+  const tags = new Uint8Array(8 + 4 + vendor.length + 4);
+  tags.set([0x4F,0x70,0x75,0x73,0x54,0x61,0x67,0x73], 0); // "OpusTags"
+  new DataView(tags.buffer).setUint32(8, vendor.length, true);
+  tags.set(vendor, 12);
+  new DataView(tags.buffer).setUint32(12 + vendor.length, 0, true);
+
+  // Split Opus data into ~4 KB packets
+  const packets = [];
+  const packetSize = 4000;
+  for (let i = 0; i < opusData.length; i += packetSize) {
+    packets.push(opusData.subarray(i, Math.min(i + packetSize, opusData.length)));
+  }
+
+  const serial = (Math.random() * 0x7FFFFFFF) | 0;
+
+  const pages = [];
+  pages.push(page(0x02, 0, serial, 0, [opusHead]));             // BOS
+  pages.push(page(0x00, 0, serial, 1, [tags]));
+  pages.push(page(0x04, opusData.length, serial, 2, packets));  // EOS
+
+  const total = pages.reduce((a, p) => a + p.length, 0);
+  const out = new Uint8Array(total);
+  let o = 0;
+  for (const p of pages) { out.set(p, o); o += p.length; }
   return out;
 }
 
