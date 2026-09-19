@@ -103,7 +103,8 @@
       "icon": "audio-converter",
       "category": "Media",
       "status": "available",
-      "accent": "#A3E635"
+      "accent": "#A3E635",
+      "download_url": "https://airsilo.pages.dev/tools/audio-converter"
     },
     {
       "id": "video-converter",
