@@ -6,7 +6,10 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0B0A0F">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;font-src https://fonts.gstatic.com;img-src 'self' data: blob:;media-src blob:;connect-src 'none';worker-src blob:;form-action 'none';base-uri 'none'">
-<title>Image Converter — AirSilo</title>
+<title>PixFlux — Image Converter by AirSilo</title>
+<!-- Favicon (inline SVG data URI — works offline) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23C4B5FD'/%3E%3Cstop offset='0.5' stop-color='%236EE7B7'/%3E%3Cstop offset='1' stop-color='%23FBCFE8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1024' height='1024' rx='256' fill='url(%23g)'/%3E%3Crect x='312' y='328' width='400' height='368' rx='48' fill='%230B0A0F'/%3E%3Cpath d='M372 616 L488 472 L568 552 L648 456 L648 640 L372 640 Z' fill='url(%23g)'/%3E%3Ccircle cx='592' cy='448' r='44' fill='url(%23g)'/%3E%3Cg transform='rotate(20 814 456)'%3E%3Cpath d='M744 400 A 140 140 0 0 1 884 512' stroke='%230B0A0F' stroke-width='48' fill='none' stroke-linecap='round'/%3E%3Cpath d='M884 512 L932 466 M884 512 L836 466' stroke='%230B0A0F' stroke-width='48' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/g%3E%3Cg transform='rotate(20 210 568)'%3E%3Cpath d='M280 624 A 140 140 0 0 1 140 512' stroke='%230B0A0F' stroke-width='48' fill='none' stroke-linecap='round'/%3E%3Cpath d='M140 512 L92 558 M140 512 L188 558' stroke='%230B0A0F' stroke-width='48' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23C4B5FD'/%3E%3Cstop offset='0.5' stop-color='%236EE7B7'/%3E%3Cstop offset='1' stop-color='%23FBCFE8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1024' height='1024' rx='256' fill='url(%23g)'/%3E%3Crect x='312' y='328' width='400' height='368' rx='48' fill='%230B0A0F'/%3E%3Cpath d='M372 616 L488 472 L568 552 L648 456 L648 640 L372 640 Z' fill='url(%23g)'/%3E%3Ccircle cx='592' cy='448' r='44' fill='url(%23g)'/%3E%3Cg transform='rotate(20 814 456)'%3E%3Cpath d='M744 400 A 140 140 0 0 1 884 512' stroke='%230B0A0F' stroke-width='48' fill='none' stroke-linecap='round'/%3E%3Cpath d='M884 512 L932 466 M884 512 L836 466' stroke='%230B0A0F' stroke-width='48' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/g%3E%3Cg transform='rotate(20 210 568)'%3E%3Cpath d='M280 624 A 140 140 0 0 1 140 512' stroke='%230B0A0F' stroke-width='48' fill='none' stroke-linecap='round'/%3E%3Cpath d='M140 512 L92 558 M140 512 L188 558' stroke='%230B0A0F' stroke-width='48' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
@@ -76,14 +79,23 @@ body{
   border-bottom:1px solid var(--outline-variant);
   padding-top:max(10px,env(safe-area-inset-top));
 }
-.logo{display:inline-flex;border-radius:var(--r-md);transition:transform var(--t-med) var(--ease-emph);flex:0 0 auto}
+.logo{
+  display:inline-flex;border-radius:var(--r-md);
+  transition:transform var(--t-med) var(--ease-emph);
+  flex:0 0 auto;
+}
 .logo:hover{transform:rotate(-4deg) scale(1.06)}
 .hdr-title{
-  display:flex;align-items:center;gap:8px;min-width:0;
-  font-weight:700;font-size:.9375rem;letter-spacing:-.01em;color:var(--on-surface);
+  display:flex;flex-direction:column;min-width:0;line-height:1.15;
 }
-.hdr-title .ms{font-size:20px;color:var(--primary)}
-.hdr-title span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-title .name{
+  font-weight:800;font-size:1.0625rem;letter-spacing:-.02em;
+  color:var(--on-surface);
+}
+.hdr-title .by{
+  font-size:.6875rem;font-weight:600;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--outline);
+}
 .icon-btn{
   margin-left:auto;flex:0 0 auto;
   display:inline-flex;align-items:center;justify-content:center;
@@ -401,7 +413,7 @@ input[type=color]::-moz-color-swatch{border:none;border-radius:6px}
 
 /* ── Footer ─────────────────────────────────────── */
 footer{
-  margin-top:64px;padding:28px 16px calc(28px + env(safe-area-inset-bottom));
+  margin-top:64px;padding:32px 16px calc(40px + env(safe-area-inset-bottom));
   border-top:1px solid var(--outline-variant);
   text-align:center;
 }
@@ -410,15 +422,24 @@ footer .made{
   font-size:.8125rem;color:var(--on-surface-variant);flex-wrap:wrap;justify-content:center;
 }
 footer .made .dot{color:var(--outline)}
+footer .back-wrap{
+  display:flex;justify-content:center;
+  margin-top:22px;
+}
 footer .back{
-  display:inline-flex;align-items:center;gap:6px;
-  margin-top:12px;font-size:.8125rem;font-weight:600;
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.8125rem;font-weight:600;
   color:var(--primary);text-decoration:none;
-  padding:8px 16px;border-radius:var(--r-full);
-  border:1px solid transparent;
+  padding:10px 20px;border-radius:var(--r-full);
+  border:1px solid var(--outline-variant);
+  background:rgba(196,181,253,.05);
   transition:all var(--t-short) var(--ease-emph);
 }
-footer .back:hover{border-color:var(--outline);background:var(--surface-container-high)}
+footer .back:hover{
+  border-color:var(--primary);
+  background:rgba(196,181,253,.12);
+  transform:translateY(-2px);
+}
 footer .back .ms{font-size:17px}
 
 /* ── Focus & motion ─────────────────────────────── */
@@ -446,22 +467,34 @@ footer .back .ms{font-size:17px}
 
 <!-- ══ HEADER ══ -->
 <header class="hdr">
-  <a class="logo" href="https://airsilo.pages.dev" aria-label="AirSilo home">
-    <svg viewBox="0 0 64 64" width="34" height="34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#C4B5FD"/>
-        <stop offset="0.5" stop-color="#6EE7B7"/>
-        <stop offset="1" stop-color="#FBCFE8"/>
-      </linearGradient></defs>
-      <rect width="64" height="64" rx="16" fill="url(#bg)"/>
-      <path d="M20 20 Q20 14 26 14 H38 Q44 14 44 20 V46 Q44 52 38 52 H26 Q20 52 20 46 Z" fill="#0B0A0F"/>
-      <rect x="24" y="24" width="16" height="2" rx="1" fill="#6EE7B7"/>
-      <rect x="24" y="32" width="16" height="2" rx="1" fill="#6EE7B7"/>
-      <rect x="24" y="40" width="16" height="2" rx="1" fill="#6EE7B7"/>
+  <a class="logo" href="https://airsilo.pages.dev" aria-label="PixFlux home">
+    <svg viewBox="0 0 1024 1024" width="38" height="38" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="pixflux-icon-bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#C4B5FD"/>
+          <stop offset="0.5" stop-color="#6EE7B7"/>
+          <stop offset="1" stop-color="#FBCFE8"/>
+        </linearGradient>
+      </defs>
+      <rect width="1024" height="1024" rx="256" fill="url(#pixflux-icon-bg)"/>
+      <rect x="312" y="328" width="400" height="368" rx="48" fill="#0B0A0F"/>
+      <path d="M372 616 L488 472 L568 552 L648 456 L648 640 L372 640 Z" fill="url(#pixflux-icon-bg)"/>
+      <circle cx="592" cy="448" r="44" fill="url(#pixflux-icon-bg)"/>
+      <g transform="rotate(20 814 456)">
+        <path d="M744 400 A 140 140 0 0 1 884 512" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+        <path d="M884 512 L932 466 M884 512 L836 466" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <g transform="rotate(20 210 568)">
+        <path d="M280 624 A 140 140 0 0 1 140 512" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+        <path d="M140 512 L92 558 M140 512 L188 558" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
     </svg>
   </a>
-  <div class="hdr-title"><span class="ms">image</span><span>Image Converter</span></div>
-  <button class="icon-btn" id="infoBtn" aria-label="About Image Converter" aria-haspopup="dialog">
+  <div class="hdr-title">
+    <span class="name">PixFlux</span>
+    <span class="by">by AirSilo</span>
+  </div>
+  <button class="icon-btn" id="infoBtn" aria-label="About PixFlux" aria-haspopup="dialog">
     <span class="ms">info</span>
   </button>
 </header>
@@ -568,9 +601,11 @@ footer .back .ms{font-size:17px}
     <span>100% offline</span><span class="dot">·</span>
     <span>No tracking</span>
   </div>
-  <a class="back" href="https://airsilo.pages.dev">
-    <span class="ms">arrow_back</span>Back to AirSilo
-  </a>
+  <div class="back-wrap">
+    <a class="back" href="https://airsilo.pages.dev">
+      <span class="ms">arrow_back</span>Back to AirSilo
+    </a>
+  </div>
 </footer>
 
 <!-- ══ TOASTS ══ -->
@@ -580,10 +615,10 @@ footer .back .ms{font-size:17px}
 <div class="scrim" id="scrim" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
     <div class="modal-head">
-      <h2 id="mTitle">About Image Converter</h2>
+      <h2 id="mTitle">About PixFlux</h2>
       <button class="icon-btn sm" id="mClose" aria-label="Close dialog"><span class="ms">close</span></button>
     </div>
-    <p>Converts images between twelve formats entirely inside your browser. No file ever touches a server — there is no network code in this page at all.</p>
+    <p>PixFlux by AirSilo converts images between twelve formats entirely inside your browser. No file ever touches a server — there is no network code in this page at all.</p>
     <ul>
       <li><b>PNG</b> — lossless, keeps transparency</li>
       <li><b>JPG</b> — small, lossy, no transparency</li>
@@ -772,7 +807,6 @@ function nextFrame(){ return new Promise(r => setTimeout(r, 0)); }
     fmtSel.appendChild(opt);
   });
 
-  // choose the first usable format
   const firstOk = Object.keys(FORMATS).find(function(k){
     return !FORMATS[k].comingSoon && SUPPORT[k] !== false;
   });
@@ -977,7 +1011,7 @@ window.addEventListener('paste', function(e){
 });
 
 /* ══════════════════════════════════════════════════════════
-   ENCODERS — common helpers
+   ENCODERS
    ══════════════════════════════════════════════════════════ */
 
 function canvasToBlob(canvas, mime, quality){
@@ -1010,7 +1044,7 @@ function concatBytes(chunks){
   return out;
 }
 
-/* ── BMP (24-bit, bottom-up, BI_RGB) ──────────────── */
+/* ── BMP ── */
 function encodeBMP(imgData){
   const w = imgData.width, h = imgData.height;
   const rowSize = Math.floor((24 * w + 31) / 32) * 4;
@@ -1024,7 +1058,6 @@ function encodeBMP(imgData){
   dv.setUint32(2,  fileSize, true);
   dv.setUint32(6,  0, true);
   dv.setUint32(10, 54, true);
-
   dv.setUint32(14, 40, true);
   dv.setInt32(18,  w, true);
   dv.setInt32(22,  h, true);
@@ -1053,7 +1086,7 @@ function encodeBMP(imgData){
   return new Blob([buf], { type: 'image/bmp' });
 }
 
-/* ── TIFF (uncompressed baseline RGB, little-endian) ─ */
+/* ── TIFF ── */
 function encodeTIFF(imgData){
   const w = imgData.width, h = imgData.height;
   const TAG_COUNT = 14;
@@ -1077,7 +1110,6 @@ function encodeTIFF(imgData){
   u8[0] = 0x49; u8[1] = 0x49;
   dv.setUint16(2, 42, true);
   dv.setUint32(4, ifdOffset, true);
-
   dv.setUint16(ifdOffset, TAG_COUNT, true);
   let t = ifdOffset + 2;
 
@@ -1113,17 +1145,15 @@ function encodeTIFF(imgData){
   dv.setUint16(bitsOffset, 8, true);
   dv.setUint16(bitsOffset + 2, 8, true);
   dv.setUint16(bitsOffset + 4, 8, true);
-
   dv.setUint16(sampleOffset, 1, true);
   dv.setUint16(sampleOffset + 2, 1, true);
   dv.setUint16(sampleOffset + 4, 1, true);
-
   dv.setUint32(xresOffset, 72, true);
   dv.setUint32(xresOffset + 4, 1, true);
   dv.setUint32(yresOffset, 72, true);
   dv.setUint32(yresOffset + 4, 1, true);
 
-  const soft = 'AirSilo';
+  const soft = 'PixFlux';
   for(let i = 0; i < soft.length; i++) u8[softOffset + i] = soft.charCodeAt(i);
   u8[softOffset + soft.length] = 0;
   u8[softOffset + soft.length + 1] = 0;
@@ -1135,32 +1165,31 @@ function encodeTIFF(imgData){
     u8[p++] = src[i + 1];
     u8[p++] = src[i + 2];
   }
-
   return new Blob([buf], { type: 'image/tiff' });
 }
 
-/* ── TGA (uncompressed 32-bit BGRA, top-down) ─────── */
+/* ── TGA ── */
 function encodeTGA(imgData){
   const w = imgData.width, h = imgData.height;
   const header = new Uint8Array(18);
-  header[2]  = 2;                                        // uncompressed true-colour
+  header[2]  = 2;
   header[12] = w & 0xFF; header[13] = (w >> 8) & 0xFF;
   header[14] = h & 0xFF; header[15] = (h >> 8) & 0xFF;
-  header[16] = 32;                                       // 32 bits per pixel
-  header[17] = 0x28;                                     // 8 alpha bits, top-left origin
+  header[16] = 32;
+  header[17] = 0x28;
 
   const pixels = new Uint8Array(w * h * 4);
   const src = imgData.data;
   for(let i = 0, p = 0; i < src.length; i += 4, p += 4){
-    pixels[p]     = src[i + 2]; // B
-    pixels[p + 1] = src[i + 1]; // G
-    pixels[p + 2] = src[i];     // R
-    pixels[p + 3] = src[i + 3]; // A
+    pixels[p]     = src[i + 2];
+    pixels[p + 1] = src[i + 1];
+    pixels[p + 2] = src[i];
+    pixels[p + 3] = src[i + 3];
   }
   return new Blob([header, pixels], { type: 'image/x-tga' });
 }
 
-/* ── PPM (P6 binary, RGB) ─────────────────────────── */
+/* ── PPM ── */
 function encodePPM(imgData){
   const w = imgData.width, h = imgData.height;
   const header = 'P6\n' + w + ' ' + h + '\n255\n';
@@ -1178,7 +1207,7 @@ function encodePPM(imgData){
   return new Blob([out], { type: 'image/x-portable-pixmap' });
 }
 
-/* ── XBM (monochrome, text-based C source) ────────── */
+/* ── XBM ── */
 function encodeXBM(imgData, sourceName){
   const w = imgData.width, h = imgData.height;
   const bytesPerRow = Math.ceil(w / 8);
@@ -1218,7 +1247,7 @@ function encodeXBM(imgData, sourceName){
   return new Blob([out], { type: 'image/x-xbitmap' });
 }
 
-/* ── GIF (single-frame, 256-colour palette + LZW) ─── */
+/* ── GIF ── */
 const CRC_TABLE = (function(){
   const t = new Uint32Array(256);
   for(let n = 0; n < 256; n++){
@@ -1266,7 +1295,6 @@ function lzwEncode(pixels, minCodeSize){
   }
 
   writeBits(clearCode, codeSize);
-
   let prefix = pixels[0];
   for(let i = 1; i < pixels.length; i++){
     const k = pixels[i];
@@ -1275,7 +1303,6 @@ function lzwEncode(pixels, minCodeSize){
     if(found >= 0){ prefix = found; continue; }
 
     writeBits(prefix, codeSize);
-
     if(nextCode < 4096){
       table[key] = nextCode++;
       if(nextCode > (1 << codeSize) && codeSize < 12) codeSize++;
@@ -1290,7 +1317,6 @@ function lzwEncode(pixels, minCodeSize){
   writeBits(prefix, codeSize);
   writeBits(eoiCode, codeSize);
   if(bitCount > 0) putByte(bitBuf & 0xFF);
-
   return outBuf.subarray(0, outLen);
 }
 
@@ -1352,7 +1378,6 @@ function encodeGIF(canvas, w, h){
 
   const parts = [];
   parts.push(new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x39, 0x61]));
-
   const lsd = new Uint8Array(7);
   lsd[0] = w & 0xFF; lsd[1] = (w >> 8) & 0xFF;
   lsd[2] = h & 0xFF; lsd[3] = (h >> 8) & 0xFF;
@@ -1365,13 +1390,11 @@ function encodeGIF(canvas, w, h){
   if(hasAlpha){
     parts.push(new Uint8Array([0x21, 0xF9, 0x04, 0x01, 0x00, 0x00, TI, 0x00]));
   }
-
   const idesc = new Uint8Array(10);
   idesc[0] = 0x2C;
   idesc[5] = w & 0xFF; idesc[6] = (w >> 8) & 0xFF;
   idesc[7] = h & 0xFF; idesc[8] = (h >> 8) & 0xFF;
   parts.push(idesc);
-
   parts.push(new Uint8Array([8]));
 
   const lzw = lzwEncode(pixels, 8);
@@ -1384,11 +1407,10 @@ function encodeGIF(canvas, w, h){
   }
   parts.push(new Uint8Array([0x00]));
   parts.push(new Uint8Array([0x3B]));
-
   return new Blob([concatBytes(parts)], { type: 'image/gif' });
 }
 
-/* ── ICO (PNG payloads, multi-size) ───────────────── */
+/* ── ICO ── */
 async function encodeICO(img, w, h){
   const limit = Math.max(w, h);
   let sizes = [16, 32, 48, 64, 128, 256].filter(function(s){ return s <= limit; });
@@ -1430,11 +1452,10 @@ async function encodeICO(img, w, h){
     dv.setUint32(e + 12, offset, true);
     offset += pngs[i].length;
   }
-
   return new Blob([header].concat(pngs), { type: 'image/x-icon' });
 }
 
-/* ── SVG (raster embedded) ────────────────────────── */
+/* ── SVG ── */
 async function encodeSVG(img, w, h){
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
@@ -1458,7 +1479,7 @@ async function encodeSVG(img, w, h){
   return new Blob([svg], { type: 'image/svg+xml' });
 }
 
-/* ── QOI (Quite OK Image) ─────────────────────────── */
+/* ── QOI ── */
 function encodeQOI(imgData){
   const w = imgData.width, h = imgData.height;
   const data = imgData.data;
@@ -1468,11 +1489,7 @@ function encodeQOI(imgData){
   const out = new Uint8Array(maxSize);
   let p = 0;
 
-  // header: "qoif" + width + height + channels + colorspace
-  out[p++] = 0x71; // q
-  out[p++] = 0x6F; // o
-  out[p++] = 0x69; // i
-  out[p++] = 0x66; // f
+  out[p++] = 0x71; out[p++] = 0x6F; out[p++] = 0x69; out[p++] = 0x66;
   out[p++] = (w >>> 24) & 0xFF;
   out[p++] = (w >>> 16) & 0xFF;
   out[p++] = (w >>> 8) & 0xFF;
@@ -1481,8 +1498,8 @@ function encodeQOI(imgData){
   out[p++] = (h >>> 16) & 0xFF;
   out[p++] = (h >>> 8) & 0xFF;
   out[p++] = h & 0xFF;
-  out[p++] = 4;   // RGBA
-  out[p++] = 0;   // sRGB
+  out[p++] = 4;
+  out[p++] = 0;
 
   const index = new Uint8Array(64 * 4);
   let prevR = 0, prevG = 0, prevB = 0, prevA = 255;
@@ -1494,21 +1511,15 @@ function encodeQOI(imgData){
 
     if(r === prevR && g === prevG && b === prevB && a === prevA){
       run++;
-      if(run === 62){
-        out[p++] = 0xC0 | (run - 1);
-        run = 0;
-      }
+      if(run === 62){ out[p++] = 0xC0 | (run - 1); run = 0; }
       continue;
     }
-    if(run > 0){
-      out[p++] = 0xC0 | (run - 1);
-      run = 0;
-    }
+    if(run > 0){ out[p++] = 0xC0 | (run - 1); run = 0; }
 
     const hash = (r * 3 + g * 5 + b * 7 + a * 11) % 64;
     const ho = hash * 4;
     if(index[ho] === r && index[ho + 1] === g && index[ho + 2] === b && index[ho + 3] === a){
-      out[p++] = hash;                       // QOI_OP_INDEX
+      out[p++] = hash;
     } else {
       index[ho]     = r;
       index[ho + 1] = g;
@@ -1529,25 +1540,17 @@ function encodeQOI(imgData){
             out[p++] = ((drdg + 8) << 4) | (dbdg + 8);
           } else {
             out[p++] = 0xFE;
-            out[p++] = r;
-            out[p++] = g;
-            out[p++] = b;
+            out[p++] = r; out[p++] = g; out[p++] = b;
           }
         }
       } else {
         out[p++] = 0xFF;
-        out[p++] = r;
-        out[p++] = g;
-        out[p++] = b;
-        out[p++] = a;
+        out[p++] = r; out[p++] = g; out[p++] = b; out[p++] = a;
       }
     }
     prevR = r; prevG = g; prevB = b; prevA = a;
   }
-  if(run > 0){
-    out[p++] = 0xC0 | (run - 1);
-  }
-  // end marker
+  if(run > 0){ out[p++] = 0xC0 | (run - 1); }
   out[p++] = 0; out[p++] = 0; out[p++] = 0;
   out[p++] = 0; out[p++] = 0; out[p++] = 0;
   out[p++] = 0; out[p++] = 1;
@@ -1555,7 +1558,7 @@ function encodeQOI(imgData){
   return new Blob([out.subarray(0, p)], { type: 'image/qoi' });
 }
 
-/* ── ZIP (store only) ─────────────────────────────── */
+/* ── ZIP ── */
 async function makeZip(entries){
   const enc = new TextEncoder();
   const chunks = [];
@@ -1847,7 +1850,7 @@ function renderResults(){
   });
 }
 
-/* ── download all as zip ──────────────────────────── */
+/* ── download all as zip ── */
 zipBtn.addEventListener('click', async function(){
   const good = state.results.filter(function(r){ return !r.error; });
   if(!good.length) return;
@@ -1871,7 +1874,7 @@ zipBtn.addEventListener('click', async function(){
       return { name: name, blob: r.blob };
     });
     const zip = await makeZip(entries);
-    triggerDownload(zip, 'airsilo-images.zip');
+    triggerDownload(zip, 'pixflux-images.zip');
     toast('ZIP created — ' + entries.length + ' files');
   }catch(err){
     toast('Could not build ZIP', true);
