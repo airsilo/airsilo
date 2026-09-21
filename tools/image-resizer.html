@@ -6,7 +6,12 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0B0A0F">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;font-src https://fonts.gstatic.com;img-src 'self' data: blob:;media-src blob:;connect-src 'none';worker-src blob:;form-action 'none';base-uri 'none'">
-<title>Image Resizer &amp; Cropper — AirSilo</title>
+
+<title>CropFlow — by AirSilo</title>
+
+<!-- Favicon: CropFlow mark, embedded as data URI -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='cf' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23C4B5FD'/%3E%3Cstop offset='0.5' stop-color='%236EE7B7'/%3E%3Cstop offset='1' stop-color='%23FBCFE8'/%3E%3C/linearGradient%3E%3ClinearGradient id='cfInk' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230B0A0F'/%3E%3Cstop offset='1' stop-color='%231A1530'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23cf)'/%3E%3Cpath d='M22 42 C 28 42, 28 32, 34 32 S 42 38, 42 32' fill='none' stroke='%236EE7B7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='0.35'/%3E%3Cpath d='M22 38 C 28 38, 28 26, 34 26 S 42 32, 42 26' fill='none' stroke='%236EE7B7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M20 24 V20 H24' fill='none' stroke='url(%23cfInk)' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M44 24 V20 H40' fill='none' stroke='url(%23cfInk)' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M20 40 V44 H24' fill='none' stroke='url(%23cfInk)' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M44 40 V44 H40' fill='none' stroke='url(%23cfInk)' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cg transform='translate(32 32) rotate(-45) scale(0.45) translate(-32 -29)'%3E%3Cpath d='M32 12 C 34.5 12, 36 13.8, 36 16 V 20 H 28 V 16 C 28 13.8, 29.5 12, 32 12 Z' fill='url(%23cfInk)'/%3E%3Crect x='27' y='20' width='10' height='2.4' rx='1.2' fill='%236EE7B7'/%3E%3Crect x='29' y='22.4' width='6' height='18' rx='1.6' fill='url(%23cfInk)'/%3E%3Crect x='30.2' y='23.6' width='1.2' height='16' rx='0.6' fill='%236EE7B7' opacity='0.55'/%3E%3Cpath d='M30.6 40.4 L 32 46 L 33.4 40.4 Z' fill='%236EE7B7'/%3E%3C/g%3E%3C/svg%3E">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
@@ -79,11 +84,34 @@ button{font-family:inherit}
   border-bottom:1px solid var(--outline-variant);
 }
 .topbar-inner{display:flex;align-items:center;gap:12px;min-height:58px;padding-top:8px;padding-bottom:8px}
-.brand{display:inline-flex;flex-shrink:0;border-radius:var(--r-md);transition:transform var(--t-short) var(--ease-emph)}
-.brand:hover{transform:rotate(-4deg) scale(1.06)}
-.tool-title{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.9375rem;letter-spacing:-.01em;flex:1;min-width:0}
-.tool-title .ms{font-size:20px;color:var(--primary)}
-.tool-title span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* brand cluster: logo + CropFlow + by AirSilo */
+.brand{
+  display:inline-flex;align-items:center;gap:10px;
+  text-decoration:none;color:inherit;
+  flex:1;min-width:0;
+  border-radius:var(--r-md);
+  transition:transform var(--t-short) var(--ease-emph);
+}
+.brand:hover .logo-mark{transform:rotate(-4deg) scale(1.06)}
+.logo-mark{
+  display:inline-flex;flex-shrink:0;
+  border-radius:var(--r-md);
+  transition:transform var(--t-short) var(--ease-emph);
+}
+.brand-text{display:flex;flex-direction:column;gap:0;min-width:0;line-height:1.15}
+.brand-name{
+  font-weight:900;font-size:1.0625rem;letter-spacing:-.025em;
+  background:linear-gradient(120deg,var(--primary) 0%,var(--secondary) 55%,var(--tertiary) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.brand-by{
+  font-size:.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--on-surface-variant);opacity:.85;
+}
+.brand-by b{color:var(--secondary);font-weight:800;letter-spacing:.05em}
+
 .icon-btn{
   display:inline-flex;align-items:center;justify-content:center;
   width:40px;height:40px;flex-shrink:0;
@@ -360,6 +388,7 @@ input[type=color]{width:44px;height:32px;padding:2px;border:1px solid var(--outl
   .card{padding:18px}
   .hnd{width:18px;height:18px}
   .preview-box{min-height:150px;padding:10px}
+  .brand-by{display:none}
 }
 </style>
 </head>
@@ -370,25 +399,53 @@ input[type=color]{width:44px;height:32px;padding:2px;border:1px solid var(--outl
 
 <header class="topbar">
   <div class="wrap topbar-inner">
-    <a class="brand" href="https://airsilo.pages.dev" aria-label="AirSilo home">
-      <svg viewBox="0 0 64 64" width="34" height="34" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
-        <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#C4B5FD"/>
-          <stop offset="0.5" stop-color="#6EE7B7"/>
-          <stop offset="1" stop-color="#FBCFE8"/>
-        </linearGradient></defs>
-        <rect width="64" height="64" rx="16" fill="url(#bg)"/>
-        <path d="M20 20 Q20 14 26 14 H38 Q44 14 44 20 V46 Q44 52 38 52 H26 Q20 52 20 46 Z" fill="#0B0A0F"/>
-        <rect x="24" y="24" width="16" height="2" rx="1" fill="#6EE7B7"/>
-        <rect x="24" y="32" width="16" height="2" rx="1" fill="#6EE7B7"/>
-        <rect x="24" y="40" width="16" height="2" rx="1" fill="#6EE7B7"/>
-      </svg>
+
+    <!-- brand cluster: logo + CropFlow + by AirSilo -->
+    <a class="brand" href="https://airsilo.pages.dev" aria-label="CropFlow by AirSilo — go to AirSilo home">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="cf" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#C4B5FD"/>
+              <stop offset="0.5" stop-color="#6EE7B7"/>
+              <stop offset="1" stop-color="#FBCFE8"/>
+            </linearGradient>
+            <linearGradient id="cfInk" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#0B0A0F"/>
+              <stop offset="1" stop-color="#1A1530"/>
+            </linearGradient>
+          </defs>
+          <rect width="64" height="64" rx="16" fill="url(#cf)"/>
+          <path d="M22 42 C 28 42, 28 32, 34 32 S 42 38, 42 32"
+                fill="none" stroke="#6EE7B7" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+          <path d="M22 38 C 28 38, 28 26, 34 26 S 42 32, 42 26"
+                fill="none" stroke="#6EE7B7" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M20 24 V20 H24" fill="none" stroke="url(#cfInk)" stroke-width="2.4"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M44 24 V20 H40" fill="none" stroke="url(#cfInk)" stroke-width="2.4"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M20 40 V44 H24" fill="none" stroke="url(#cfInk)" stroke-width="2.4"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M44 40 V44 H40" fill="none" stroke="url(#cfInk)" stroke-width="2.4"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <g transform="translate(32 32) rotate(-45) scale(0.45) translate(-32 -29)">
+            <path d="M32 12 C 34.5 12, 36 13.8, 36 16 V 20 H 28 V 16 C 28 13.8, 29.5 12, 32 12 Z" fill="url(#cfInk)"/>
+            <rect x="27" y="20" width="10" height="2.4" rx="1.2" fill="#6EE7B7"/>
+            <rect x="29" y="22.4" width="6" height="18" rx="1.6" fill="url(#cfInk)"/>
+            <rect x="30.2" y="23.6" width="1.2" height="16" rx="0.6" fill="#6EE7B7" opacity="0.55"/>
+            <path d="M30.6 40.4 L 32 46 L 33.4 40.4 Z" fill="#6EE7B7"/>
+          </g>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-name">CropFlow</span>
+        <span class="brand-by">by <b>AirSilo</b></span>
+      </span>
     </a>
-    <div class="tool-title">
-      <span class="ms" aria-hidden="true">photo_size_select_large</span>
-      <span>Image Resizer &amp; Cropper</span>
-    </div>
-    <button class="icon-btn" id="infoBtn" aria-label="About this tool" aria-haspopup="dialog">
+
+    <button class="icon-btn" id="infoBtn" aria-label="About CropFlow" aria-haspopup="dialog">
       <span class="ms" aria-hidden="true">info</span>
     </button>
   </div>
@@ -614,17 +671,17 @@ input[type=color]{width:44px;height:32px;padding:2px;border:1px solid var(--outl
 <div class="scrim" id="scrim" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
   <div class="modal">
     <div class="modal-head">
-      <h2 id="modalTitle">About this tool</h2>
+      <h2 id="modalTitle">About CropFlow</h2>
       <button class="icon-btn" id="closeModal" type="button" aria-label="Close dialog">
         <span class="ms" aria-hidden="true">close</span>
       </button>
     </div>
-    <p>An offline image resizer, cropper and compressor that never touches a server. Your image is decoded, edited and re-encoded entirely inside this browser tab.</p>
+    <p>CropFlow is an offline image resizer, cropper and compressor that never touches a server. Your image is decoded, edited and re-encoded entirely inside this browser tab.</p>
     <ul>
       <li><b>Resize</b> — set an exact pixel width and height, lock the aspect ratio, or pick a quick preset.</li>
       <li><b>Crop</b> — drag the box, pull any of the eight handles, or lock a ratio like 1:1 or 16:9.</li>
       <li><b>Shapes</b> — rectangular, rounded corners, or a perfect circle cut-out.</li>
-      <li><b>Compress</b> — switch on “Limit file size” and the tool binary-searches JPEG/WebP quality (and image scale, for PNG) until it fits your KB budget.</li>
+      <li><b>Compress</b> — switch on “Limit file size” and CropFlow binary-searches JPEG/WebP quality (and image scale, for PNG) until it fits your KB budget.</li>
       <li><b>Portals</b> — one-tap presets for passport photos, signatures and thumbnails.</li>
     </ul>
     <p style="margin-bottom:0"><b style="color:var(--secondary)">Privacy:</b> no uploads, no analytics, no network calls. Close the tab and everything is gone.</p>
@@ -1222,30 +1279,25 @@ input[type=color]{width:44px;height:32px;padding:2px;border:1px solid var(--outl
     var p = PRESETS[btn.getAttribute('data-preset')];
     if (!p) return;
 
-    /* crop ratio */
     setAspect(ASPECTS[p.asp], p.asp);
     state.aspectKey = 'custom';
     updateAspectChips();
 
-    /* explicit size */
     state.outW = p.w;
     state.outH = p.h;
     state.sizeLocked = true;
     wIn.value = p.w;
     hIn.value = p.h;
 
-    /* shape */
     state.shape = p.shape;
     setSeg(shapeSeg, p.shape);
     radiusWrap.hidden = p.shape !== 'rounded';
 
-    /* format */
     state.format = p.fmt;
     setSeg(fmtSeg, p.fmt);
     qualityWrap.hidden = p.fmt === 'image/png';
     bgColor.parentElement.style.display = p.fmt === 'image/jpeg' ? '' : 'none';
 
-    /* target */
     if (p.target > 0) {
       targetOn.checked = true;
       targetWrap.hidden = false;
@@ -1507,7 +1559,7 @@ input[type=color]{width:44px;height:32px;padding:2px;border:1px solid var(--outl
     var url = URL.createObjectURL(state.blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = state.fileName + '-airsilo.' + extFor(state.format);
+    a.download = state.fileName + '-cropflow.' + extFor(state.format);
     document.body.appendChild(a);
     a.click();
     a.remove();
