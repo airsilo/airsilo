@@ -10,7 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
-<title>Audio Converter · AirSilo</title>
+<title>WaveFlux · by AirSilo</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23C4B5FD'/%3E%3Cstop offset='0.5' stop-color='%236EE7B7'/%3E%3Cstop offset='1' stop-color='%23FBCFE8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Crect x='8' y='8' width='48' height='48' rx='12' fill='%230B0A0F'/%3E%3Crect x='14' y='24' width='3.5' height='16' rx='1.75' fill='%23F472B6'/%3E%3Crect x='20.5' y='18' width='3.5' height='28' rx='1.75' fill='%23A78BFA'/%3E%3Crect x='27' y='12' width='3.5' height='40' rx='1.75' fill='%23FBBF24'/%3E%3Crect x='34' y='16' width='3.5' height='32' rx='1.75' fill='%236EE7B7'/%3E%3Crect x='40.5' y='22' width='3.5' height='20' rx='1.75' fill='%2322D3EE'/%3E%3Crect x='47' y='27' width='3.5' height='10' rx='1.75' fill='%23FBCFE8'/%3E%3C/svg%3E">
 <style>
 :root{
   --primary:#C4B5FD; --on-primary:#2E1065; --primary-container:#5B21B6;
@@ -49,10 +50,31 @@ button{font-family:inherit}
 .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 .header{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);background:rgba(11,10,15,.72);border-bottom:1px solid var(--outline-variant)}
 .header-inner{max-width:1120px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.02em;font-size:1.0625rem}
+.brand{
+  display:flex;align-items:center;gap:9px;
+  text-decoration:none;
+}
 .brand svg{display:block;flex-shrink:0}
-.brand span{display:none}
-@media (min-width:420px){.brand span{display:inline}}
+.brand-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1.1;
+}
+.brand-name{
+  color:var(--on-surface);
+  font-weight:900;
+  font-size:1.0625rem;
+  letter-spacing:-.02em;
+  white-space:nowrap;
+}
+.brand-by{
+  color:var(--muted);
+  font-size:.6875rem;
+  font-weight:500;
+  letter-spacing:.01em;
+  white-space:nowrap;
+  margin-top:2px;
+}
 .header-divider{width:1px;height:22px;background:var(--outline-variant);flex-shrink:0}
 .header-tool{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:600;color:var(--on-surface-variant);min-width:0}
 .header-tool .ms{font-size:20px;color:var(--primary)}
@@ -174,22 +196,29 @@ button{font-family:inherit}
 
 <header class="header">
   <div class="header-inner">
-    <a href="https://airsilo.pages.dev" class="brand" aria-label="AirSilo home">
-      <svg viewBox="0 0 64 64" width="34" height="34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="0.5" stop-color="#6EE7B7"/><stop offset="1" stop-color="#FBCFE8"/></linearGradient></defs>
-        <rect width="64" height="64" rx="16" fill="url(#bg)"/>
-        <path d="M20 20 Q20 14 26 14 H38 Q44 14 44 20 V46 Q44 52 38 52 H26 Q20 52 20 46 Z" fill="#0B0A0F"/>
-        <rect x="24" y="24" width="16" height="2" rx="1" fill="#6EE7B7"/>
-        <rect x="24" y="32" width="16" height="2" rx="1" fill="#6EE7B7"/>
-        <rect x="24" y="40" width="16" height="2" rx="1" fill="#6EE7B7"/>
-      </svg>
-      <span>AirSilo</span>
-    </a>
-    <div class="header-divider" aria-hidden="true"></div>
-    <div class="header-tool">
-      <span class="ms ms-fill" aria-hidden="true">music_note</span>
-      <span class="name">Audio Converter</span>
-    </div>
+    <a href="https://airsilo.pages.dev" class="brand" aria-label="WaveFlux by AirSilo">
+  <svg viewBox="0 0 64 64" width="34" height="34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#C4B5FD"/>
+        <stop offset="0.5" stop-color="#6EE7B7"/>
+        <stop offset="1" stop-color="#FBCFE8"/>
+      </linearGradient>
+    </defs>
+    <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+    <rect x="8" y="8" width="48" height="48" rx="12" fill="#0B0A0F"/>
+    <rect x="14" y="24" width="3.5" height="16" rx="1.75" fill="#F472B6"/>
+    <rect x="20.5" y="18" width="3.5" height="28" rx="1.75" fill="#A78BFA"/>
+    <rect x="27" y="12" width="3.5" height="40" rx="1.75" fill="#FBBF24"/>
+    <rect x="34" y="16" width="3.5" height="32" rx="1.75" fill="#6EE7B7"/>
+    <rect x="40.5" y="22" width="3.5" height="20" rx="1.75" fill="#22D3EE"/>
+    <rect x="47" y="27" width="3.5" height="10" rx="1.75" fill="#FBCFE8"/>
+  </svg>
+  <span class="brand-text">
+    <span class="brand-name">WaveFlux</span>
+    <span class="brand-by">by AirSilo</span>
+  </span>
+</a>
     <div class="header-spacer"></div>
     <button class="icon-btn" id="infoBtn" aria-label="About this tool">
       <span class="ms" aria-hidden="true">info</span>
@@ -391,15 +420,15 @@ button{font-family:inherit}
       </button>
     </div>
     <div class="modal-body">
-      <p>A fully offline, single-file audio converter. Everything runs in your browser — no uploads, no servers, no network calls.</p>
-      <ul>
-        <li><strong>Inputs:</strong> MP3, WAV, OGG, FLAC, M4A, AAC, OPUS, AIFF, WMA, APE, WV and more — whatever your browser can decode</li>
-        <li><strong>Outputs:</strong> MP3, M4A, AAC, Opus, WebM, WAV, AIFF</li>
-        <li><strong>Engines:</strong> WebCodecs (AAC, Opus, MP3) · lamejs fallback (MP3) · pure JS containers for M4A and WebM · native PCM writers (WAV, AIFF)</li>
-        <li><strong>Privacy:</strong> Your files never leave your device</li>
-      </ul>
-      <p style="font-size:.8125rem;opacity:.85">MIT &amp; LGPL-licensed components</p>
-    </div>
+  <p><strong>WaveFlux</strong> is a fully offline, single-file audio converter built by AirSilo. Everything runs in your browser — no uploads, no servers, no network calls.</p>
+  <ul>
+    <li><strong>Inputs:</strong> MP3, WAV, OGG, FLAC, M4A, AAC, OPUS, AIFF, WMA, APE, WV and more — whatever your browser can decode</li>
+    <li><strong>Outputs:</strong> MP3, M4A, AAC, Opus, WebM, WAV, AIFF</li>
+    <li><strong>Engines:</strong> WebCodecs (AAC, Opus, MP3) · lamejs fallback (MP3) · pure JS containers for M4A and WebM · native PCM writers (WAV, AIFF)</li>
+    <li><strong>Privacy:</strong> Your files never leave your device</li>
+  </ul>
+  <p style="font-size:.8125rem;opacity:.85">WaveFlux by AirSilo · MIT &amp; LGPL-licensed components</p>
+</div>
   </div>
 </div>
 
