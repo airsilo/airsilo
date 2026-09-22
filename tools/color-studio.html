@@ -404,6 +404,13 @@ input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(196,181,253,.25)}
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 .img-tools{display:flex;flex-wrap:wrap;gap:10px}
+.img-hint{
+  display:flex;align-items:center;gap:8px;
+  font-size:.75rem;color:var(--on-surface-variant);
+  padding:8px 14px;border-radius:var(--r-full);
+  background:rgba(196,181,253,.08);border:1px solid rgba(196,181,253,.24);
+}
+.img-hint .ms{font-size:16px;color:var(--primary)}
 
 /* ── Saved palettes ────────────────────────────────── */
 .saved-list{display:flex;flex-direction:column;gap:12px}
@@ -684,8 +691,12 @@ input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(196,181,253,.25)}
     <input type="file" id="fileInput" accept="image/*" hidden>
 
     <div class="img-stage" id="imgStage" hidden>
+      <div class="img-hint" role="note">
+        <span class="ms" aria-hidden="true">touch_app</span>
+        Click any pixel to copy its color · hover for a magnified preview
+      </div>
       <div class="canvas-wrap" id="canvasWrap">
-        <canvas id="canvas" aria-label="Image preview. Click to pick a color."></canvas>
+        <canvas id="canvas" aria-label="Image preview. Click to pick and copy a color."></canvas>
         <div class="magnifier" id="magnifier" hidden>
           <canvas id="magCanvas" width="132" height="132"></canvas>
           <span class="mag-hex" id="magHex">#000000</span>
@@ -739,11 +750,11 @@ input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(196,181,253,.25)}
       <ul>
         <li><strong>Native picker</strong> — open your operating system's color dialog.</li>
         <li><strong>Eyedropper</strong> — sample any pixel on your screen (Chromium browsers).</li>
-        <li><strong>Image picker</strong> — drop, browse or paste an image, then hover for a live magnifier and click any pixel.</li>
+        <li><strong>Image picker</strong> — drop, browse or paste an image, then hover for a live magnifier and click any pixel. The picked color is copied to your clipboard instantly.</li>
         <li><strong>Dominant colors</strong> — automatically extract the most-used colors from an image.</li>
         <li><strong>Palette generator</strong> — analogous, complementary, split, triadic, tetradic, mono, shades and tints.</li>
         <li><strong>Contrast check</strong> — live WCAG ratio against white and black.</li>
-        <li><strong>Export</strong> — copy CSS variables, JSON, or download an SVG palette sheet.</li>
+        <li><strong>Export</strong> — copy CSS variables, JSON, or download an SVG palette palette sheet.</li>
       </ul>
       <h3>Privacy</h3>
       <p>Everything runs in this page. Images are decoded locally with the FileReader API and drawn to a canvas — nothing is uploaded, stored remotely, or tracked. Saved palettes live only in this browser's local storage.</p>
@@ -1195,8 +1206,9 @@ input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(196,181,253,.25)}
       const ed = new window.EyeDropper();
       const res = await ed.open();
       if(res && res.sRGBHex){
-        setFromHex(res.sRGBHex, true);
-        toast('Picked ' + res.sRGBHex.toUpperCase());
+        const hx = res.sRGBHex.toUpperCase();
+        setFromHex(hx, true);
+        copy(hx, 'Picked & copied ' + hx);
       }
     } catch(err){ /* user cancelled */ }
   });
@@ -1402,6 +1414,8 @@ input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(196,181,253,.25)}
   canvas.addEventListener('pointerleave', () => { magnifier.hidden = true; });
   canvas.addEventListener('pointercancel', () => { magnifier.hidden = true; });
 
+  // FIX: pointerdown on the canvas now copies the picked hex to the clipboard
+  // in addition to updating the picker state, matching user expectation.
   canvas.addEventListener('pointerdown', e => {
     const p = pointerToPixel(e.clientX, e.clientY);
     if(!p) return;
@@ -1409,7 +1423,17 @@ input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(196,181,253,.25)}
     if(!data){ toast('Pixels unavailable for this image'); return; }
     const hx = rgbToHex(data[0], data[1], data[2]);
     setFromHex(hx, true);
-    toast('Picked ' + hx);
+    copy(hx, 'Picked & copied ' + hx);
+  });
+
+  // FIX: clicking the magnified hex label also copies — extra affordance
+  // for touch users or anyone who expects the readout itself to be copyable.
+  magHex.style.pointerEvents = 'auto';
+  magHex.style.cursor = 'pointer';
+  magHex.addEventListener('click', e => {
+    e.stopPropagation();
+    const hx = magHex.textContent.trim();
+    if(/^#[0-9a-fA-F]{6}$/.test(hx)) copy(hx);
   });
 
   /* ─────────── dominant colors ─────────── */
