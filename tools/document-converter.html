@@ -289,13 +289,18 @@ select:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgb
 }
 
 @media (max-width:520px){
-  .pf-beta-badge{margin-left:6px; padding:2px 6px; font-size:.55rem}
   .pf-warning{font-size:.75rem; padding:10px 12px}
 }
 
 @media (max-width:520px){
-  .app-header .brand-text{display:none}
-  .app-header .title-block{border-left:none; padding-left:0; margin-left:0}
+  .app-header{padding:10px 14px; gap:8px}
+  .app-header .brand{gap:8px}
+  .app-header .brand svg{width:30px; height:30px}
+  .app-header .brand-text{display:flex; gap:0; line-height:1.05; overflow:hidden; min-width:0}
+  .app-header .brand-text .name{font-size:.875rem; white-space:nowrap}
+  .app-header .brand-text .sub{font-size:.6rem; letter-spacing:.03em; white-space:nowrap}
+  .pf-beta-badge{margin-left:6px; padding:1px 6px; font-size:.5rem; letter-spacing:.06em}
+  .pf-beta-badge .ms{display:none}
   .actions{width:100%}
   .actions .btn{flex:1}
   .controls{flex-direction:column; align-items:stretch}
