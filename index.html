@@ -413,14 +413,12 @@ p { margin: 0; }
 .modal-icon .ms { font-size: 30px; }
 .float-card .fc-icon .ms { font-size: 22px; }
 
-/* When a custom logo is present, drop the tinted background */
 .tool-icon.has-custom-logo,
 .modal-icon.has-custom-logo,
 .float-card .fc-icon.has-custom-logo {
   background: transparent;
 }
 
-/* Custom logo wrapper — always fills its container */
 .custom-logo-wrap {
   display: block;
   width: 100%;
@@ -591,6 +589,7 @@ h2.section-title {
 .badge-soft { background: rgba(139, 130, 160, 0.18); color: var(--on-surface-variant); }
 .badge-featured { background: color-mix(in srgb, var(--card-accent, var(--primary)) 20%, transparent); color: var(--card-accent, var(--primary)); }
 .badge-soon { background: rgba(251, 191, 36, 0.16); color: #FBBF24; }
+.badge-external { background: rgba(34, 211, 238, 0.16); color: #22D3EE; }
 
 .tool-name { font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.015em; margin-bottom: 4px; }
 .tool-card.featured .tool-name { font-size: 1.5rem; }
@@ -830,7 +829,7 @@ h2.section-title {
   backdrop-filter: blur(12px);
   display: grid; place-items: center;
   color: var(--on-surface);
-  transition: background-color var(--t-short) var(--ease-std), transform var(--t-short) var(--ease-emph);
+  transition: background-color var(--t-short) var(--ease-std), transform var(--t-short) var(--t-emph);
 }
 .modal-close:hover { background: var(--error); color: var(--on-error); transform: rotate(90deg); }
 
@@ -1330,7 +1329,7 @@ h2.section-title {
 
 <script>
 /* ============================================================
-   AirSilo v3 — app (clean renderIcon, JS fallback)
+   AirSilo v3 — app (external tools supported, clean renderIcon)
    ============================================================ */
 (() => {
   'use strict';
@@ -1338,7 +1337,6 @@ h2.section-title {
   const $$ = (s, r=document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  /* ---- Material Symbol fallback per tool ---- */
   const ICON_MAP = {
     'pixflux': 'image',
     'cropflow': 'photo_size_select_large',
@@ -1351,7 +1349,6 @@ h2.section-title {
     'pdfflow': 'picture_as_pdf',
   };
 
-  /* ---- Per-tool accent colors ---- */
   const ACCENTS = {
     'pixflux': '#A78BFA',
     'cropflow': '#6EE7B7',
@@ -1367,12 +1364,10 @@ h2.section-title {
   const fallbackIcon = (toolId) =>
     `<span class="ms ms-fill">${ICON_MAP[toolId] || 'apps'}</span>`;
 
-  /* ---- Clean, robust icon renderer ---- */
   const renderIcon = (tool) => {
     const raw = tool.logo;
     const logo = typeof raw === 'string' ? raw.trim() : '';
 
-    // Case A: raw SVG markup
     if (logo.startsWith('<svg') || logo.startsWith('<?xml')) {
       let svg = logo
         .replace(/\\n/g, ' ')
@@ -1395,17 +1390,14 @@ h2.section-title {
       return `<span class="custom-logo-wrap">${svg}</span>`;
     }
 
-    // Case B: URL (svg, png, webp, data URL)
     if (/^(https?:\/\/|data:image\/)/i.test(logo)) {
       const fb = esc(ICON_MAP[tool.id] || 'apps');
       return `<span class="custom-logo-wrap" data-fallback="${fb}"><img src="${esc(logo)}" alt="" data-logo-img /></span>`;
     }
 
-    // Case C: fallback
     return fallbackIcon(tool.id);
   };
 
-  /* ---- Attach error fallback for logo images ---- */
   const attachLogoFallbacks = (root) => {
     (root || document).querySelectorAll('.custom-logo-wrap img[data-logo-img]').forEach(img => {
       if (img.dataset.fallbackBound) return;
@@ -1418,7 +1410,6 @@ h2.section-title {
     });
   };
 
-  /* ---- Embedded fallback data ---- */
   const FALLBACK_SETTINGS = {
     site_name: 'AirSilo',
     title: 'AirSilo — Utilities, unplugged.',
@@ -1450,15 +1441,15 @@ h2.section-title {
   };
 
   const FALLBACK_TOOLS = [
-    { id:'pixflux', name:'PixFlux', description:'Convert PNG, JPEG, and WebP files locally. Adjust quality, preserve transparency, batch convert in one go.', icon:'pixflux', category:'Images', version:'1.0.0', size:'~120 KB', status:'available', featured:true, download_url:'/tools/pixflux.html', screenshot:'', logo:'', changelog:'Initial release.' },
-    { id:'cropflow', name:'CropFlow', description:'Resize, crop, and compress images with pixel precision.', icon:'cropflow', category:'Images', version:'1.0.0', size:'~110 KB', status:'available', download_url:'/tools/cropflow.html', screenshot:'', logo:'', changelog:'Initial release.' },
-    { id:'paperflow', name:'PaperFlow', description:'Merge, split, rotate, and convert PDFs — without uploading a single page.', icon:'paperflow', category:'Documents', version:'1.0.0', size:'~180 KB', status:'available', download_url:'/tools/paperflow.html', screenshot:'', logo:'', changelog:'Initial release.' },
-    { id:'qrflux', name:'QrFlux', description:'Generate styled QR codes and scan them from your camera — completely offline.', icon:'qrflux', category:'Utilities', version:'1.0.0', size:'~90 KB', status:'available', download_url:'/tools/qrflux.html', screenshot:'', logo:'', changelog:'Initial release.' },
-    { id:'cryptsilo', name:'CryptSilo', description:'Generate MD5, SHA-1, SHA-256, SHA-512 hashes and strong random passwords.', icon:'cryptsilo', category:'Security', version:'1.0.0', size:'~70 KB', status:'available', featured:true, download_url:'/tools/cryptsilo.html', screenshot:'', logo:'', changelog:'Initial release.' },
-    { id:'prismpick', name:'PrismPick', description:'Pick colors from any image, extract palettes, preview combinations.', icon:'prismpick', category:'Design', version:'1.0.0', size:'~85 KB', status:'available', download_url:'/tools/prismpick.html', screenshot:'', logo:'', changelog:'Initial release.' },
-    { id:'vidflux', name:'VidFlux', description:'Convert between common video formats right in your browser.', icon:'vidflux', category:'Media', status:'coming-soon', download_url:'', logo:'' },
-    { id:'waveflux', name:'WaveFlux', description:'MP3, WAV, OGG, and more — convert audio locally with a waveform preview.', icon:'waveflux', category:'Media', status:'coming-soon', download_url:'', logo:'' },
-    { id:'pdfflow', name:'PdfFlow', description:'Advanced PDF editing, form filling, and OCR — no uploads, ever.', icon:'pdfflow', category:'Documents', status:'coming-soon', download_url:'', logo:'' }
+    { id:'pixflux', name:'PixFlux', description:'Convert PNG, JPEG, and WebP files locally.', icon:'pixflux', category:'Images', version:'1.0.0', size:'~120 KB', status:'available', featured:true, download_url:'/tools/pixflux.html', external:false, screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'cropflow', name:'CropFlow', description:'Resize, crop, and compress images with pixel precision.', icon:'cropflow', category:'Images', version:'1.0.0', size:'~110 KB', status:'available', download_url:'/tools/cropflow.html', external:false, screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'paperflow', name:'PaperFlow', description:'Merge, split, rotate, and convert PDFs.', icon:'paperflow', category:'Documents', version:'1.0.0', size:'~180 KB', status:'available', download_url:'/tools/paperflow.html', external:false, screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'qrflux', name:'QrFlux', description:'Generate styled QR codes and scan them offline.', icon:'qrflux', category:'Utilities', version:'1.0.0', size:'~90 KB', status:'available', download_url:'/tools/qrflux.html', external:false, screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'cryptsilo', name:'CryptSilo', description:'Generate hashes and strong random passwords.', icon:'cryptsilo', category:'Security', version:'1.0.0', size:'~70 KB', status:'available', featured:true, download_url:'/tools/cryptsilo.html', external:false, screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'prismpick', name:'PrismPick', description:'Pick colors from any image, extract palettes.', icon:'prismpick', category:'Design', version:'1.0.0', size:'~85 KB', status:'available', download_url:'/tools/prismpick.html', external:false, screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'vidflux', name:'VidFlux', description:'Convert between common video formats right in your browser.', icon:'vidflux', category:'Media', version:'1.0.0', status:'available', download_url:'https://airsilo.pages.dev/vidflux', external:true, screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'waveflux', name:'WaveFlux', description:'MP3, WAV, OGG, and more — convert audio locally.', icon:'waveflux', category:'Media', status:'coming-soon', download_url:'', external:false, logo:'' },
+    { id:'pdfflow', name:'PdfFlow', description:'Advanced PDF editing, form filling, and OCR.', icon:'pdfflow', category:'Documents', status:'coming-soon', download_url:'', external:false, logo:'' }
   ];
 
   const PLACEHOLDER_SHOT = "data:image/svg+xml," + encodeURIComponent(
@@ -1643,20 +1634,22 @@ h2.section-title {
 
     grid.innerHTML = list.map((t, i) => {
       const soon = t.status === 'coming-soon';
+      const isExternal = !!t.external;
       const accent = t.accent || ACCENTS[t.id] || '#C4B5FD';
       const meta = [t.version ? `v${t.version}` : '', t.size].filter(Boolean).join(' · ');
       let sizeClass = 'half';
       if (t.featured) sizeClass = 'featured';
       const delay = `${(i % 6) * 60}ms`;
-      const hasDownload = !soon && t.download_url;
+      const hasDownload = !soon && t.download_url && !isExternal;
       const hasCustomLogo = !!t.logo;
       return `
-        <article class="tool-card ${sizeClass}${soon ? ' soon' : ''}" style="--card-accent:${accent}; animation-delay:${delay}" data-id="${esc(t.id)}" ${soon ? '' : 'tabindex="0" role="button" aria-label="Open ' + esc(t.name) + '"'}>
+        <article class="tool-card ${sizeClass}${soon ? ' soon' : ''}" style="--card-accent:${accent}; animation-delay:${delay}" data-id="${esc(t.id)}" ${soon ? '' : 'tabindex="0" role="button" aria-label="' + (isExternal ? 'Visit ' : 'Open ') + esc(t.name) + '"'}>
           <div class="tool-top">
             <div class="tool-icon${hasCustomLogo ? ' has-custom-logo' : ''}">${renderIcon(t)}</div>
             <div class="tool-badges">
               ${t.featured && !soon ? `<span class="badge badge-featured">Featured</span>` : ''}
               ${soon ? `<span class="badge badge-soon">Soon</span>` : `<span class="badge badge-soft">${esc(meta || 'v1.0.0')}</span>`}
+              ${isExternal && !soon ? `<span class="badge badge-external">External</span>` : ''}
             </div>
           </div>
           <div>
@@ -1667,8 +1660,10 @@ h2.section-title {
           <div class="tool-foot">
             ${soon
               ? `<button class="btn btn-outlined" disabled><span class="ms">notifications</span> Notify me</button>`
-              : `<button class="btn btn-outlined" data-action="details"><span class="ms">info</span> Details</button>
-                 ${hasDownload ? `<a class="tool-dl" data-action="download" href="${esc(t.download_url)}" download title="Download HTML" aria-label="Download" onclick="event.stopPropagation()"><span class="ms">download</span></a>` : ''}`}
+              : (isExternal
+                  ? `<a class="btn btn-filled" href="${esc(t.download_url || '#')}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="ms">open_in_new</span> Visit ${esc(t.name)}</a>`
+                  : `<button class="btn btn-outlined" data-action="details"><span class="ms">info</span> Details</button>
+                     ${hasDownload ? `<a class="tool-dl" data-action="download" href="${esc(t.download_url)}" download title="Download HTML" aria-label="Download" onclick="event.stopPropagation()"><span class="ms">download</span></a>` : ''}`)}
           </div>
         </article>`;
     }).join('');
@@ -1692,11 +1687,23 @@ h2.section-title {
       if (!tool || tool.status === 'coming-soon') return;
       card.addEventListener('click', (e) => {
         if (e.target.closest('[data-action="download"]')) return;
+        if (e.target.closest('a[target="_blank"]')) return;
         e.preventDefault();
-        openToolModal(tool);
+        if (tool.external && tool.download_url) {
+          window.open(tool.download_url, '_blank', 'noopener');
+        } else {
+          openToolModal(tool);
+        }
       });
       card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openToolModal(tool); }
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (tool.external && tool.download_url) {
+            window.open(tool.download_url, '_blank', 'noopener');
+          } else {
+            openToolModal(tool);
+          }
+        }
       });
     });
   }
