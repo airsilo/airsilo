@@ -6,27 +6,24 @@
 <meta name="color-scheme" content="dark" />
 <meta name="theme-color" content="#0B0A0F" />
 <title>AirSilo — Utilities, unplugged.</title>
-<meta name="description" content="AirSilo is a collection of private, offline-first tools. Convert images, resize, generate QR codes, hash passwords, and more — all processed locally in your browser. No uploads, no tracking, no ads." />
-<meta name="keywords" content="offline tools, image converter, qr generator, password generator, private tools, no upload" />
+<meta name="description" content="AirSilo is a collection of private, offline-first tools — PixFlux, PaperFlow, CropFlow, QrFlux, CryptSilo, PrismPick and more. All processed locally in your browser. No uploads, no tracking, no ads." />
+<meta name="keywords" content="offline tools, image converter, pixflux, paperflow, cropflow, qrflux, cryptsilo, prismpick, private tools" />
 
-<!-- Material Symbols + Roboto -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" />
 
-<!-- New favicon (matches new logo) -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23C4B5FD'/%3E%3Cstop offset='0.5' stop-color='%236EE7B7'/%3E%3Cstop offset='1' stop-color='%23FBCFE8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M20 20 Q20 14 26 14 H38 Q44 14 44 20 V46 Q44 52 38 52 H26 Q20 52 20 46 Z' fill='%230B0A0F'/%3E%3Crect x='24' y='24' width='16' height='2' rx='1' fill='%236EE7B7'/%3E%3Crect x='24' y='32' width='16' height='2' rx='1' fill='%236EE7B7'/%3E%3Crect x='24' y='40' width='16' height='2' rx='1' fill='%236EE7B7'/%3E%3C/svg%3E" type="image/svg+xml" />
 
 <style>
 /* ============================================================
-   AirSilo v2 — Material 3 Expressive · Dark only
+   AirSilo v3 — Material 3 Expressive · Dark only
    ============================================================ */
 
 :root {
   color-scheme: dark;
 
-  /* ---- M3 dark tonal palette (vibrant) ---- */
   --primary: #C4B5FD;
   --on-primary: #2E1065;
   --primary-container: #5B21B6;
@@ -47,7 +44,6 @@
 
   --surface: #0B0A0F;
   --surface-dim: #08070C;
-  --surface-bright: #2C2838;
   --surface-container-lowest: #08070C;
   --surface-container-low: #12101A;
   --surface-container: #181624;
@@ -59,10 +55,6 @@
   --outline: #8B82A0;
   --outline-variant: #3D3650;
 
-  --inverse-surface: #E8E2F0;
-  --inverse-on-surface: #181624;
-
-  /* Shape */
   --r-xs: 6px;
   --r-sm: 10px;
   --r-md: 14px;
@@ -71,16 +63,12 @@
   --r-xxl: 40px;
   --r-full: 999px;
 
-  /* Motion */
   --ease-emph: cubic-bezier(0.05, 0.7, 0.1, 1);
   --ease-emph-dec: cubic-bezier(0.05, 0.7, 0.1, 1);
-  --ease-emph-acc: cubic-bezier(0.3, 0, 0.8, 0.15);
   --ease-std: cubic-bezier(0.2, 0, 0, 1);
   --t-short: 200ms;
   --t-med: 400ms;
-  --t-long: 600ms;
 
-  /* Elevation */
   --e1: 0 1px 3px rgba(0,0,0,.5);
   --e2: 0 4px 12px rgba(0,0,0,.55);
   --e3: 0 8px 24px rgba(0,0,0,.6);
@@ -112,21 +100,15 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; line-height: 1.1; letter-spacing: 
 p { margin: 0; }
 
 .container { width: min(100% - 2rem, var(--container)); margin-inline: auto; }
-.container-narrow { width: min(100% - 2rem, 900px); margin-inline: auto; }
 
-/* ---- Material Symbols ---- */
 .ms {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
   line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
   display: inline-block;
   white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
@@ -134,7 +116,7 @@ p { margin: 0; }
 }
 .ms-fill { font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
 
-/* ============ Ambient background ============ */
+/* ---- Ambient background ---- */
 .mesh {
   position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none;
   background: radial-gradient(ellipse at top, #1A1530 0%, var(--surface) 55%);
@@ -159,7 +141,6 @@ p { margin: 0; }
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ---- Scroll progress ---- */
 .scroll-progress {
   position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 200;
   background: transparent;
@@ -170,7 +151,7 @@ p { margin: 0; }
   transition: width 80ms linear;
 }
 
-/* ============ Floating pill nav ============ */
+/* ---- Nav ---- */
 .nav-wrap {
   position: fixed; top: 16px; left: 0; right: 0; z-index: 100;
   display: flex; justify-content: center;
@@ -186,15 +167,10 @@ p { margin: 0; }
   border: 1px solid rgba(139, 130, 160, 0.22);
   border-radius: var(--r-full);
   box-shadow: var(--e2);
-  transition: padding var(--t-med) var(--ease-emph),
-              background-color var(--t-med) var(--ease-std),
-              box-shadow var(--t-med) var(--ease-std);
+  transition: background-color var(--t-med) var(--ease-std), box-shadow var(--t-med) var(--ease-std);
   max-width: 100%;
 }
-.nav.scrolled {
-  background: rgba(24, 22, 36, 0.92);
-  box-shadow: var(--e3);
-}
+.nav.scrolled { background: rgba(24, 22, 36, 0.92); box-shadow: var(--e3); }
 .brand { display: flex; align-items: center; gap: 10px; padding-right: 8px; }
 .brand-mark {
   width: 34px; height: 34px; flex-shrink: 0;
@@ -212,25 +188,22 @@ p { margin: 0; }
   padding: 8px 14px; border-radius: var(--r-full);
   font-size: 0.875rem; font-weight: 500;
   color: var(--on-surface-variant);
-  transition: background-color var(--t-short) var(--ease-std),
-              color var(--t-short) var(--ease-std);
+  transition: background-color var(--t-short) var(--ease-std), color var(--t-short) var(--ease-std);
 }
 .nav-links a:hover { background: rgba(196, 181, 253, 0.14); color: var(--on-surface); }
 
-/* ============ Buttons (M3 Expressive) ============ */
+/* ---- Buttons ---- */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 10px 22px; min-height: 40px;
   border-radius: var(--r-full);
-  font-size: 0.875rem; font-weight: 600; letter-spacing: 0.005em;
+  font-size: 0.875rem; font-weight: 600;
   border: 1px solid transparent;
   transition: transform var(--t-short) var(--ease-emph),
               box-shadow var(--t-med) var(--ease-std),
               background-color var(--t-short) var(--ease-std),
-              color var(--t-short) var(--ease-std),
-              border-radius var(--t-med) var(--ease-emph);
+              color var(--t-short) var(--ease-std);
   white-space: nowrap; position: relative; overflow: hidden;
-  isolation: isolate;
 }
 .btn::after {
   content: ""; position: absolute; inset: 0;
@@ -251,30 +224,33 @@ p { margin: 0; }
   box-shadow: 0 8px 32px -8px rgba(196, 181, 253, 0.7);
   transform: translateY(-1px);
 }
-
 .btn-tonal {
   background: var(--secondary-container);
   color: var(--on-secondary-container);
 }
 .btn-tonal:hover { background: #0B7F5C; box-shadow: 0 6px 20px -8px rgba(110, 231, 183, 0.4); }
-
 .btn-outlined {
   background: transparent;
   border-color: var(--outline);
   color: var(--on-surface);
 }
 .btn-outlined:hover { background: rgba(196, 181, 253, 0.1); border-color: var(--primary); }
-
-.btn-ghost { background: transparent; color: var(--on-surface-variant); }
-.btn-ghost:hover { background: rgba(255,255,255,.06); color: var(--on-surface); }
-
-.btn-lg { padding: 14px 28px; min-height: 52px; font-size: 0.9375rem; border-radius: var(--r-full); }
+.btn-paypal {
+  background: linear-gradient(135deg, #0070BA, #003087);
+  color: #fff;
+}
+.btn-paypal:hover {
+  background: linear-gradient(135deg, #0083D1, #003D9E);
+  box-shadow: 0 6px 20px -8px rgba(0, 112, 186, 0.6);
+  transform: translateY(-1px);
+}
+.btn-lg { padding: 14px 28px; min-height: 52px; font-size: 0.9375rem; }
 .btn-lg .ms { font-size: 20px; }
 .btn-sm { padding: 6px 14px; min-height: 34px; font-size: 0.8125rem; }
 .btn-block { width: 100%; }
 .btn:disabled { opacity: 0.38; cursor: not-allowed; }
 
-/* ============ Hero ============ */
+/* ---- Hero ---- */
 .hero {
   position: relative;
   padding: 140px 0 80px;
@@ -296,7 +272,7 @@ p { margin: 0; }
   font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em;
   color: var(--on-primary-container);
   text-transform: uppercase;
-  animation: fadeUp 0.7s var(--ease-emph-dec) both;
+  animation: fadeUp 0.7s var(--ease-emph) both;
 }
 .hero-eyebrow .ping {
   width: 8px; height: 8px; border-radius: 50%;
@@ -320,11 +296,10 @@ p { margin: 0; }
 .hero-title .line { display: block; overflow: hidden; }
 .hero-title .line span {
   display: block;
-  animation: heroSlide 0.9s var(--ease-emph-dec) both;
+  animation: heroSlide 0.9s var(--ease-emph) both;
 }
 .hero-title .line:nth-child(1) span { animation-delay: 0.1s; }
 .hero-title .line:nth-child(2) span { animation-delay: 0.22s; }
-.hero-title .line:nth-child(3) span { animation-delay: 0.34s; }
 @keyframes heroSlide {
   from { transform: translateY(110%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
@@ -353,17 +328,16 @@ p { margin: 0; }
   color: var(--on-surface-variant);
   line-height: 1.6; max-width: 520px;
   margin-bottom: 36px;
-  animation: fadeUp 0.8s 0.4s var(--ease-emph-dec) both;
+  animation: fadeUp 0.8s 0.4s var(--ease-emph) both;
 }
 .hero-actions {
   display: flex; gap: 12px; flex-wrap: wrap;
-  animation: fadeUp 0.8s 0.5s var(--ease-emph-dec) both;
+  animation: fadeUp 0.8s 0.5s var(--ease-emph) both;
 }
-
 .hero-trust {
   display: flex; flex-wrap: wrap; gap: 20px 28px;
   margin-top: 40px;
-  animation: fadeUp 0.8s 0.6s var(--ease-emph-dec) both;
+  animation: fadeUp 0.8s 0.6s var(--ease-emph) both;
 }
 .trust-item {
   display: flex; align-items: center; gap: 8px;
@@ -372,16 +346,13 @@ p { margin: 0; }
 }
 .trust-item .ms { font-size: 18px; color: var(--secondary); }
 
-/* Hero visual - stacked floating cards */
 .hero-visual {
   position: relative;
   height: 520px;
   display: none;
-  animation: fadeIn 1s 0.4s var(--ease-emph-dec) both;
+  animation: fadeIn 1s 0.4s var(--ease-emph) both;
 }
-@media (min-width: 900px) {
-  .hero-visual { display: block; }
-}
+@media (min-width: 900px) { .hero-visual { display: block; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .float-card {
@@ -392,7 +363,6 @@ p { margin: 0; }
   padding: 16px;
   box-shadow: var(--e4);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   display: flex; align-items: center; gap: 12px;
   min-width: 240px;
   animation: float 6s ease-in-out infinite;
@@ -402,27 +372,19 @@ p { margin: 0; }
   width: 44px; height: 44px; flex-shrink: 0;
   border-radius: var(--r-md);
   display: grid; place-items: center;
+  overflow: hidden;
 }
+.float-card .fc-icon img { width: 100%; height: 100%; object-fit: cover; }
 .float-card .fc-text { min-width: 0; }
-.float-card .fc-title {
-  font-size: 0.875rem; font-weight: 600;
-  color: var(--on-surface);
-  margin-bottom: 2px;
-}
-.float-card .fc-meta {
-  font-size: 0.6875rem; color: var(--on-surface-variant);
-  font-weight: 500;
-}
+.float-card .fc-title { font-size: 0.875rem; font-weight: 600; color: var(--on-surface); margin-bottom: 2px; }
+.float-card .fc-meta { font-size: 0.6875rem; color: var(--on-surface-variant); font-weight: 500; }
 
 .fc-1 { top: 20px; left: 0; animation-delay: 0s; }
 .fc-1 .fc-icon { background: rgba(167, 139, 250, 0.16); color: #A78BFA; }
-
 .fc-2 { top: 140px; right: 0; animation-delay: 1.2s; }
 .fc-2 .fc-icon { background: rgba(110, 231, 183, 0.16); color: #6EE7B7; }
-
 .fc-3 { top: 260px; left: 20px; animation-delay: 2.4s; }
 .fc-3 .fc-icon { background: rgba(251, 207, 232, 0.16); color: #FBCFE8; }
-
 .fc-4 { top: 380px; right: 30px; animation-delay: 3.6s; }
 .fc-4 .fc-icon { background: rgba(251, 191, 36, 0.16); color: #FBBF24; }
 
@@ -438,7 +400,7 @@ p { margin: 0; }
 .orb-a { width: 300px; height: 300px; background: #7C3AED; top: 20px; left: 20%; animation: drift1 18s ease-in-out infinite; }
 .orb-b { width: 260px; height: 260px; background: #10B981; bottom: 40px; right: 10%; animation: drift2 22s ease-in-out infinite; }
 
-/* ============ Marquee ribbon ============ */
+/* ---- Marquee ---- */
 .marquee {
   overflow: hidden;
   border-top: 1px solid var(--outline-variant);
@@ -454,7 +416,6 @@ p { margin: 0; }
   width: max-content;
   animation: marquee 40s linear infinite;
 }
-.marquee-track.reverse { animation-direction: reverse; animation-duration: 46s; }
 .marquee-track:hover { animation-play-state: paused; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
@@ -470,7 +431,7 @@ p { margin: 0; }
 .marquee-item:nth-child(4n+3) .dot { background: var(--tertiary); }
 .marquee-item:nth-child(4n+4) .dot { background: #FBBF24; }
 
-/* ============ Sections ============ */
+/* ---- Sections ---- */
 .section { padding: 96px 0; position: relative; }
 .section-head { margin-bottom: 56px; max-width: 720px; }
 .section-head.center { margin-inline: auto; text-align: center; }
@@ -496,15 +457,13 @@ h2.section-title {
 }
 .section-head.center .section-sub { margin-inline: auto; }
 
-/* Reveal on scroll */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s var(--ease-emph-dec), transform 0.7s var(--ease-emph-dec); }
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s var(--ease-emph), transform 0.7s var(--ease-emph); }
 .reveal.in { opacity: 1; transform: none; }
 .reveal-d1 { transition-delay: 0.08s; }
 .reveal-d2 { transition-delay: 0.16s; }
 .reveal-d3 { transition-delay: 0.24s; }
-.reveal-d4 { transition-delay: 0.32s; }
 
-/* ============ Tools bento ============ */
+/* ---- Tools ---- */
 .tools-head {
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: 24px; flex-wrap: wrap; margin-bottom: 40px;
@@ -566,8 +525,7 @@ h2.section-title {
 .tool-card:hover::before { opacity: 0.14; }
 .tool-card > * { position: relative; z-index: 1; }
 
-.tool-card.featured { grid-column: span 6; grid-row: span 1; }
-.tool-card.wide { grid-column: span 8; }
+.tool-card.featured { grid-column: span 6; }
 .tool-card.half { grid-column: span 6; }
 .tool-card.soon { cursor: default; }
 .tool-card.soon:hover { transform: translateY(-3px); }
@@ -579,7 +537,11 @@ h2.section-title {
   background: color-mix(in srgb, var(--card-accent, var(--primary)) 16%, transparent);
   color: var(--card-accent, var(--primary));
   transition: border-radius var(--t-med) var(--ease-emph), transform var(--t-med) var(--ease-emph);
+  overflow: hidden;
+  position: relative;
 }
+.tool-icon img { width: 100%; height: 100%; object-fit: cover; }
+.tool-icon svg { width: 26px; height: 26px; }
 .tool-icon .ms { font-size: 26px; }
 .tool-card:hover .tool-icon { border-radius: var(--r-lg); transform: scale(1.06) rotate(-4deg); }
 
@@ -604,12 +566,7 @@ h2.section-title {
   color: var(--on-surface-variant);
   flex: 1;
 }
-.tool-card.featured .tool-desc { font-size: 1rem; }
-
-.tool-foot {
-  display: flex; gap: 10px; align-items: center;
-  padding-top: 4px;
-}
+.tool-foot { display: flex; gap: 10px; align-items: center; padding-top: 4px; }
 .tool-foot .btn { flex: 1; }
 .tool-dl {
   width: 44px; height: 44px; flex-shrink: 0;
@@ -635,7 +592,7 @@ h2.section-title {
 }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-/* ============ Promises ============ */
+/* ---- Promise ---- */
 .promise-grid {
   display: grid; gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -647,9 +604,7 @@ h2.section-title {
   border: 1px solid var(--outline-variant);
   position: relative;
   overflow: hidden;
-  transition: transform var(--t-med) var(--ease-emph),
-              border-color var(--t-med) var(--ease-std),
-              border-radius var(--t-med) var(--ease-emph);
+  transition: transform var(--t-med) var(--ease-emph), border-color var(--t-med) var(--ease-std), border-radius var(--t-med) var(--ease-emph);
 }
 .promise:hover {
   transform: translateY(-6px);
@@ -677,11 +632,9 @@ h2.section-title {
 .promise h3 { font-size: 1.125rem; margin-bottom: 8px; letter-spacing: -0.01em; }
 .promise p { font-size: 0.9375rem; line-height: 1.55; color: var(--on-surface-variant); }
 
-/* ============ Stats strip ============ */
+/* ---- Stats ---- */
 .stats-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
   padding: 32px;
   border-radius: var(--r-xl);
   background: linear-gradient(145deg, rgba(28, 24, 38, 0.85), rgba(18, 16, 26, 0.6));
@@ -696,9 +649,7 @@ h2.section-title {
 .stat:hover { transform: scale(1.05); }
 .stat-num {
   font-size: clamp(1.75rem, 3.5vw, 2.75rem);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1;
+  font-weight: 900; letter-spacing: -0.04em; line-height: 1;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text; background-clip: text; color: transparent;
   margin-bottom: 6px;
@@ -709,7 +660,7 @@ h2.section-title {
   text-transform: uppercase; color: var(--on-surface-variant);
 }
 
-/* ============ Donation ============ */
+/* ---- Donate ---- */
 .donate-wrap {
   padding: 60px 40px;
   border-radius: var(--r-xxl);
@@ -745,9 +696,7 @@ h2.section-title {
   border: 1px solid var(--outline-variant);
   display: flex; flex-direction: column; align-items: center; gap: 12px;
   text-align: center;
-  transition: transform var(--t-med) var(--ease-emph),
-              border-color var(--t-med) var(--ease-std),
-              border-radius var(--t-med) var(--ease-emph);
+  transition: transform var(--t-med) var(--ease-emph), border-color var(--t-med) var(--ease-std), border-radius var(--t-med) var(--ease-emph);
 }
 .donate-opt:hover {
   transform: translateY(-6px);
@@ -768,7 +717,7 @@ h2.section-title {
 .donate-opt .btn { width: 100%; margin-top: 4px; }
 .donate-foot { font-size: 0.8125rem; color: var(--on-surface-variant); margin-top: 28px; opacity: 0.8; }
 
-/* ============ Footer ============ */
+/* ---- Footer ---- */
 .footer {
   border-top: 1px solid var(--outline-variant);
   padding: 56px 0 32px;
@@ -781,9 +730,7 @@ h2.section-title {
   gap: 40px;
   margin-bottom: 40px;
 }
-@media (max-width: 720px) {
-  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
-}
+@media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr; gap: 32px; } }
 .footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .footer-brand .brand-mark { width: 40px; height: 40px; }
 .footer-tagline { color: var(--on-surface-variant); font-size: 0.9375rem; line-height: 1.55; max-width: 320px; }
@@ -809,7 +756,7 @@ h2.section-title {
 .footer-made { display: inline-flex; align-items: center; gap: 6px; }
 .footer-made .ms { font-size: 16px; color: #FBCFE8; }
 
-/* ============ Modals ============ */
+/* ---- Modals ---- */
 .modal { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; padding: 20px; }
 .modal[hidden] { display: none; }
 .scrim {
@@ -828,7 +775,7 @@ h2.section-title {
   border: 1px solid var(--outline-variant);
   border-radius: var(--r-xl);
   box-shadow: var(--e5);
-  animation: modalIn 0.4s var(--ease-emph-dec) both;
+  animation: modalIn 0.4s var(--ease-emph) both;
   scrollbar-width: thin;
   scrollbar-color: var(--outline) transparent;
 }
@@ -867,7 +814,9 @@ h2.section-title {
   display: grid; place-items: center; flex-shrink: 0;
   background: color-mix(in srgb, var(--card-accent, var(--primary)) 20%, transparent);
   color: var(--card-accent, var(--primary));
+  overflow: hidden;
 }
+.modal-icon img { width: 100%; height: 100%; object-fit: cover; }
 .modal-icon .ms { font-size: 30px; }
 .modal-head h3 { font-size: 1.4rem; letter-spacing: -0.02em; }
 .modal-meta { font-size: 0.8125rem; color: var(--on-surface-variant); margin-top: 4px; font-weight: 500; }
@@ -886,13 +835,8 @@ h2.section-title {
 .modal-changelog:empty { display: none; }
 .modal-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .modal-actions .btn { flex: 1; min-width: 160px; }
-.modal-hash {
-  font-size: 0.6875rem; color: var(--on-surface-variant);
-  margin-top: 16px; font-family: 'Roboto Mono', monospace;
-  word-break: break-all; line-height: 1.5; opacity: 0.7;
-}
 
-/* ============ UPI modal ============ */
+/* ---- UPI Modal ---- */
 .upi-head { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; }
 .upi-logo {
   width: 56px; height: 56px; border-radius: var(--r-lg);
@@ -952,21 +896,18 @@ h2.section-title {
   background: var(--surface-container-high);
   color: var(--on-surface);
   font: inherit; font-size: 0.9375rem;
-  transition: border-color var(--t-short) var(--ease-std),
-              box-shadow var(--t-short) var(--ease-std),
-              border-radius var(--t-med) var(--ease-emph);
+  transition: border-color var(--t-short) var(--ease-std), box-shadow var(--t-short) var(--ease-std);
 }
 .upi-form input:focus, .upi-form textarea:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(196, 181, 253, 0.18);
-  border-radius: var(--r-md);
 }
 .form-status { font-size: 0.8125rem; text-align: center; margin-top: 6px; font-weight: 600; }
 .form-status.ok { color: var(--secondary); }
 .form-status.err { color: var(--error); }
 
-/* ============ Bottom nav (mobile) ============ */
+/* ---- Bottom nav ---- */
 .bottom-nav {
   display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
   background: rgba(18, 16, 26, 0.92);
@@ -986,11 +927,10 @@ h2.section-title {
 .bnav-item.active { color: var(--primary); background: rgba(196, 181, 253, 0.14); }
 .bnav-item .ms { font-size: 24px; }
 
-/* ============ Responsive ============ */
+/* ---- Responsive ---- */
 @media (max-width: 1024px) {
   .tool-card { grid-column: span 6; }
   .tool-card.featured { grid-column: span 12; }
-  .tool-card.wide { grid-column: span 12; }
 }
 @media (max-width: 900px) {
   .hero { padding: 120px 0 60px; min-height: auto; }
@@ -1000,7 +940,6 @@ h2.section-title {
   .stats-strip { grid-template-columns: repeat(2, 1fr); gap: 0; padding: 20px; }
   .stat { border-right: none; border-bottom: 1px solid var(--outline-variant); padding: 16px 8px; }
   .stat:nth-last-child(-n+2) { border-bottom: none; }
-  .stat:nth-child(2n) { border-right: none; }
 }
 @media (max-width: 720px) {
   .nav-links { display: none; }
@@ -1008,9 +947,8 @@ h2.section-title {
   .nav .btn-filled { padding: 8px 14px; min-height: 36px; font-size: 0.8125rem; }
   .bottom-nav { display: block; }
   body { padding-bottom: 76px; }
-  .tool-card, .tool-card.featured, .tool-card.wide, .tool-card.half { grid-column: span 12; }
+  .tool-card, .tool-card.featured, .tool-card.half { grid-column: span 12; }
   .section { padding: 56px 0; }
-  .section-head { margin-bottom: 40px; }
   .donate-wrap { padding: 40px 22px; border-radius: var(--r-xl); }
   .form-row { grid-template-columns: 1fr; }
   .modal-body { padding: 22px 20px 24px; }
@@ -1018,14 +956,11 @@ h2.section-title {
   .footer-grid { grid-template-columns: 1fr; gap: 28px; }
   .marquee { padding: 16px 0; }
   .marquee-item { font-size: 0.9375rem; }
-  .hero-title { margin: 18px 0 20px; }
-  .hero-trust { gap: 14px 20px; margin-top: 32px; }
 }
 @media (max-width: 400px) {
   .hero-title { font-size: 2.2rem; }
   .brand-name { display: none; }
 }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
@@ -1039,11 +974,8 @@ h2.section-title {
 </head>
 <body>
 
-<!-- Ambient background -->
 <div class="mesh" aria-hidden="true"><div class="blob"></div></div>
 <div class="grain" aria-hidden="true"></div>
-
-<!-- Scroll progress -->
 <div class="scroll-progress" aria-hidden="true"><div class="bar" id="scrollBar"></div></div>
 
 <!-- ===== Nav ===== -->
@@ -1096,7 +1028,7 @@ h2.section-title {
           <span class="line"><span class="grad-1">unplugged.</span></span>
         </h1>
         <p class="hero-sub">
-          Every tool in AirSilo runs entirely in your browser. No uploads, no accounts, no trackers. Open a tool, do the job, close the tab. That's it.
+          A growing collection of tiny, private tools — PixFlux, PaperFlow, CropFlow, QrFlux, CryptSilo, PrismPick and more. Every one runs entirely in your browser.
         </p>
         <div class="hero-actions">
           <a href="#tools" class="btn btn-filled btn-lg">
@@ -1120,30 +1052,30 @@ h2.section-title {
         <div class="orb orb-a"></div>
         <div class="orb orb-b"></div>
         <div class="float-card fc-1">
-          <div class="fc-icon"><span class="ms ms-fill">image</span></div>
+          <div class="fc-icon" data-hero-icon="pixflux"><span class="ms ms-fill">image</span></div>
           <div class="fc-text">
-            <div class="fc-title">Image Converter</div>
+            <div class="fc-title">PixFlux</div>
             <div class="fc-meta">PNG → WebP · 0.3s</div>
           </div>
         </div>
         <div class="float-card fc-2">
-          <div class="fc-icon"><span class="ms ms-fill">key</span></div>
+          <div class="fc-icon" data-hero-icon="cryptsilo"><span class="ms ms-fill">key</span></div>
           <div class="fc-text">
-            <div class="fc-title">Password Generator</div>
+            <div class="fc-title">CryptSilo</div>
             <div class="fc-meta">32 chars · 180 bits entropy</div>
           </div>
         </div>
         <div class="float-card fc-3">
-          <div class="fc-icon"><span class="ms ms-fill">qr_code_2</span></div>
+          <div class="fc-icon" data-hero-icon="qrflux"><span class="ms ms-fill">qr_code_2</span></div>
           <div class="fc-text">
-            <div class="fc-title">QR Studio</div>
+            <div class="fc-title">QrFlux</div>
             <div class="fc-meta">Generated offline</div>
           </div>
         </div>
         <div class="float-card fc-4">
-          <div class="fc-icon"><span class="ms ms-fill">palette</span></div>
+          <div class="fc-icon" data-hero-icon="prismpick"><span class="ms ms-fill">palette</span></div>
           <div class="fc-text">
-            <div class="fc-title">Color Palette</div>
+            <div class="fc-title">PrismPick</div>
             <div class="fc-meta">12 colors extracted</div>
           </div>
         </div>
@@ -1154,9 +1086,7 @@ h2.section-title {
 
 <!-- ===== Marquee ===== -->
 <div class="marquee" aria-hidden="true">
-  <div class="marquee-track" id="marqueeTrack">
-    <!-- injected by JS (doubled for seamless loop) -->
-  </div>
+  <div class="marquee-track" id="marqueeTrack"></div>
 </div>
 
 <!-- ===== Tools ===== -->
@@ -1170,7 +1100,6 @@ h2.section-title {
       </div>
       <div class="chip-bar reveal reveal-d1" id="filterChips" role="tablist"></div>
     </div>
-
     <div class="tools-grid" id="toolsGrid" aria-live="polite">
       <div class="skeleton-card"></div>
       <div class="skeleton-card"></div>
@@ -1187,7 +1116,6 @@ h2.section-title {
       <h2 class="section-title">Built on <span class="grad-1">four simple rules.</span></h2>
       <p class="section-sub">No dark patterns. No hidden costs. No fine print. Just tools that do exactly what they say.</p>
     </div>
-
     <div class="promise-grid">
       <div class="promise reveal" style="--promise-color: #C4B5FD">
         <div class="promise-icon"><span class="ms ms-fill">shield</span></div>
@@ -1217,22 +1145,10 @@ h2.section-title {
 <section class="section" style="padding-top:0">
   <div class="container">
     <div class="stats-strip reveal">
-      <div class="stat">
-        <div class="stat-num" data-count="9">0</div>
-        <div class="stat-label">Tools live</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" data-count="0">0</div>
-        <div class="stat-label">Uploads</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" data-count="0">0</div>
-        <div class="stat-label">Trackers</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" data-count="100">0</div>
-        <div class="stat-label">% local</div>
-      </div>
+      <div class="stat"><div class="stat-num" data-count="9">0</div><div class="stat-label">Tools live</div></div>
+      <div class="stat"><div class="stat-num" data-count="0">0</div><div class="stat-label">Uploads</div></div>
+      <div class="stat"><div class="stat-num" data-count="0">0</div><div class="stat-label">Trackers</div></div>
+      <div class="stat"><div class="stat-num" data-count="100">0</div><div class="stat-label">% local</div></div>
     </div>
   </div>
 </section>
@@ -1290,10 +1206,7 @@ h2.section-title {
       </div>
       <div class="footer-col">
         <h4>Connect</h4>
-        <ul>
-          <li><a data-bind-href="github_url" href="#" target="_blank" rel="noopener"><span class="ms" style="font-size:16px">code</span> GitHub</a></li>
-          <li><a data-bind-href="contact_email_url" href="#"><span class="ms" style="font-size:16px">mail</span> Contact</a></li>
-        </ul>
+        <ul id="connectLinks"></ul>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1303,7 +1216,7 @@ h2.section-title {
   </div>
 </footer>
 
-<!-- ===== Bottom nav (mobile) ===== -->
+<!-- ===== Bottom nav ===== -->
 <nav class="bottom-nav" aria-label="Mobile navigation">
   <div class="bottom-nav-inner">
     <a class="bnav-item active" href="#tools"><span class="ms ms-fill">apps</span>Tools</a>
@@ -1336,7 +1249,6 @@ h2.section-title {
           <span class="ms">download</span> Download HTML
         </a>
       </div>
-      <p class="modal-hash" id="toolModalHash"></p>
     </div>
   </div>
 </div>
@@ -1390,7 +1302,7 @@ h2.section-title {
 
 <script>
 /* ============================================================
-   AirSilo v2 — app (inline)
+   AirSilo v3 — app
    ============================================================ */
 (() => {
   'use strict';
@@ -1398,31 +1310,51 @@ h2.section-title {
   const $$ = (s, r=document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  /* ---- Material Symbols name map ---- */
+  /* ---- Material Symbols icon map (fallback when no custom logo) ---- */
   const ICON_MAP = {
-    'image-converter': 'image',
-    'image-resizer': 'photo_size_select_large',
-    'document-converter': 'description',
-    'qr-studio': 'qr_code_2',
-    'hasher-password': 'key',
-    'color-studio': 'palette',
-    'video-converter': 'movie',
-    'pdf-toolkit': 'picture_as_pdf',
-    'audio-converter': 'music_note',
+    'pixflux': 'image',
+    'cropflow': 'photo_size_select_large',
+    'paperflow': 'description',
+    'qrflux': 'qr_code_2',
+    'cryptsilo': 'key',
+    'prismpick': 'palette',
+    'vidflux': 'movie',
+    'waveflux': 'music_note',
+    'pdfflow': 'picture_as_pdf',
   };
-  const icon = (name) => `<span class="ms ms-fill">${ICON_MAP[name] || 'apps'}</span>`;
 
   /* ---- Per-tool accent colors ---- */
   const ACCENTS = {
-    'image-converter': '#A78BFA',
-    'image-resizer': '#6EE7B7',
-    'document-converter': '#FBCFE8',
-    'qr-studio': '#FBBF24',
-    'hasher-password': '#60A5FA',
-    'color-studio': '#F472B6',
-    'video-converter': '#22D3EE',
-    'pdf-toolkit': '#FB923C',
-    'audio-converter': '#A3E635',
+    'pixflux': '#A78BFA',
+    'cropflow': '#6EE7B7',
+    'paperflow': '#FBCFE8',
+    'qrflux': '#FBBF24',
+    'cryptsilo': '#60A5FA',
+    'prismpick': '#F472B6',
+    'vidflux': '#22D3EE',
+    'waveflux': '#A3E635',
+    'pdfflow': '#FB923C',
+  };
+
+  /* ---- How to render an icon: custom logo (image/svg) OR Material Symbol ---- */
+  const renderIcon = (tool) => {
+    const logo = tool.logo;
+    if (logo) {
+      // Data URL (uploaded image)
+      if (logo.startsWith('data:')) {
+        return `<img src="${esc(logo)}" alt="" />`;
+      }
+      // URL to an image
+      if (/^https?:\/\//i.test(logo)) {
+        return `<img src="${esc(logo)}" alt="" />`;
+      }
+      // Raw SVG markup pasted via CMS
+      if (logo.trim().startsWith('<svg')) {
+        return logo; // trusted content from CMS
+      }
+    }
+    // Fallback to Material Symbol
+    return `<span class="ms ms-fill">${ICON_MAP[tool.id] || 'apps'}</span>`;
   };
 
   /* ---- Embedded fallback data ---- */
@@ -1433,40 +1365,43 @@ h2.section-title {
     hero: {
       title_line1: 'Utilities,',
       title_line2: 'unplugged.',
-      subtitle: 'A collection of handy utilities that run entirely in your browser. Your files never leave your device.'
+      subtitle: 'A growing collection of tiny, private tools — PixFlux, PaperFlow, CropFlow, QrFlux, CryptSilo, PrismPick and more.'
     },
     donation: {
       heading: 'Keep it free. Keep it ad-free.',
       subheading: 'AirSilo will always be free, private, and ad-free. If a tool saved you time today, a small tip keeps the lights on.',
-      bmc_url: 'https://buymeacoffee.com/airsilo',
+      paypal_url: 'https://paypal.me/airsilo',
       kofi_url: 'https://ko-fi.com/airsilo',
       form_endpoint: '',
       upi: {
         enabled: true,
         upi_id: 'airsilo@upi',
         qr_image: '',
-        note: 'Works with PhonePe, Paytm, GPay, BHIM and every UPI app.',
         apps: ['PhonePe','Paytm','GPay','BHIM','Amazon Pay']
       }
     },
+    connect_links: [
+      { label: 'GitHub',  url: 'https://github.com/airsilo', icon: 'code' },
+      { label: 'Contact', url: 'mailto:hello@airsilo.com',    icon: 'mail' }
+    ],
     contact_email: 'hello@airsilo.com',
     github_url: 'https://github.com/airsilo'
   };
 
   const FALLBACK_TOOLS = [
-    { id:'image-converter', name:'Image Converter', description:'Convert PNG, JPEG, and WebP files locally. Adjust quality, preserve transparency, batch convert in one go.', icon:'image-converter', category:'Images', version:'1.0.0', size:'~120 KB', sha256:'', status:'available', featured:true, download_url:'/tools/image-converter.html', screenshot:'', changelog:'Initial release.\n- PNG ↔ JPEG ↔ WebP\n- Batch conversion\n- Quality control' },
-    { id:'image-resizer', name:'Image Resizer & Cropper', description:'Resize, crop, and compress images with pixel precision. Aspect-ratio lock, custom dimensions, file-size targets.', icon:'image-resizer', category:'Images', version:'1.0.0', size:'~110 KB', sha256:'', status:'available', download_url:'/tools/image-resizer.html', screenshot:'', changelog:'Initial release.' },
-    { id:'document-converter', name:'Document Converter', description:'Merge, split, rotate, and convert PDFs and documents — all without uploading a single page.', icon:'document-converter', category:'Documents', version:'1.0.0', size:'~180 KB', sha256:'', status:'available', download_url:'/tools/document-converter.html', screenshot:'', changelog:'Initial release.\n- PDF merge / split\n- Rotate & reorder pages\n- Images → PDF' },
-    { id:'qr-studio', name:'QR Code Studio', description:'Generate styled QR codes and scan them from your camera or an uploaded image — completely offline.', icon:'qr-studio', category:'Utilities', version:'1.0.0', size:'~90 KB', sha256:'', status:'available', download_url:'/tools/qr-studio.html', screenshot:'', changelog:'Initial release.' },
-    { id:'hasher-password', name:'Hasher & Password Generator', description:'Generate MD5, SHA-1, SHA-256, SHA-512 hashes and create strong, cryptographically random passwords.', icon:'hasher-password', category:'Security', version:'1.0.0', size:'~70 KB', sha256:'', status:'available', featured:true, download_url:'/tools/hasher-password.html', screenshot:'', changelog:'Initial release.\n- MD5, SHA-1, SHA-256, SHA-512\n- Password generator with entropy meter' },
-    { id:'color-studio', name:'Color Palette & Eyedropper', description:'Pick colors from any image, extract palettes, and preview combinations — perfect for designers.', icon:'color-studio', category:'Design', version:'1.0.0', size:'~85 KB', sha256:'', status:'available', download_url:'/tools/color-studio.html', screenshot:'', changelog:'Initial release.' },
-    { id:'video-converter', name:'Video Converter', description:'Convert between common video formats right in your browser. Works offline once loaded.', icon:'video-converter', category:'Media', status:'coming-soon' },
-    { id:'pdf-toolkit', name:'PDF Toolkit Pro', description:'Advanced PDF editing, form filling, and OCR — no uploads, ever.', icon:'pdf-toolkit', category:'Documents', status:'coming-soon' },
-    { id:'audio-converter', name:'Audio Converter', description:'MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.', icon:'audio-converter', category:'Media', status:'coming-soon' }
+    { id:'pixflux', name:'PixFlux', description:'Convert PNG, JPEG, and WebP files locally. Adjust quality, preserve transparency, batch convert in one go.', icon:'pixflux', category:'Images', version:'1.0.0', size:'~120 KB', status:'available', featured:true, download_url:'/tools/pixflux.html', screenshot:'', logo:'', changelog:'Initial release.\n- PNG ↔ JPEG ↔ WebP\n- Batch conversion\n- Quality control' },
+    { id:'cropflow', name:'CropFlow', description:'Resize, crop, and compress images with pixel precision. Aspect-ratio lock, custom dimensions, file-size targets.', icon:'cropflow', category:'Images', version:'1.0.0', size:'~110 KB', status:'available', download_url:'/tools/cropflow.html', screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'paperflow', name:'PaperFlow', description:'Merge, split, rotate, and convert PDFs and documents — all without uploading a single page.', icon:'paperflow', category:'Documents', version:'1.0.0', size:'~180 KB', status:'available', download_url:'/tools/paperflow.html', screenshot:'', logo:'', changelog:'Initial release.\n- PDF merge / split\n- Rotate & reorder pages\n- Images → PDF' },
+    { id:'qrflux', name:'QrFlux', description:'Generate styled QR codes and scan them from your camera or an uploaded image — completely offline.', icon:'qrflux', category:'Utilities', version:'1.0.0', size:'~90 KB', status:'available', download_url:'/tools/qrflux.html', screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'cryptsilo', name:'CryptSilo', description:'Generate MD5, SHA-1, SHA-256, SHA-512 hashes and create strong, cryptographically random passwords.', icon:'cryptsilo', category:'Security', version:'1.0.0', size:'~70 KB', status:'available', featured:true, download_url:'/tools/cryptsilo.html', screenshot:'', logo:'', changelog:'Initial release.\n- MD5, SHA-1, SHA-256, SHA-512\n- Password generator with entropy meter' },
+    { id:'prismpick', name:'PrismPick', description:'Pick colors from any image, extract palettes, and preview combinations — perfect for designers.', icon:'prismpick', category:'Design', version:'1.0.0', size:'~85 KB', status:'available', download_url:'/tools/prismpick.html', screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'vidflux', name:'VidFlux', description:'Convert between common video formats right in your browser. Works offline once loaded.', icon:'vidflux', category:'Media', status:'coming-soon', download_url:'', logo:'' },
+    { id:'waveflux', name:'WaveFlux', description:'MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.', icon:'waveflux', category:'Media', status:'coming-soon', download_url:'', logo:'' },
+    { id:'pdfflow', name:'PdfFlow', description:'Advanced PDF editing, form filling, and OCR — no uploads, ever.', icon:'pdfflow', category:'Documents', status:'coming-soon', download_url:'', logo:'' }
   ];
 
   const PLACEHOLDER_SHOT = "data:image/svg+xml," + encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#181624"/><stop offset="1" stop-color="#221F30"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><circle cx="320" cy="160" r="48" fill="#C4B5FD" opacity="0.18"/><circle cx="320" cy="160" r="32" fill="#C4B5FD" opacity="0.28"/><text x="320" y="250" text-anchor="middle" font-family="Roboto,system-ui" font-size="15" fill="#C8BFD8" font-weight="500">Screenshot coming soon</text><text x="320" y="274" text-anchor="middle" font-family="Roboto,system-ui" font-size="12" fill="#8B82A0">Add via Decap CMS</text></svg>`
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#181624"/><stop offset="1" stop-color="#221F30"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><circle cx="320" cy="160" r="48" fill="#C4B5FD" opacity="0.18"/><circle cx="320" cy="160" r="32" fill="#C4B5FD" opacity="0.28"/><text x="320" y="250" text-anchor="middle" font-family="Roboto,system-ui" font-size="15" fill="#C8BFD8" font-weight="500">Screenshot coming soon</text></svg>`
   );
   const PLACEHOLDER_QR = "data:image/svg+xml," + encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#fff"/><g fill="#0B0A0F"><rect x="20" y="20" width="50" height="50"/><rect x="130" y="20" width="50" height="50"/><rect x="20" y="130" width="50" height="50"/></g><g fill="#fff"><rect x="30" y="30" width="30" height="30"/><rect x="140" y="30" width="30" height="30"/><rect x="30" y="140" width="30" height="30"/></g><text x="100" y="195" text-anchor="middle" font-family="Roboto" font-size="9" fill="#8B82A0">DEMO QR — replace in CMS</text></svg>`
@@ -1488,11 +1423,12 @@ h2.section-title {
     renderFilters();
     renderTools();
     renderDonate();
+    renderConnectLinks();
     wireUpiForm();
     animateCounters();
+    hydrateHeroIcons();
   }
 
-  /* ---- Content loading ---- */
   async function loadContent() {
     try {
       const [toolsRes, settingsRes] = await Promise.all([
@@ -1510,7 +1446,6 @@ h2.section-title {
     TOOLS = FALLBACK_TOOLS;
   }
 
-  /* ---- Chrome ---- */
   function wireChrome() {
     const nav = $('#nav');
     const bar = $('#scrollBar');
@@ -1524,7 +1459,6 @@ h2.section-title {
     window.addEventListener('scroll', onScroll, { passive: true });
     $('#year').textContent = new Date().getFullYear();
 
-    // Smooth anchor scroll
     $$('a[href^="#"]').forEach(a => {
       a.addEventListener('click', (e) => {
         const id = a.getAttribute('href');
@@ -1538,7 +1472,6 @@ h2.section-title {
       });
     });
 
-    // Bottom nav active state
     const sections = ['tools', 'promise', 'donate'];
     const bnavItems = $$('.bnav-item');
     const io = new IntersectionObserver((entries) => {
@@ -1551,25 +1484,17 @@ h2.section-title {
     sections.forEach(id => { const el = document.getElementById(id); if (el) io.observe(el); });
   }
 
-  /* ---- Reveal on scroll ---- */
   function wireReveal() {
     const els = $$('.reveal');
-    if (!('IntersectionObserver' in window)) {
-      els.forEach(el => el.classList.add('in'));
-      return;
-    }
+    if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('in')); return; }
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('in');
-          io.unobserve(e.target);
-        }
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
       });
     }, { threshold: 0.12 });
     els.forEach(el => io.observe(el));
   }
 
-  /* ---- Cursor glow on buttons/cards ---- */
   function wireCursorGlow() {
     if (window.matchMedia('(pointer: coarse)').matches) return;
     document.addEventListener('pointermove', (e) => {
@@ -1588,24 +1513,22 @@ h2.section-title {
     }, { passive: true });
   }
 
-  /* ---- Settings ---- */
   function bindSettings() {
     const set = (sel, val) => { const el = $(sel); if (el && val) el.textContent = val; };
-    set('[data-bind="tagline"]', SETTINGS.tagline);
     set('[data-bind="donation.heading"]', SETTINGS.donation?.heading);
     set('[data-bind="donation.subheading"]', SETTINGS.donation?.subheading);
-
-    const gh = $('[data-bind-href="github_url"]');
-    if (gh) gh.href = SETTINGS.github_url || '#';
-    const ct = $('[data-bind-href="contact_email_url"]');
-    if (ct) {
-      if (SETTINGS.contact_email) ct.href = `mailto:${SETTINGS.contact_email}`;
-      else ct.style.display = 'none';
-    }
     if (SETTINGS.title) document.title = SETTINGS.title;
+    if (SETTINGS.hero?.title_line1) {
+      const lines = $$('.hero-title .line span');
+      if (lines[0]) lines[0].textContent = SETTINGS.hero.title_line1;
+      if (lines[1]) lines[1].textContent = SETTINGS.hero.title_line2;
+    }
+    if (SETTINGS.hero?.subtitle) {
+      const sub = $('.hero-sub');
+      if (sub) sub.textContent = SETTINGS.hero.subtitle;
+    }
   }
 
-  /* ---- Marquee ---- */
   function renderMarquee() {
     const track = $('#marqueeTrack');
     const items = [
@@ -1614,10 +1537,23 @@ h2.section-title {
       'Private by design','Yours to keep'
     ];
     const html = items.map(t => `<span class="marquee-item"><span class="dot"></span>${esc(t)}</span>`).join('');
-    track.innerHTML = html + html; // duplicate for seamless loop
+    track.innerHTML = html + html;
   }
 
-  /* ---- Filters ---- */
+  /* ---- Footer Connect links (editable via CMS) ---- */
+  function renderConnectLinks() {
+    const list = $('#connectLinks');
+    const links = SETTINGS.connect_links || FALLBACK_SETTINGS.connect_links;
+    list.innerHTML = links.map(l => `
+      <li>
+        <a href="${esc(l.url)}" ${/^https?:/i.test(l.url) ? 'target="_blank" rel="noopener"' : ''}>
+          <span class="ms" style="font-size:16px">${esc(l.icon || 'link')}</span>
+          ${esc(l.label)}
+        </a>
+      </li>
+    `).join('');
+  }
+
   function renderFilters() {
     const cats = ['All', ...new Set(TOOLS.map(t => t.category).filter(Boolean))];
     const wrap = $('#filterChips');
@@ -1635,16 +1571,12 @@ h2.section-title {
         const on = c === btn;
         c.classList.toggle('active', on);
         const iconEl = c.querySelector('.ms');
-        if (iconEl) {
-          iconEl.textContent = on ? 'auto_awesome' : 'label';
-          iconEl.classList.toggle('ms-fill', on);
-        }
+        if (iconEl) { iconEl.textContent = on ? 'auto_awesome' : 'label'; iconEl.classList.toggle('ms-fill', on); }
       });
       renderTools();
     });
   }
 
-  /* ---- Tools grid ---- */
   function renderTools() {
     const grid = $('#toolsGrid');
     const list = TOOLS.filter(t => activeFilter === 'All' || t.category === activeFilter);
@@ -1657,15 +1589,14 @@ h2.section-title {
       const soon = t.status === 'coming-soon';
       const accent = t.accent || ACCENTS[t.id] || '#C4B5FD';
       const meta = [t.version ? `v${t.version}` : '', t.size].filter(Boolean).join(' · ');
-      // Bento sizing
       let sizeClass = 'half';
       if (t.featured) sizeClass = 'featured';
-      // Stagger
       const delay = `${(i % 6) * 60}ms`;
+      const hasDownload = !soon && t.download_url;
       return `
         <article class="tool-card ${sizeClass}${soon ? ' soon' : ''}" style="--card-accent:${accent}; animation-delay:${delay}" data-id="${esc(t.id)}" ${soon ? '' : 'tabindex="0" role="button" aria-label="Open ' + esc(t.name) + '"'}>
           <div class="tool-top">
-            <div class="tool-icon">${icon(t.icon)}</div>
+            <div class="tool-icon">${renderIcon(t)}</div>
             <div class="tool-badges">
               ${t.featured && !soon ? `<span class="badge badge-featured">Featured</span>` : ''}
               ${soon ? `<span class="badge badge-soon">Soon</span>` : `<span class="badge badge-soft">${esc(meta || 'v1.0.0')}</span>`}
@@ -1680,21 +1611,18 @@ h2.section-title {
             ${soon
               ? `<button class="btn btn-outlined" disabled><span class="ms">notifications</span> Notify me</button>`
               : `<button class="btn btn-outlined" data-action="details"><span class="ms">info</span> Details</button>
-                 <a class="tool-dl" data-action="download" href="${esc(t.download_url || '#')}" download title="Download HTML" aria-label="Download" onclick="event.stopPropagation()">
-                   <span class="ms">download</span>
-                 </a>`}
+                 ${hasDownload ? `<a class="tool-dl" data-action="download" href="${esc(t.download_url)}" download title="Download HTML" aria-label="Download" onclick="event.stopPropagation()"><span class="ms">download</span></a>` : ''}`}
           </div>
         </article>`;
     }).join('');
 
-    // Entrance animation
     const cards = grid.querySelectorAll('.tool-card');
     cards.forEach((c, i) => {
       c.style.opacity = '0';
       c.style.transform = 'translateY(20px)';
       requestAnimationFrame(() => {
         setTimeout(() => {
-          c.style.transition = 'opacity 0.6s var(--ease-emph-dec), transform 0.6s var(--ease-emph-dec)';
+          c.style.transition = 'opacity 0.6s var(--ease-emph), transform 0.6s var(--ease-emph)';
           c.style.opacity = '1';
           c.style.transform = 'translateY(0)';
         }, i * 40);
@@ -1715,7 +1643,6 @@ h2.section-title {
     });
   }
 
-  /* ---- Tool modal ---- */
   function openToolModal(tool) {
     const modal = $('#toolModal');
     const accent = tool.accent || ACCENTS[tool.id] || '#C4B5FD';
@@ -1723,7 +1650,7 @@ h2.section-title {
 
     $('#toolModalTitle').textContent = tool.name;
     $('#toolModalDesc').textContent = tool.description || '';
-    $('#toolModalIcon').innerHTML = icon(tool.icon);
+    $('#toolModalIcon').innerHTML = renderIcon(tool);
     $('#toolModalMeta').textContent = [tool.category, tool.version ? `v${tool.version}` : null, tool.size].filter(Boolean).join(' · ');
 
     const shot = $('#toolModalShot');
@@ -1732,25 +1659,31 @@ h2.section-title {
     shot.onerror = () => { shot.src = PLACEHOLDER_SHOT; };
 
     $('#toolModalChangelog').textContent = tool.changelog ? `What's new\n${tool.changelog}` : '';
-    $('#toolModalOpen').href = tool.download_url || '#';
-    const dl = $('#toolModalDownload');
-    dl.href = tool.download_url || '#';
-    dl.setAttribute('download', (tool.id || 'tool') + '.html');
-    $('#toolModalHash').textContent = tool.sha256 ? `SHA-256: ${tool.sha256}` : '';
 
+    const openLink = $('#toolModalOpen');
+    const dlLink = $('#toolModalDownload');
+    if (tool.download_url) {
+      openLink.href = tool.download_url;
+      openLink.style.display = '';
+      dlLink.href = tool.download_url;
+      dlLink.setAttribute('download', (tool.id || 'tool') + '.html');
+      dlLink.style.display = '';
+    } else {
+      openLink.style.display = 'none';
+      dlLink.style.display = 'none';
+    }
     openModal(modal);
   }
 
-  /* ---- Donate ---- */
   function renderDonate() {
     const wrap = $('#donateOptions');
     const d = SETTINGS.donation || {};
     const opts = [];
 
-    if (d.bmc_url) opts.push({
-      title: 'Buy me a coffee', desc: 'One-time tip via card', icon: '☕',
-      color: '#FBBF24', href: d.bmc_url, cls: 'btn-tonal',
-      label: 'Buy a coffee', target: '_blank'
+    if (d.paypal_url) opts.push({
+      title: 'PayPal', desc: 'One-time tip via card or balance', icon: 'P',
+      color: '#60A5FA', href: d.paypal_url, cls: 'btn-paypal',
+      label: 'Donate via PayPal', target: '_blank'
     });
     if (d.kofi_url) opts.push({
       title: 'Ko-fi', desc: 'Recurring or one-time', icon: '❤',
@@ -1777,7 +1710,6 @@ h2.section-title {
     });
   }
 
-  /* ---- UPI modal ---- */
   function openUpiModal() {
     const upi = SETTINGS.donation?.upi || {};
     const img = $('#upiQrImg');
@@ -1800,7 +1732,6 @@ h2.section-title {
     openModal($('#upiModal'));
   }
 
-  /* ---- UPI form ---- */
   function wireUpiForm() {
     const form = $('#upiForm');
     form?.addEventListener('submit', async (e) => {
@@ -1841,7 +1772,6 @@ h2.section-title {
     });
   }
 
-  /* ---- Modal helpers ---- */
   function openModal(modal) {
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -1857,7 +1787,6 @@ h2.section-title {
     setTimeout(() => modal.querySelector('.modal-close')?.focus(), 40);
   }
 
-  /* ---- Counter animation ---- */
   function animateCounters() {
     const els = $$('[data-count]');
     const io = new IntersectionObserver((entries) => {
@@ -1879,6 +1808,15 @@ h2.section-title {
       });
     }, { threshold: 0.5 });
     els.forEach(el => io.observe(el));
+  }
+
+  /* Swap hero float-card icons with real tool logos if provided */
+  function hydrateHeroIcons() {
+    $$('[data-hero-icon]').forEach(el => {
+      const id = el.dataset.heroIcon;
+      const tool = TOOLS.find(t => t.id === id);
+      if (tool && tool.logo) el.innerHTML = renderIcon(tool);
+    });
   }
 })();
 </script>
