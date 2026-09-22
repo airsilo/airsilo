@@ -10,7 +10,7 @@
       "status": "available",
       "changelog": "Initial release.\n- PNG ↔ JPEG ↔ WebP\n- Batch conversion\n- Quality control",
       "version": "1.0.0",
-      "download_url": "/tools/image-resizer.html",
+      "download_url": "/tools/image-converter.html",
       "icon": "pixflux",
       "id": "pixflux",
       "description": "Convert PNG, JPEG, and WebP files locally. Adjust quality, preserve transparency, batch convert in one go.",
