@@ -49,22 +49,22 @@
       "category": "Images"
     },
     {
-      "size": "~110 KB",
+      "size": "~85 KB",
       "screenshot": "",
       "sha256": "",
-      "accent": "#6EE7B7",
-      "logo": "https://raw.githubusercontent.com/airsilo/airsilo/main/logos/cropflow.svg",
-      "name": "CropFlow",
+      "accent": "#F472B6",
+      "logo": "https://raw.githubusercontent.com/airsilo/airsilo/main/logos/prismpick.svg",
+      "name": "PrismPick",
       "external": false,
       "featured": false,
       "status": "available",
       "changelog": "Initial release.",
       "version": "1.0.0",
-      "download_url": "/tools/image-resizer.html",
-      "icon": "cropflow",
-      "id": "cropflow",
-      "description": "Resize, crop, and compress images with pixel precision. Aspect-ratio lock, custom dimensions, file-size targets.",
-      "category": "Images"
+      "download_url": "/tools/color-studio.html",
+      "icon": "prismpick",
+      "id": "prismpick",
+      "description": "Pick colors from any image, extract palettes, and preview combinations — perfect for designers.",
+      "category": "Design"
     },
     {
       "size": "~90 KB",
@@ -103,22 +103,22 @@
       "category": "Security"
     },
     {
-      "size": "~85 KB",
+      "size": "~110 KB",
       "screenshot": "",
       "sha256": "",
-      "accent": "#F472B6",
-      "logo": "",
-      "name": "PrismPick",
+      "accent": "#6EE7B7",
+      "logo": "https://raw.githubusercontent.com/airsilo/airsilo/main/logos/cropflow.svg",
+      "name": "CropFlow",
       "external": false,
       "featured": false,
       "status": "available",
       "changelog": "Initial release.",
       "version": "1.0.0",
-      "download_url": "/tools/prismpick.html",
-      "icon": "prismpick",
-      "id": "prismpick",
-      "description": "Pick colors from any image, extract palettes, and preview combinations — perfect for designers.",
-      "category": "Design"
+      "download_url": "/tools/image-resizer.html",
+      "icon": "cropflow",
+      "id": "cropflow",
+      "description": "Resize, crop, and compress images with pixel precision. Aspect-ratio lock, custom dimensions, file-size targets.",
+      "category": "Images"
     },
     {
       "size": "~180 KB",
