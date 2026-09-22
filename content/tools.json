@@ -33,22 +33,6 @@
       "category": "Images"
     },
     {
-      "size": "~180 KB",
-      "screenshot": "",
-      "accent": "#FBCFE8",
-      "logo": "<svg viewBox=\"0 0 64 64\" width=\"64\" height=\"64\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"PaperFlow logo\">\n  <defs>\n    <linearGradient id=\"pf-bg\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#C4B5FD\"/>\n      <stop offset=\"0.5\" stop-color=\"#6EE7B7\"/>\n      <stop offset=\"1\" stop-color=\"#FBCFE8\"/>\n    </linearGradient>\n    <linearGradient id=\"pf-flow\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">\n      <stop offset=\"0\" stop-color=\"#6EE7B7\"/>\n      <stop offset=\"1\" stop-color=\"#C4B5FD\"/>\n    </linearGradient>\n    <clipPath id=\"pf-clip\">\n      <rect x=\"14\" y=\"10\" width=\"36\" height=\"44\" rx=\"10\"/>\n    </clipPath>\n  </defs>\n\n  <!-- Rounded gradient square -->\n  <rect width=\"64\" height=\"64\" rx=\"16\" fill=\"url(#pf-bg)\"/>\n\n  <!-- Page silhouette with round corners -->\n  <rect x=\"14\" y=\"10\" width=\"36\" height=\"44\" rx=\"10\" fill=\"#0B0A0F\"/>\n\n  <!-- Flow lines: three rounded strokes that shift in length, suggesting motion -->\n  <g clip-path=\"url(#pf-clip)\">\n    <rect x=\"20\" y=\"22\" width=\"20\" height=\"2.8\" rx=\"1.4\" fill=\"url(#pf-flow)\"/>\n    <rect x=\"20\" y=\"30\" width=\"26\" height=\"2.8\" rx=\"1.4\" fill=\"url(#pf-flow)\"/>\n    <rect x=\"20\" y=\"38\" width=\"16\" height=\"2.8\" rx=\"1.4\" fill=\"url(#pf-flow)\" opacity=\"0.7\"/>\n  </g>\n\n  <!-- Convert indicator: two rounded dots suggesting output/flow -->\n  <circle cx=\"42\" cy=\"44\" r=\"1.4\" fill=\"#6EE7B7\"/>\n  <circle cx=\"46\" cy=\"44\" r=\"1.4\" fill=\"#6EE7B7\" opacity=\"0.6\"/>\n</svg>",
-      "name": "PaperFlow",
-      "featured": false,
-      "status": "available",
-      "changelog": "Initial release.\n- PDF merge / split\n- Rotate & reorder pages\n- Images → PDF",
-      "version": "1.0.0",
-      "download_url": "/tools/document-converter.html",
-      "icon": "paperflow",
-      "id": "paperflow",
-      "description": "Merge, split, rotate, and convert PDFs and documents — all without uploading a single page.",
-      "category": "Documents"
-    },
-    {
       "size": "~90 KB",
       "screenshot": "",
       "accent": "#FBBF24",
@@ -118,6 +102,22 @@
       "id": "waveflux",
       "description": "MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.",
       "category": "Media"
+    },
+    {
+      "size": "~180 KB",
+      "screenshot": "",
+      "accent": "#FBCFE8",
+      "logo": "<svg viewBox=\"0 0 64 64\" width=\"64\" height=\"64\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"PaperFlow logo\">\n  <defs>\n    <linearGradient id=\"pf-bg\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#C4B5FD\"/>\n      <stop offset=\"0.5\" stop-color=\"#6EE7B7\"/>\n      <stop offset=\"1\" stop-color=\"#FBCFE8\"/>\n    </linearGradient>\n    <linearGradient id=\"pf-flow\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">\n      <stop offset=\"0\" stop-color=\"#6EE7B7\"/>\n      <stop offset=\"1\" stop-color=\"#C4B5FD\"/>\n    </linearGradient>\n    <clipPath id=\"pf-clip\">\n      <rect x=\"14\" y=\"10\" width=\"36\" height=\"44\" rx=\"10\"/>\n    </clipPath>\n  </defs>\n\n  <!-- Rounded gradient square -->\n  <rect width=\"64\" height=\"64\" rx=\"16\" fill=\"url(#pf-bg)\"/>\n\n  <!-- Page silhouette with round corners -->\n  <rect x=\"14\" y=\"10\" width=\"36\" height=\"44\" rx=\"10\" fill=\"#0B0A0F\"/>\n\n  <!-- Flow lines: three rounded strokes that shift in length, suggesting motion -->\n  <g clip-path=\"url(#pf-clip)\">\n    <rect x=\"20\" y=\"22\" width=\"20\" height=\"2.8\" rx=\"1.4\" fill=\"url(#pf-flow)\"/>\n    <rect x=\"20\" y=\"30\" width=\"26\" height=\"2.8\" rx=\"1.4\" fill=\"url(#pf-flow)\"/>\n    <rect x=\"20\" y=\"38\" width=\"16\" height=\"2.8\" rx=\"1.4\" fill=\"url(#pf-flow)\" opacity=\"0.7\"/>\n  </g>\n\n  <!-- Convert indicator: two rounded dots suggesting output/flow -->\n  <circle cx=\"42\" cy=\"44\" r=\"1.4\" fill=\"#6EE7B7\"/>\n  <circle cx=\"46\" cy=\"44\" r=\"1.4\" fill=\"#6EE7B7\" opacity=\"0.6\"/>\n</svg>",
+      "name": "PaperFlow",
+      "featured": false,
+      "status": "available",
+      "changelog": "Initial release.\n- PDF merge / split\n- Rotate & reorder pages\n- Images → PDF",
+      "version": "1.0.0",
+      "download_url": "/tools/document-converter.html",
+      "icon": "paperflow",
+      "id": "paperflow",
+      "description": "Merge, split, rotate, and convert PDFs and documents — all without uploading a single page.",
+      "category": "Documents"
     },
     {
       "accent": "#FB923C",
