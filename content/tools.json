@@ -33,7 +33,7 @@
       "logo": "https://raw.githubusercontent.com/airsilo/airsilo/main/logos/vidflux.svg",
       "name": "VidFlux",
       "status": "available",
-      "download_url": "",
+      "download_url": "https://airsilo.pages.dev/vidflux/",
       "icon": "vidflux",
       "id": "vidflux",
       "description": "Convert between common video formats right in your browser. Works offline once loaded.",
