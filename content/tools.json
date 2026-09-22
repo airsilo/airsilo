@@ -82,7 +82,7 @@
     },
     {
       "accent": "#22D3EE",
-      "logo": "",
+      "logo": "<svg viewBox=\"0 0 64 64\" width=\"64\" height=\"64\" xmlns=\"http://www.w3.org/2000/svg\">\n  <defs>\n    <linearGradient id=\"titlebar-brand\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#C4B5FD\"/>\n      <stop offset=\"0.5\" stop-color=\"#6EE7B7\"/>\n      <stop offset=\"1\" stop-color=\"#FBCFE8\"/>\n    </linearGradient>\n  </defs>\n  <rect width=\"64\" height=\"64\" rx=\"16\" fill=\"url(#titlebar-brand)\"/>\n  <path d=\"M24 20 L44 32 L24 44 Z\" fill=\"#0B0A0F\" stroke=\"#0B0A0F\" stroke-width=\"2\" stroke-linejoin=\"round\"/>\n  <path d=\"M46 22 A 10 10 0 0 1 54 32\" stroke=\"#0B0A0F\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/>\n  <path d=\"M54 32 L58 28 M54 32 L50 28\" stroke=\"#0B0A0F\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/>\n  <path d=\"M18 42 A 10 10 0 0 1 10 32\" stroke=\"#0B0A0F\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/>\n  <path d=\"M10 32 L6 36 M10 32 L14 36\" stroke=\"#0B0A0F\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/>\n</svg>",
       "name": "VidFlux",
       "status": "available",
       "download_url": "",
