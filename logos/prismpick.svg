@@ -1,0 +1,21 @@
+<svg viewBox="0 0 64 64" width="45" height="45" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PrismPick logo">
+  <defs>
+    <linearGradient id="pp-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C4B5FD"/>
+      <stop offset="0.5" stop-color="#6EE7B7"/>
+      <stop offset="1" stop-color="#FBCFE8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="16" fill="url(#pp-bg)"/>
+  <rect x="6" y="6" width="52" height="52" rx="12" fill="#0B0A0F"/>
+
+  <!-- Three stacked color bars -->
+  <rect x="16" y="18" width="32" height="6" rx="3" fill="#FBBF24"/>
+  <rect x="16" y="29" width="24" height="6" rx="3" fill="#F472B6"/>
+  <rect x="16" y="40" width="16" height="6" rx="3" fill="#22D3EE"/>
+
+  <!-- Picker dot on the shortest bar -->
+  <circle cx="37" cy="43" r="4.5" fill="#0B0A0F"/>
+  <circle cx="37" cy="43" r="2" fill="#22D3EE"/>
+</svg>
