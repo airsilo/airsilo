@@ -540,8 +540,14 @@ h2.section-title {
   overflow: hidden;
   position: relative;
 }
-.tool-icon img { width: 100%; height: 100%; object-fit: cover; }
-.tool-icon svg { width: 26px; height: 26px; }
+.tool-icon img,
+.tool-icon svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* fills the container, cropping any overflow */
+  display: block;
+  border-radius: inherit;
+}
 .tool-icon .ms { font-size: 26px; }
 .tool-card:hover .tool-icon { border-radius: var(--r-lg); transform: scale(1.06) rotate(-4deg); }
 
