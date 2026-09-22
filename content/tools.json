@@ -2,7 +2,7 @@
   "tools": [
     {
       "accent": "#A3E635",
-      "logo": "<svg viewBox=\"0 0 64 64\" width=\"45\" height=\"45\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\">\n  <defs>\n    <linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"#C4B5FD\"/>\n      <stop offset=\"0.5\" stop-color=\"#6EE7B7\"/>\n      <stop offset=\"1\" stop-color=\"#FBCFE8\"/>\n    </linearGradient>\n  </defs>\n  <rect width=\"64\" height=\"64\" rx=\"16\" fill=\"url(#bg)\"/>\n  <rect x=\"8\" y=\"8\" width=\"48\" height=\"48\" rx=\"12\" fill=\"#0B0A0F\"/>\n  <rect x=\"14\" y=\"24\" width=\"3.5\" height=\"16\" rx=\"1.75\" fill=\"#F472B6\"/>\n  <rect x=\"20.5\" y=\"18\" width=\"3.5\" height=\"28\" rx=\"1.75\" fill=\"#A78BFA\"/>\n  <rect x=\"27\" y=\"12\" width=\"3.5\" height=\"40\" rx=\"1.75\" fill=\"#FBBF24\"/>\n  <rect x=\"34\" y=\"16\" width=\"3.5\" height=\"32\" rx=\"1.75\" fill=\"#6EE7B7\"/>\n  <rect x=\"40.5\" y=\"22\" width=\"3.5\" height=\"20\" rx=\"1.75\" fill=\"#22D3EE\"/>\n  <rect x=\"47\" y=\"27\" width=\"3.5\" height=\"10\" rx=\"1.75\" fill=\"#FBCFE8\"/>\n</svg>",
+      "logo": "https://raw.githubusercontent.com/airsilo/airsilo/main/logos/waveflux.svg",
       "name": "WaveFlux",
       "featured": true,
       "status": "available",
