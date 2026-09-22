@@ -25,22 +25,26 @@ collections:
         file: "content/settings.json"
         fields:
           - { label: "Site name", name: "site_name", widget: "string" }
+          - { label: "Browser title", name: "title", widget: "string" }
           - { label: "Tagline", name: "tagline", widget: "string" }
+
           - label: "Hero"
             name: "hero"
             widget: "object"
             fields:
               - { label: "Title line 1", name: "title_line1", widget: "string" }
-              - { label: "Title line 2", name: "title_line2", widget: "string" }
+              - { label: "Title line 2 (gradient)", name: "title_line2", widget: "string" }
               - { label: "Subtitle", name: "subtitle", widget: "text" }
+
           - label: "Donation"
             name: "donation"
             widget: "object"
             fields:
               - { label: "Heading", name: "heading", widget: "string" }
               - { label: "Subheading", name: "subheading", widget: "text" }
-              - { label: "Buy Me a Coffee URL", name: "bmc_url", widget: "string", required: false }
+              - { label: "PayPal URL", name: "paypal_url", widget: "string", required: false, hint: "e.g. https://paypal.me/yourname" }
               - { label: "Ko-fi URL", name: "kofi_url", widget: "string", required: false }
+              - { label: "Form endpoint (Formspree etc.)", name: "form_endpoint", widget: "string", required: false, hint: "Leave empty to use mailto fallback" }
               - label: "UPI"
                 name: "upi"
                 widget: "object"
@@ -49,6 +53,40 @@ collections:
                   - { label: "UPI ID", name: "upi_id", widget: "string" }
                   - { label: "QR code image", name: "qr_image", widget: "image", required: false }
                   - { label: "Supported apps", name: "apps", widget: "list", default: ["PhonePe","Paytm","GPay","BHIM"] }
+
+          - label: "Footer — Connect links"
+            name: "connect_links"
+            widget: "list"
+            summary: "{{fields.label}}"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+              - label: "Icon (Material Symbols name)"
+                name: "icon"
+                widget: "select"
+                default: "link"
+                options:
+                  - link
+                  - code
+                  - mail
+                  - alternate_email
+                  - chat
+                  - public
+                  - rss_feed
+                  - smartphone
+                  - language
+                  - share
+                  - contact_mail
+                  - support_agent
+                  - groups
+                  - terminal
+                  - bug_report
+                  - forum
+                  - photo_camera
+                  - videocam
+                  - palette
+                  - shield
+
           - { label: "Contact email", name: "contact_email", widget: "string", required: false }
           - { label: "GitHub URL", name: "github_url", widget: "string", required: false }
 
@@ -64,22 +102,22 @@ collections:
             widget: "list"
             summary: "{{fields.name}} — {{fields.status}}"
             fields:
-              - { label: "ID", name: "id", widget: "string", hint: "e.g. image-converter" }
+              - { label: "ID", name: "id", widget: "string", hint: "e.g. pixflux" }
               - { label: "Name", name: "name", widget: "string" }
               - { label: "Description", name: "description", widget: "text" }
-              - label: "Icon"
+              - label: "Fallback icon (Material Symbol)"
                 name: "icon"
                 widget: "select"
                 options:
-                  - image-converter
-                  - image-resizer
-                  - document-converter
-                  - qr-studio
-                  - hasher-password
-                  - color-studio
-                  - video-converter
-                  - pdf-toolkit
-                  - audio-converter
+                  - pixflux
+                  - cropflow
+                  - paperflow
+                  - qrflux
+                  - cryptsilo
+                  - prismpick
+                  - vidflux
+                  - waveflux
+                  - pdfflow
               - { label: "Category", name: "category", widget: "string" }
               - { label: "Version", name: "version", widget: "string", required: false }
               - { label: "File size", name: "size", widget: "string", required: false, hint: "e.g. ~120 KB" }
@@ -91,6 +129,7 @@ collections:
                 default: "available"
               - { label: "Featured", name: "featured", widget: "boolean", default: false, required: false }
               - { label: "Accent color", name: "accent", widget: "color", required: false, default: "#C4B5FD" }
-              - { label: "Download URL", name: "download_url", widget: "string", required: false }
+              - { label: "Download URL", name: "download_url", widget: "string", required: false, hint: "e.g. /tools/pixflux.html OR a full external URL" }
               - { label: "Screenshot", name: "screenshot", widget: "image", required: false }
+              - { label: "Custom Logo — URL or raw SVG (optional)", name: "logo", widget: "text", required: false, hint: "Paste an image URL (https://...) OR a full <svg>...</svg> block. Leave empty to use the fallback icon above." }
               - { label: "Changelog", name: "changelog", widget: "text", required: false }
