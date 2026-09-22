@@ -15,15 +15,33 @@
     "form_endpoint": "",
     "upi": {
       "enabled": true,
-      "upi_id": "airsilo@upi",
+      "upi_id": "bhargov@superyes",
       "qr_image": "https://raw.githubusercontent.com/airsilo/airsilo/main/admin/assets/uploads/upi-qr.png",
-      "apps": ["PhonePe", "Paytm", "GPay", "BHIM", "Amazon Pay"]
+      "apps": [
+        "PhonePe",
+        "Paytm",
+        "GPay",
+        "BHIM",
+        "Amazon Pay"
+      ]
     }
   },
   "connect_links": [
-    { "label": "GitHub",      "url": "https://github.com/airsilo",       "icon": "code" },
-    { "label": "Twitter / X", "url": "https://twitter.com/airsilo",      "icon": "alternate_email" },
-    { "label": "Email",       "url": "mailto:hello@airsilo.com",         "icon": "mail" }
+    {
+      "label": "GitHub",
+      "url": "https://github.com/airsilo",
+      "icon": "code"
+    },
+    {
+      "label": "Twitter / X",
+      "url": "https://twitter.com/airsilo",
+      "icon": "alternate_email"
+    },
+    {
+      "label": "Email",
+      "url": "mailto:hello@airsilo.com",
+      "icon": "mail"
+    }
   ],
   "contact_email": "hello@airsilo.com",
   "github_url": "https://github.com/airsilo"
