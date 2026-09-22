@@ -437,8 +437,9 @@ p { margin: 0; }
   height: 100% !important;
   max-width: 100% !important;
   max-height: 100% !important;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: inherit;
+  background: transparent;
 }
 .custom-logo-wrap > svg {
   aspect-ratio: 1 / 1;
@@ -1329,7 +1330,7 @@ h2.section-title {
 
 <script>
 /* ============================================================
-   AirSilo v3 — app
+   AirSilo v3 — app (clean renderIcon, JS fallback)
    ============================================================ */
 (() => {
   'use strict';
@@ -1337,7 +1338,7 @@ h2.section-title {
   const $$ = (s, r=document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  /* ---- Fallback Material Symbol per tool ---- */
+  /* ---- Material Symbol fallback per tool ---- */
   const ICON_MAP = {
     'pixflux': 'image',
     'cropflow': 'photo_size_select_large',
@@ -1363,20 +1364,17 @@ h2.section-title {
     'pdfflow': '#FB923C',
   };
 
-  /* ---- Robust icon renderer (handles raw SVG, data URL, remote URL) ---- */
   const fallbackIcon = (toolId) =>
     `<span class="ms ms-fill">${ICON_MAP[toolId] || 'apps'}</span>`;
 
+  /* ---- Clean, robust icon renderer ---- */
   const renderIcon = (tool) => {
     const raw = tool.logo;
     const logo = typeof raw === 'string' ? raw.trim() : '';
 
-    // ---- Case A: Raw SVG markup ----
+    // Case A: raw SVG markup
     if (logo.startsWith('<svg') || logo.startsWith('<?xml')) {
-      let svg = logo;
-
-      // 1. Un-escape JSON artifacts
-      svg = svg
+      let svg = logo
         .replace(/\\n/g, ' ')
         .replace(/\\r/g, ' ')
         .replace(/\\t/g, ' ')
@@ -1385,49 +1383,39 @@ h2.section-title {
         .replace(/\s+/g, ' ')
         .trim();
 
-      // 2. Ensure xmlns (iOS Safari requires it)
-      if (!/\sxmlns=/.test(svg)) {
-        svg = svg.replace(/<svg/i, '<svg xmlns="http://www.w3.org/2000/svg"');
-      }
-
-      // 3. Ensure viewBox
-      if (!/viewBox=/i.test(svg)) {
-        svg = svg.replace(/<svg/i, '<svg viewBox="0 0 512 512"');
-      }
-
-      // 4. Strip outer width/height (CSS controls size)
+      if (!/\sxmlns=/.test(svg)) svg = svg.replace(/<svg/i, '<svg xmlns="http://www.w3.org/2000/svg"');
+      if (!/viewBox=/i.test(svg)) svg = svg.replace(/<svg/i, '<svg viewBox="0 0 512 512"');
       svg = svg.replace(/<svg([^>]*?)\swidth="[^"]*"/i, '<svg$1');
       svg = svg.replace(/<svg([^>]*?)\sheight="[^"]*"/i, '<svg$1');
-
-      // 5. Inline sizing safety net
-      svg = svg.replace(/<svg([^>]*)>/i,
-        '<svg$1 style="width:100%;height:100%;display:block;">');
-
-      // 6. Ensure closing tag
       if (!svg.includes('</svg>')) svg += '</svg>';
 
-      // 7. Sanity check: has visual children?
       if (!/<(path|rect|circle|ellipse|polygon|polyline|line|text|g|image)\b/i.test(svg)) {
         return fallbackIcon(tool.id);
       }
-
       return `<span class="custom-logo-wrap">${svg}</span>`;
     }
 
-    // ---- Case B: Data URL ----
-    if (logo.startsWith('data:image/')) {
-      const fb = fallbackIcon(tool.id);
-      return `<span class="custom-logo-wrap"><img src="${esc(logo)}" alt="" onerror="this.parentNode.innerHTML='${fb.replace(/'/g, "\\'")}'" /></span>`;
+    // Case B: URL (svg, png, webp, data URL)
+    if (/^(https?:\/\/|data:image\/)/i.test(logo)) {
+      const fb = esc(ICON_MAP[tool.id] || 'apps');
+      return `<span class="custom-logo-wrap" data-fallback="${fb}"><img src="${esc(logo)}" alt="" data-logo-img /></span>`;
     }
 
-    // ---- Case C: Remote URL ----
-    if (/^https?:\/\//i.test(logo)) {
-      const fb = fallbackIcon(tool.id);
-      return `<span class="custom-logo-wrap"><img src="${esc(logo)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='${fb.replace(/'/g, "\\'")}'" /></span>`;
-    }
-
-    // ---- Case D: Fallback ----
+    // Case C: fallback
     return fallbackIcon(tool.id);
+  };
+
+  /* ---- Attach error fallback for logo images ---- */
+  const attachLogoFallbacks = (root) => {
+    (root || document).querySelectorAll('.custom-logo-wrap img[data-logo-img]').forEach(img => {
+      if (img.dataset.fallbackBound) return;
+      img.dataset.fallbackBound = '1';
+      img.addEventListener('error', () => {
+        const wrap = img.closest('.custom-logo-wrap');
+        const fb = wrap?.dataset.fallback || 'apps';
+        if (wrap) wrap.innerHTML = `<span class="ms ms-fill">${fb}</span>`;
+      }, { once: true });
+    });
   };
 
   /* ---- Embedded fallback data ---- */
@@ -1685,6 +1673,8 @@ h2.section-title {
         </article>`;
     }).join('');
 
+    attachLogoFallbacks(grid);
+
     grid.querySelectorAll('.tool-card').forEach((c, i) => {
       c.style.opacity = '0';
       c.style.transform = 'translateY(20px)';
@@ -1744,6 +1734,8 @@ h2.section-title {
       openLink.style.display = 'none';
       dlLink.style.display = 'none';
     }
+
+    attachLogoFallbacks(modal);
     openModal(modal);
   }
 
@@ -1891,6 +1883,7 @@ h2.section-title {
         el.classList.add('has-custom-logo');
       }
     });
+    attachLogoFallbacks(document);
   }
 })();
 </script>
