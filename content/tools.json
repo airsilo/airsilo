@@ -130,7 +130,7 @@
       "external": false,
       "featured": false,
       "status": "available",
-      "changelog": "Initial release.\n- PDF merge / split\n- Rotate & reorder pages\n- Images → PDF",
+      "changelog": "Initial release (Public Beta). \n- v1.0\n- PDF merge / split\n- Rotate & reorder pages\n- Images → PDF",
       "version": "1.0.0",
       "download_url": "/tools/document-converter.html",
       "icon": "paperflow",
