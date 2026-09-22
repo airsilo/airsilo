@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0B0A0F">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;font-src https://fonts.gstatic.com;img-src 'self' data: blob:;media-src blob:;connect-src 'none';worker-src blob:;form-action 'none';base-uri 'none'">
+<title>VidFlux by AirSilo — Fully Offline Video Converter</title>
+<meta name="description" content="VidFlux is a fully offline, privacy-first video converter for Windows. Convert MP4, MOV, ProRes, MKV, H.265, WebM and more — with AMD, Intel & NVIDIA hardware acceleration. No uploads. No servers. No tracking.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23C4B5FD'/%3E%3Cstop offset='0.5' stop-color='%236EE7B7'/%3E%3Cstop offset='1' stop-color='%23FBCFE8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1024' height='1024' rx='256' fill='url(%23g)'/%3E%3Cpath d='M384 320 L704 512 L384 704 Z' fill='%230B0A0F'/%3E%3Cpath d='M736 352 A 160 160 0 0 1 864 512' stroke='%230B0A0F' stroke-width='48' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
+<style>
+/* ─── TOKENS ───────────────────────────────────────────── */
+:root{
+  --primary:#C4B5FD;  --on-primary:#2E1065;  --primary-container:#5B21B6;
+  --secondary:#6EE7B7; --on-secondary:#064E3B; --secondary-container:#065F46;
+  --on-secondary-container:#A7F3D0;
+  --tertiary:#FBCFE8; --on-tertiary:#831843; --tertiary-container:#9D174D;
+  --error:#FCA5A5;    --on-error:#450A0A;
+  --surface:#0B0A0F;
+  --surface-container-low:#12101A;
+  --surface-container:#181624;
+  --surface-container-high:#221F30;
+  --surface-container-highest:#2C2838;
+  --on-surface:#E8E2F0;
+  --on-surface-variant:#C8BFD8;
+  --outline:#8B82A0;
+  --outline-variant:#3D3650;
+
+  --violet:#A78BFA; --mint:#6EE7B7; --pink:#F472B6; --amber:#FBBF24;
+  --blue:#60A5FA; --cyan:#22D3EE; --lime:#A3E635; --orange:#FB923C; --rose:#FBCFE8;
+
+  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:20px;
+  --r-xl:28px; --r-xxl:40px; --r-full:999px;
+
+  --ease-emph:cubic-bezier(0.05,0.7,0.1,1);
+  --t-short:200ms; --t-med:400ms;
+
+  --shadow-e5:0 32px 64px -24px rgba(0,0,0,.85), 0 0 0 1px rgba(196,181,253,.06);
+  --maxw:1140px;
+  --nav-h:82px;
+}
+
+/* ─── RESET / BASE ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;background:var(--surface);color:var(--on-surface);
+  font-family:Roboto,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:1rem;line-height:1.6;font-weight:400;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+h1,h2,h3,h4,p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+::selection{background:rgba(196,181,253,.3);color:#fff}
+
+:where(a,button,[tabindex]):focus-visible{
+  outline:2px solid var(--primary);outline-offset:3px;border-radius:var(--r-xs);
+}
+
+/* ═══ SCROLL PROGRESS BAR ══════════════════════════════ */
+.scroll-progress{
+  position:fixed;top:0;left:0;
+  width:100%;height:3px;
+  z-index:200;
+  pointer-events:none;
+  background:transparent;
+}
+.scroll-progress__fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#C4B5FD 0%,#6EE7B7 55%,#FBCFE8 100%);
+  border-radius:0 var(--r-full) var(--r-full) 0;
+  box-shadow:0 0 12px -2px rgba(196,181,253,.7);
+  transition:width 80ms linear;
+  will-change:width;
+}
+
+/* ─── AMBIENT BACKGROUND ───────────────────────────────── */
+.mesh{position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse at top,#1A1530 0%,var(--surface) 55%)}
+.mesh::before,.mesh::after,.mesh .blob{content:"";position:absolute;border-radius:50%;filter:blur(120px);opacity:.35}
+.mesh::before{width:620px;height:620px;background:#7C3AED;top:-200px;left:-160px;animation:drift1 26s ease-in-out infinite}
+.mesh::after{width:560px;height:560px;background:#10B981;top:30%;right:-200px;animation:drift2 32s ease-in-out infinite}
+.mesh .blob{width:520px;height:520px;background:#EC4899;bottom:-180px;left:30%;animation:drift3 38s ease-in-out infinite}
+@keyframes drift1{50%{transform:translate(80px,60px) scale(1.15)}}
+@keyframes drift2{50%{transform:translate(-90px,50px) scale(1.1)}}
+@keyframes drift3{50%{transform:translate(50px,-80px) scale(1.12)}}
+.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ─── ICONS ────────────────────────────────────────────── */
+.ms{
+  font-family:'Material Symbols Outlined';
+  font-weight:normal;font-style:normal;font-size:24px;line-height:1;
+  letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;
+  word-wrap:normal;direction:ltr;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  -webkit-font-smoothing:antialiased;
+}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* ─── LAYOUT HELPERS ───────────────────────────────────── */
+.wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(16px,4.5vw,32px)}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  padding:5px 12px;border-radius:var(--r-full);
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--mint);
+}
+
+/* ═══ HEADER / CONDENSED FLOATING CAPSULE NAV ═══════════ */
+.nav-shell{
+  position:sticky;top:0;z-index:60;
+  padding:17px 0 16px;
+  pointer-events:none;
+  display:flex;justify-content:center;
+}
+
+.navbar{
+  pointer-events:auto;
+  display:flex;align-items:center;gap:2px;
+  max-width:calc(100% - clamp(16px,4vw,32px));
+  padding:5px 5px 5px 7px;
+  border-radius:var(--r-full);
+  background:linear-gradient(180deg,rgba(44,40,56,.76),rgba(18,16,26,.9));
+  border:1px solid rgba(196,181,253,.17);
+  box-shadow:
+    0 10px 28px -14px rgba(0,0,0,.75),
+    0 2px 8px -4px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter:blur(22px) saturate(165%);
+  -webkit-backdrop-filter:blur(22px) saturate(165%);
+  transition:border-color var(--t-med) var(--ease-emph),box-shadow var(--t-med) var(--ease-emph);
+}
+
+/* ── Brand ── */
+.nav-brand{
+  display:flex;align-items:center;gap:8px;
+  padding:2px 4px 2px 2px;flex:none;border-radius:var(--r-full);
+}
+.nav-logo{
+  width:30px;height:30px;flex:none;border-radius:9px;
+  box-shadow:0 6px 16px -8px rgba(196,181,253,.7);
+  transition:transform var(--t-med) var(--ease-emph),border-radius var(--t-med) var(--ease-emph);
+}
+.nav-brand:hover .nav-logo{transform:rotate(-4deg) scale(1.06);border-radius:11px}
+.nav-brand-text{display:flex;align-items:baseline;gap:6px;min-width:0}
+.nav-brand-name{
+  font-size:.9375rem;font-weight:900;letter-spacing:-.025em;
+  color:#fff;white-space:nowrap;line-height:1;
+}
+.nav-brand-by{
+  display:none;font-size:.6875rem;font-weight:600;letter-spacing:.01em;
+  color:var(--on-surface-variant);white-space:nowrap;line-height:1;
+}
+@media (min-width:520px){ .nav-brand-by{display:inline} }
+
+/* ── Links ── */
+.nav-links{display:none;align-items:center;gap:0;margin:0 3px}
+@media (min-width:800px){ .nav-links{display:flex} }
+
+.nav-link{
+  display:inline-flex;align-items:center;
+  padding:7px 12px;border-radius:var(--r-full);
+  font-size:.8125rem;font-weight:600;letter-spacing:-.005em;
+  color:var(--on-surface-variant);white-space:nowrap;
+  transition:color var(--t-short) var(--ease-emph),
+             background var(--t-short) var(--ease-emph),
+             transform var(--t-short) var(--ease-emph);
+}
+.nav-link:hover{color:var(--on-surface);background:rgba(255,255,255,.06)}
+.nav-link:active{transform:scale(.96)}
+
+/* ── Right side ── */
+.nav-actions{display:flex;align-items:center;gap:2px;flex:none}
+
+.nav-icon-btn{
+  width:33px;height:33px;flex:none;display:grid;place-items:center;
+  border-radius:50%;border:1px solid transparent;
+  background:transparent;color:var(--on-surface-variant);
+  transition:all var(--t-short) var(--ease-emph);
+}
+.nav-icon-btn .ms{font-size:19px}
+.nav-icon-btn:hover{
+  color:var(--primary);background:rgba(196,181,253,.1);
+  border-color:rgba(196,181,253,.24);transform:rotate(-4deg) scale(1.06);
+}
+.nav-icon-btn:active{transform:scale(.96)}
+
+.nav-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 15px;min-height:34px;border-radius:var(--r-full);
+  font-size:.8125rem;font-weight:700;letter-spacing:-.005em;
+  color:var(--on-primary);white-space:nowrap;
+  background:linear-gradient(135deg,#EDE9FE 0%,#C4B5FD 52%,#A78BFA 100%);
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:
+    0 10px 24px -12px rgba(196,181,253,.9),
+    inset 0 1px 0 rgba(255,255,255,.55);
+  transition:all var(--t-short) var(--ease-emph);
+}
+.nav-cta .ms{font-size:16px}
+.nav-cta:hover{filter:brightness(1.07);transform:translateY(-1px);box-shadow:0 15px 32px -12px rgba(196,181,253,1),inset 0 1px 0 rgba(255,255,255,.6)}
+.nav-cta:active{transform:scale(.96)}
+
+/* anchor offset for sticky nav */
+section[id]{scroll-margin-top:calc(var(--nav-h) + 12px)}
+
+/* ─── PRIVACY BADGE ────────────────────────────────────── */
+.privacy-strip{display:flex;justify-content:center;padding-top:clamp(8px,2.5vw,18px)}
+.privacy-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 16px;border-radius:var(--r-full);
+  background:rgba(6,95,70,.35);
+  border:1px solid rgba(110,231,183,.32);
+  color:var(--secondary);
+  font-size:.75rem;font-weight:600;letter-spacing:.01em;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:0 0 32px -12px rgba(110,231,183,.45);
+  text-align:center;
+}
+.privacy-badge .ms{font-size:16px;flex:none}
+
+/* ─── HERO ─────────────────────────────────────────────── */
+.hero{padding:clamp(30px,6vw,64px) 0 clamp(40px,7vw,80px);position:relative}
+.hero-grid{
+  display:grid;gap:clamp(36px,6vw,64px);
+  grid-template-columns:1fr;align-items:center;
+}
+.hero h1{
+  font-size:clamp(2.4rem,6.4vw,5.2rem);
+  font-weight:900;letter-spacing:-.045em;line-height:1.02;
+  margin-bottom:18px;
+}
+.grad{
+  background:linear-gradient(115deg,#C4B5FD 0%,#6EE7B7 48%,#FBCFE8 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p.lead{
+  font-size:clamp(1rem,2.1vw,1.15rem);
+  color:var(--on-surface-variant);max-width:56ch;line-height:1.65;
+}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:26px;
+  font-size:.8125rem;font-weight:500;color:var(--on-surface-variant);
+}
+.hero-meta span{display:inline-flex;align-items:center;gap:6px}
+.hero-meta .ms{font-size:16px;color:var(--mint)}
+
+/* ─── BUTTONS ──────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 22px;min-height:40px;border-radius:var(--r-full);
+  font-size:.875rem;font-weight:600;border:1px solid transparent;
+  transition:all 200ms cubic-bezier(.05,.7,.1,1);
+  white-space:nowrap;
+}
+.btn:active{transform:scale(.96)}
+.btn .ms{font-size:19px}
+.btn-filled{background:linear-gradient(135deg,var(--primary),var(--tertiary));color:var(--on-primary);box-shadow:0 12px 32px -14px rgba(196,181,253,.75)}
+.btn-filled:hover{box-shadow:0 18px 42px -14px rgba(196,181,253,.9);filter:brightness(1.06)}
+.btn-tonal{background:var(--secondary-container);color:var(--on-secondary-container)}
+.btn-tonal:hover{background:#0A7B5C}
+.btn-outlined{background:transparent;border-color:var(--outline);color:var(--on-surface)}
+.btn-outlined:hover{border-color:var(--primary);color:var(--primary);background:rgba(196,181,253,.07)}
+.btn-lg{padding:14px 30px;min-height:52px;font-size:.9375rem}
+.btn-block{width:100%}
+
+/* ─── APP MOCK ─────────────────────────────────────────── */
+.mock{
+  background:linear-gradient(145deg,rgba(28,24,38,.9),rgba(18,16,26,.75));
+  border:1px solid var(--outline-variant);
+  border-radius:var(--r-xl);padding:0;overflow:hidden;
+  box-shadow:var(--shadow-e5);
+  transition:transform var(--t-med) var(--ease-emph),border-radius var(--t-med) var(--ease-emph);
+}
+.mock:hover{transform:translateY(-6px);border-radius:var(--r-xxl)}
+.mock-bar{
+  display:flex;align-items:center;gap:7px;
+  padding:12px 16px;border-bottom:1px solid var(--outline-variant);
+  background:rgba(11,10,15,.5);
+}
+.mock-dot{width:10px;height:10px;border-radius:50%;flex:none}
+.mock-dot.d1{background:#F87171}.mock-dot.d2{background:#FBBF24}.mock-dot.d3{background:#34D399}
+.mock-title{margin-left:auto;font-size:.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--outline)}
+.mock-body{padding:20px}
+.mock-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mock-file{display:flex;align-items:center;gap:11px;min-width:0;flex:1 1 auto}
+.mock-ic{
+  width:40px;height:40px;flex:none;display:grid;place-items:center;font-size:20px;
+  border-radius:var(--r-md);background:rgba(167,139,250,.14);color:var(--violet);
+}
+.mock-name{font-size:.875rem;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:min(46vw,220px)}
+.mock-meta{font-size:.6875rem;color:var(--on-surface-variant);letter-spacing:.02em}
+.mock-arrow{color:var(--outline);flex:none}
+.mock-arrow .ms{font-size:18px}
+.mock-out{
+  font-size:.75rem;font-weight:700;padding:6px 12px;border-radius:var(--r-full);
+  background:rgba(110,231,183,.13);color:var(--mint);border:1px solid rgba(110,231,183,.25);
+  white-space:nowrap;
+}
+.progress{
+  margin-top:18px;height:8px;border-radius:var(--r-full);
+  background:var(--surface-container-highest);overflow:hidden;
+}
+.progress-fill{
+  height:100%;width:0%;border-radius:var(--r-full);
+  background:linear-gradient(90deg,#C4B5FD,#6EE7B7);
+  transition:width .12s linear;
+}
+.mock-stats{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:12px;font-size:.6875rem;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--outline);
+}
+.mock-stats .pct{color:var(--mint);font-variant-numeric:tabular-nums}
+.mock-hw{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;
+  padding-top:18px;border-top:1px solid var(--outline-variant);
+}
+.hw-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.6875rem;font-weight:700;letter-spacing:.03em;
+  padding:5px 11px;border-radius:var(--r-full);
+  background:var(--surface-container-high);border:1px solid var(--outline-variant);
+  color:var(--on-surface-variant);
+}
+.hw-chip .ms{font-size:14px}
+.hw-chip.nv{color:#A3E635;border-color:rgba(163,230,53,.3)}
+.hw-chip.qs{color:#60A5FA;border-color:rgba(96,165,250,.3)}
+.hw-chip.am{color:#FB923C;border-color:rgba(251,146,60,.3)}
+
+/* ─── SECTIONS ─────────────────────────────────────────── */
+section{padding-block:clamp(48px,8vw,92px)}
+.sec-head{max-width:62ch;margin-bottom:clamp(28px,5vw,48px)}
+.sec-head h2{
+  font-size:clamp(1.85rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1.08;
+  margin:14px 0 14px;
+}
+.sec-head p{color:var(--on-surface-variant);font-size:1.0625rem}
+
+/* ─── CARDS ────────────────────────────────────────────── */
+.grid{display:grid;gap:16px;grid-template-columns:1fr}
+.card{
+  background:linear-gradient(145deg,rgba(28,24,38,.85),rgba(18,16,26,.7));
+  border:1px solid var(--outline-variant);
+  border-radius:var(--r-xl);padding:24px;
+  transition:transform 400ms cubic-bezier(.05,.7,.1,1),
+             border-radius 400ms cubic-bezier(.05,.7,.1,1),
+             border-color 400ms cubic-bezier(.05,.7,.1,1),
+             box-shadow 400ms cubic-bezier(.05,.7,.1,1);
+  position:relative;overflow:hidden;
+}
+.card::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(420px 220px at var(--mx,50%) var(--my,0%),rgba(196,181,253,.09),transparent 70%);
+  opacity:0;transition:opacity var(--t-med) var(--ease-emph);
+}
+.card:hover{transform:translateY(-6px);border-radius:var(--r-xxl);border-color:rgba(196,181,253,.35);box-shadow:0 28px 56px -26px rgba(0,0,0,.9)}
+.card:hover::after{opacity:1}
+.card h3{font-size:1.1875rem;font-weight:700;letter-spacing:-.015em;margin-bottom:8px}
+.card p{font-size:.9375rem;color:var(--on-surface-variant);line-height:1.6}
+.ic{
+  width:48px;height:48px;display:grid;place-items:center;margin-bottom:16px;
+  border-radius:var(--r-md);font-size:24px;
+  transition:border-radius var(--t-med) var(--ease-emph),transform var(--t-med) var(--ease-emph);
+}
+.card:hover .ic{border-radius:var(--r-lg);transform:rotate(-4deg) scale(1.06)}
+.ic-violet{background:rgba(167,139,250,.14);color:var(--violet)}
+.ic-mint{background:rgba(110,231,183,.13);color:var(--mint)}
+.ic-pink{background:rgba(244,114,182,.13);color:var(--pink)}
+.ic-amber{background:rgba(251,191,36,.13);color:var(--amber)}
+.ic-blue{background:rgba(96,165,250,.13);color:var(--blue)}
+.ic-cyan{background:rgba(34,211,238,.13);color:var(--cyan)}
+.ic-lime{background:rgba(163,230,53,.13);color:var(--lime)}
+.ic-orange{background:rgba(251,146,60,.13);color:var(--orange)}
+
+/* ─── FEATURE SPOTLIGHT ────────────────────────────────── */
+.spot{display:grid;gap:16px;grid-template-columns:1fr}
+.spot-card{display:flex;flex-direction:column;gap:12px}
+.spot-tag{
+  align-self:flex-start;
+  font-size:.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 11px;border-radius:var(--r-full);
+  background:var(--surface-container-highest);color:var(--on-surface-variant);
+  border:1px solid var(--outline-variant);
+}
+.spot-tag.hdr{color:var(--amber);border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.09)}
+.spot-tag.k8{color:var(--pink);border-color:rgba(244,114,182,.3);background:rgba(244,114,182,.09)}
+.spot-tag.gpu{color:var(--lime);border-color:rgba(163,230,53,.3);background:rgba(163,230,53,.09)}
+.spot-num{font-size:clamp(1.9rem,4.6vw,2.9rem);font-weight:900;letter-spacing:-.04em;line-height:1}
+.spot-num small{font-size:.5em;font-weight:700;letter-spacing:-.01em;color:var(--on-surface-variant)}
+
+/* ─── FORMAT CHIPS ─────────────────────────────────────── */
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:var(--r-full);
+  font-size:.8125rem;font-weight:600;letter-spacing:.01em;
+  background:var(--surface-container);border:1px solid var(--outline-variant);
+  color:var(--on-surface);
+  transition:all var(--t-short) var(--ease-emph);
+}
+.chip:hover{transform:translateY(-3px);border-color:var(--primary);color:var(--primary);background:rgba(196,181,253,.08)}
+.chip .dot{width:7px;height:7px;border-radius:50%;flex:none}
+.chip-note{margin-top:20px;font-size:.875rem;color:var(--on-surface-variant)}
+
+/* ─── DOWNLOAD ─────────────────────────────────────────── */
+.dl-grid{display:grid;gap:16px;grid-template-columns:1fr}
+.dl-card{
+  display:flex;flex-direction:column;gap:16px;
+  background:linear-gradient(145deg,rgba(28,24,38,.9),rgba(18,16,26,.72));
+  border:1px solid var(--outline-variant);
+  border-radius:var(--r-xl);padding:24px;
+  transition:transform 400ms var(--ease-emph),border-radius 400ms var(--ease-emph),border-color 400ms var(--ease-emph),box-shadow 400ms var(--ease-emph);
+  position:relative;overflow:hidden;
+}
+.dl-card:hover{transform:translateY(-6px);border-radius:var(--r-xxl);border-color:rgba(196,181,253,.4);box-shadow:0 28px 56px -26px rgba(0,0,0,.9)}
+.dl-card.recommended{border-color:rgba(110,231,183,.4);background:linear-gradient(145deg,rgba(6,95,70,.28),rgba(18,16,26,.75))}
+.dl-top{display:flex;align-items:flex-start;gap:14px}
+.dl-top .ic{margin:0;flex:none}
+.dl-title{font-size:1.1875rem;font-weight:700;letter-spacing:-.015em}
+.dl-file{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.75rem;color:var(--on-surface-variant);word-break:break-all;margin-top:3px;
+}
+.dl-desc{font-size:.875rem;color:var(--on-surface-variant);flex:1}
+.dl-list{display:flex;flex-direction:column;gap:7px;font-size:.8125rem;color:var(--on-surface-variant)}
+.dl-list li{display:flex;align-items:flex-start;gap:8px}
+.dl-list .ms{font-size:16px;color:var(--mint);flex:none;margin-top:1px}
+
+/* ─── OS PILL (icon badge on mobile) ───────────────────── */
+.rec-pill{
+  position:absolute;top:16px;right:16px;
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  font-size:.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 10px;border-radius:var(--r-full);
+  background:rgba(110,231,183,.15);color:var(--mint);border:1px solid rgba(110,231,183,.35);
+  z-index:2;
+  pointer-events:none;
+}
+.rec-pill-text{display:inline-block}
+.rec-pill-icon{
+  display:none;width:12px;height:12px;flex:none;
+  color:var(--mint);
+  fill:currentColor;
+}
+
+.dl-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.75rem;color:var(--outline);font-weight:600;letter-spacing:.02em}
+.dl-meta span{display:inline-flex;align-items:center;gap:5px}
+.dl-meta .ms{font-size:14px}
+
+.soon-grid{display:grid;gap:16px;grid-template-columns:1fr;margin-top:16px}
+.soon{
+  display:flex;align-items:center;gap:14px;
+  padding:20px 22px;border-radius:var(--r-xl);
+  border:1px dashed var(--outline-variant);
+  background:rgba(18,16,26,.5);
+  transition:border-color var(--t-med) var(--ease-emph),border-radius var(--t-med) var(--ease-emph);
+}
+.soon:hover{border-color:var(--outline);border-radius:var(--r-xxl)}
+.soon .ic{margin:0;flex:none;width:44px;height:44px;font-size:22px}
+.soon h4{font-size:1rem;font-weight:700}
+.soon p{font-size:.8125rem;color:var(--on-surface-variant)}
+
+/* ─── SPEC / TABLE ─────────────────────────────────────── */
+.spec-list{
+  border:1px solid var(--outline-variant);border-radius:var(--r-xl);overflow:hidden;
+  background:linear-gradient(145deg,rgba(28,24,38,.7),rgba(18,16,26,.55));
+}
+.spec-row{
+  display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between;
+  padding:16px 22px;border-bottom:1px solid var(--outline-variant);
+  font-size:.875rem;
+}
+.spec-row:last-child{border-bottom:none}
+.spec-row dt{color:var(--on-surface-variant);font-weight:600}
+.spec-row dd{margin:0;font-weight:600;text-align:right;color:var(--on-surface)}
+.spec-row dd a{color:var(--primary);border-bottom:1px solid rgba(196,181,253,.35)}
+.spec-row dd a:hover{border-bottom-color:var(--primary)}
+
+/* ─── CTA BANNER ───────────────────────────────────────── */
+.cta-banner{
+  position:relative;overflow:hidden;
+  border-radius:var(--r-xxl);
+  padding:clamp(32px,6vw,64px) clamp(22px,5vw,56px);
+  text-align:center;
+  background:linear-gradient(140deg,rgba(91,33,182,.42),rgba(6,95,70,.34) 55%,rgba(157,23,77,.34));
+  border:1px solid rgba(196,181,253,.24);
+}
+.cta-banner::before{
+  content:"";position:absolute;inset:-40%;
+  background:conic-gradient(from 0deg,transparent,rgba(196,181,253,.14),transparent 35%);
+  animation:spin 18s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cta-banner > *{position:relative;z-index:1}
+.cta-banner h2{font-size:clamp(1.6rem,4vw,2.75rem);font-weight:900;letter-spacing:-.035em;margin-bottom:12px}
+.cta-banner p{color:var(--on-surface-variant);max-width:52ch;margin:0 auto 26px}
+.cta-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+
+/* ─── FOOTER ───────────────────────────────────────────── */
+.site-footer{
+  border-top:1px solid var(--outline-variant);
+  padding:34px 0 44px;margin-top:clamp(40px,7vw,80px);
+  background:rgba(18,16,26,.55);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.footer-inner{
+  display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center;
+}
+.footer-brand{display:flex;align-items:center;gap:11px}
+.footer-brand svg{width:32px;height:32px;border-radius:var(--r-xs)}
+.footer-brand-text{text-align:left;line-height:1.25}
+.footer-brand-text strong{font-size:.9375rem;font-weight:900;letter-spacing:-.015em;display:block}
+.footer-brand-text span{font-size:.6875rem;color:var(--on-surface-variant)}
+.footer-line{
+  display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
+  font-size:.8125rem;color:var(--on-surface-variant);font-weight:500;
+}
+.footer-line .ms{font-size:16px;color:var(--mint)}
+.footer-line .sep{color:var(--outline-variant)}
+.footer-links{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.flink{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:var(--r-full);
+  font-size:.8125rem;font-weight:600;
+  border:1px solid var(--outline-variant);background:var(--surface-container);
+  color:var(--on-surface-variant);
+  transition:all var(--t-short) var(--ease-emph);
+}
+.flink .ms{font-size:16px}
+.flink:hover{color:var(--primary);border-color:var(--primary);transform:translateY(-2px)}
+.flink:active{transform:scale(.96)}
+.footer-copy{font-size:.75rem;color:var(--outline)}
+
+/* ─── MODAL ────────────────────────────────────────────── */
+.scrim{
+  position:fixed;inset:0;z-index:100;
+  display:grid;place-items:center;padding:20px;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  opacity:0;visibility:hidden;
+  transition:opacity var(--t-med) var(--ease-emph),visibility var(--t-med);
+}
+.scrim.open{opacity:1;visibility:visible}
+.modal{
+  width:min(560px,100%);max-height:86vh;overflow-y:auto;
+  background:var(--surface-container);
+  border:1px solid var(--outline-variant);
+  border-radius:var(--r-xl);padding:26px;
+  box-shadow:0 32px 80px -24px rgba(0,0,0,.95);
+  transform:translateY(32px) scale(.94);opacity:0;
+  transition:transform var(--t-med) var(--ease-emph),opacity var(--t-med) var(--ease-emph);
+}
+.scrim.open .modal{transform:none;opacity:1}
+.modal-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.modal-head .ic{margin:0;width:44px;height:44px;font-size:22px;flex:none}
+.modal-head h2{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;flex:1}
+.modal-close{
+  width:36px;height:36px;flex:none;display:grid;place-items:center;
+  border-radius:var(--r-full);border:1px solid var(--outline-variant);
+  background:var(--surface-container-high);color:var(--on-surface);
+  transition:all var(--t-short) var(--ease-emph);
+}
+.modal-close:hover{color:var(--error);border-color:var(--error);transform:rotate(90deg)}
+.modal-close:active{transform:scale(.96)}
+.modal p{font-size:.9375rem;color:var(--on-surface-variant);margin-bottom:14px}
+.modal .kv{display:flex;flex-direction:column;gap:2px;margin-bottom:14px}
+.modal .kv span{font-size:.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--outline)}
+.modal .kv strong{font-size:.9375rem;font-weight:600;color:var(--on-surface)}
+.modal .kv a{color:var(--primary)}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+
+/* ─── REVEAL ANIMATION ─────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .75s var(--ease-emph),transform .75s var(--ease-emph)}
+.reveal.in{opacity:1;transform:none}
+
+/* ─── RESPONSIVE ───────────────────────────────────────── */
+@media (min-width:520px){
+  .soon-grid{grid-template-columns:1fr 1fr}
+}
+@media (min-width:720px){
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .spot{grid-template-columns:repeat(3,1fr)}
+  .dl-grid{grid-template-columns:repeat(2,1fr)}
+  .spec-row{flex-wrap:nowrap}
+  .footer-inner{flex-direction:row;justify-content:space-between;text-align:left}
+  .footer-links{justify-content:flex-end}
+}
+@media (min-width:960px){
+  .hero-grid{grid-template-columns:1.05fr .95fr}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+}
+
+/* ── Narrow / mobile tune-ups ── */
+@media (max-width:520px){
+  .hero-cta{flex-direction:column;align-items:stretch}
+  .hero-cta .btn{width:100%}
+  .cta-actions .btn{flex:1 1 100%}
+  .btn-lg{padding:12px 22px;min-height:46px;font-size:.875rem}
+  .btn-lg .ms{font-size:18px}
+
+  /* OS pill becomes a small circular icon badge — no overlap */
+  .rec-pill{
+    top:12px;right:12px;
+    width:30px;height:30px;
+    padding:0;
+    gap:0;
+  }
+  .rec-pill-text{display:none}
+  .rec-pill-icon{display:block;width:14px;height:14px}
+  /* keep title clear of the badge */
+  .dl-card.recommended .dl-top{padding-right:34px}
+}
+@media (max-width:400px){
+  .nav-shell{padding:14px 0 12px}
+  .navbar{gap:1px;padding:4px 4px 4px 6px}
+  .nav-logo{width:27px;height:27px;border-radius:8px}
+  .nav-brand{gap:6px;padding:2px 3px 2px 2px}
+  .nav-brand-name{font-size:.875rem}
+  .nav-brand-by{display:none !important}
+  .nav-icon-btn{width:31px;height:31px}
+  .nav-icon-btn .ms{font-size:18px}
+  .nav-cta{padding:7px 12px;min-height:31px;font-size:.75rem;gap:5px}
+  .nav-cta .ms{font-size:15px}
+  .privacy-badge{font-size:.6875rem;padding:6px 13px}
+  .mock-name{max-width:min(50vw,180px)}
+}
+
+/* ─── REDUCED MOTION ───────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  .reveal{opacity:1;transform:none}
+  .card:hover,.dl-card:hover,.mock:hover,.chip:hover,.flink:hover,
+  .nav-brand:hover .nav-logo,.nav-icon-btn:hover,.nav-cta:hover{transform:none}
+  .cta-banner::before{display:none}
+  .scroll-progress__fill{transition:none;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SCROLL PROGRESS BAR (very top) ══ -->
+<div class="scroll-progress" aria-hidden="true">
+  <div class="scroll-progress__fill" id="scrollProgressFill"></div>
+</div>
+
+<!-- AMBIENT BACKGROUND -->
+<div class="mesh"><div class="blob"></div></div>
+<div class="grain"></div>
+
+<!-- ══ CONDENSED FLOATING CAPSULE NAV ══ -->
+<header class="nav-shell">
+  <nav class="navbar" aria-label="Primary">
+
+    <!-- Brand -->
+    <a class="nav-brand" href="https://airsilo.pages.dev" aria-label="VidFlux by AirSilo — home">
+      <svg class="nav-logo" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="vidflux-nav-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#C4B5FD"/>
+            <stop offset="0.5" stop-color="#6EE7B7"/>
+            <stop offset="1" stop-color="#FBCFE8"/>
+          </linearGradient>
+        </defs>
+        <rect width="1024" height="1024" rx="256" fill="url(#vidflux-nav-grad)"/>
+        <path d="M384 320 L704 512 L384 704 Z" fill="#0B0A0F" stroke="#0B0A0F" stroke-width="32" stroke-linejoin="round"/>
+        <path d="M736 352 A 160 160 0 0 1 864 512" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+        <path d="M864 512 L928 448 M864 512 L800 448" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+        <path d="M288 672 A 160 160 0 0 1 160 512" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+        <path d="M160 512 L96 576 M160 512 L224 576" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="nav-brand-text">
+        <span class="nav-brand-name">VidFlux</span>
+        <span class="nav-brand-by">by AirSilo</span>
+      </span>
+    </a>
+
+    <!-- Links -->
+    <ul class="nav-links">
+      <li><a class="nav-link" href="#features">Features</a></li>
+      <li><a class="nav-link" href="#formats">Formats</a></li>
+      <li><a class="nav-link" href="#details">Details</a></li>
+    </ul>
+
+    <!-- Actions -->
+    <div class="nav-actions">
+      <button class="nav-icon-btn" id="infoBtn" type="button" aria-label="About VidFlux" aria-haspopup="dialog">
+        <span class="ms" aria-hidden="true">info</span>
+      </button>
+      <a class="nav-cta" href="#download">
+        <span class="ms" aria-hidden="true">grid_view</span>
+        Download
+      </a>
+    </div>
+
+  </nav>
+</header>
+
+<!-- ══ PRIVACY BADGE ══ -->
+<div class="wrap privacy-strip">
+  <p class="privacy-badge">
+    <span class="ms ms-fill" aria-hidden="true">shield</span>
+    100% offline · Files never leave your device
+  </p>
+</div>
+
+<main>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero" aria-labelledby="heroTitle">
+    <div class="wrap hero-grid">
+      <div class="reveal">
+        <span class="eyebrow">
+          <span class="ms ms-fill" aria-hidden="true">bolt</span>
+          Version 1.0.0 · Windows 64-bit
+        </span>
+        <h1 id="heroTitle" style="margin-top:16px">
+          Convert video.<br>
+          <span class="grad">Offline. Private. Fast.</span>
+        </h1>
+        <p class="lead">
+          VidFlux is a fully offline video converter that runs entirely on your own machine.
+          No uploads, no servers, no accounts, no telemetry — your footage never leaves your device.
+          Powered by FFmpeg with AMD, Intel and NVIDIA hardware acceleration.
+        </p>
+
+        <div class="hero-cta">
+          <a class="btn btn-filled btn-lg" href="https://github.com/airsilo/vidflux/releases/latest/download/VidFlux_1.0.0_x64-setup.exe" rel="noopener noreferrer">
+            <span class="ms ms-fill" aria-hidden="true">download</span>
+            Download for Windows
+          </a>
+          <a class="btn btn-outlined btn-lg" href="https://github.com/airsilo/vidflux" rel="noopener noreferrer">
+            <span class="ms" aria-hidden="true">code</span>
+            View on GitHub
+          </a>
+        </div>
+
+        <div class="hero-meta">
+          <span><span class="ms ms-fill" aria-hidden="true">verified_user</span> No upload · No tracking</span>
+          <span><span class="ms ms-fill" aria-hidden="true">memory</span> GPU accelerated</span>
+          <span><span class="ms ms-fill" aria-hidden="true">hdmi_input</span> 4K 10-bit HDR</span>
+          <span><span class="ms ms-fill" aria-hidden="true">balance</span> GPL v3 · Open source</span>
+        </div>
+      </div>
+
+      <!-- App mock -->
+      <div class="mock reveal" role="img" aria-label="VidFlux app interface showing a 4K HDR ProRes file converting to MP4 H.265 using GPU acceleration">
+        <div class="mock-bar">
+          <span class="mock-dot d1"></span>
+          <span class="mock-dot d2"></span>
+          <span class="mock-dot d3"></span>
+          <span class="mock-title">VidFlux · Queue</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-row">
+            <div class="mock-file">
+              <span class="mock-ic ms" aria-hidden="true">movie</span>
+              <span style="min-width:0">
+                <span class="mock-name">vacation_4k_hdr.mov</span>
+                <span class="mock-meta">4K · 10-bit · HDR10 · ProRes 422</span>
+              </span>
+            </div>
+            <span class="mock-arrow" aria-hidden="true"><span class="ms">arrow_forward</span></span>
+            <span class="mock-out">MP4 · H.265</span>
+          </div>
+
+          <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+
+          <div class="mock-stats">
+            <span>NVENC · GPU</span>
+            <span>2.4× realtime</span>
+            <span class="pct" id="progressPct">0%</span>
+          </div>
+
+          <div class="mock-hw">
+            <span class="hw-chip nv"><span class="ms" aria-hidden="true">developer_board</span> NVIDIA NVENC</span>
+            <span class="hw-chip qs"><span class="ms" aria-hidden="true">developer_board</span> Intel Quick Sync</span>
+            <span class="hw-chip am"><span class="ms" aria-hidden="true">developer_board</span> AMD AMF</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ WHY / FEATURES ══ -->
+  <section id="features" aria-labelledby="whyTitle">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow"><span class="ms ms-fill" aria-hidden="true">lock</span> Privacy by architecture</span>
+        <h2 id="whyTitle">Your files never touch a server</h2>
+        <p>Most “online converters” upload your video to someone else’s computer. VidFlux doesn’t have a server at all — it’s a native desktop app that does every single frame locally.</p>
+      </div>
+
+      <div class="grid grid-4">
+        <article class="card reveal">
+          <div class="ic ic-mint"><span class="ms" aria-hidden="true">wifi_off</span></div>
+          <h3>100% Offline</h3>
+          <p>Works with your Wi-Fi off and your Ethernet unplugged. Install once, convert forever — no license checks, no activation, no phoning home.</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="ic ic-violet"><span class="ms" aria-hidden="true">cloud_off</span></div>
+          <h3>Zero Uploads</h3>
+          <p>There is no upload button because there is nothing to upload. Files are read from your disk and written back to your disk.</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="ic ic-pink"><span class="ms" aria-hidden="true">visibility_off</span></div>
+          <h3>No Tracking</h3>
+          <p>No analytics, no crash reporting, no telemetry, no accounts. The app makes zero network requests — by design.</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="ic ic-lime"><span class="ms" aria-hidden="true">speed</span></div>
+          <h3>Blazing Fast</h3>
+          <p>Hardware encoding offloads the heavy lifting to your GPU, so a job that takes minutes in software can finish in seconds.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SPOTLIGHT ══ -->
+  <section aria-labelledby="powerTitle">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow"><span class="ms ms-fill" aria-hidden="true">memory</span> Built for real hardware</span>
+        <h2 id="powerTitle">Up to 4K 10-bit HDR — and 8K if your GPU can take it</h2>
+        <p>VidFlux talks directly to your GPU’s media engine, so you keep quality high and render times low.</p>
+      </div>
+
+      <div class="spot">
+        <article class="card spot-card reveal">
+          <span class="spot-tag gpu">GPU Accelerated</span>
+          <div class="spot-num">3 <small>vendors</small></div>
+          <h3>AMD · Intel · NVIDIA</h3>
+          <p>Automatic detection and support for NVIDIA NVENC, Intel Quick Sync Video and AMD AMF. Pick your encoder or let VidFlux choose the fastest one available.</p>
+        </article>
+
+        <article class="card spot-card reveal">
+          <span class="spot-tag hdr">HDR Ready</span>
+          <div class="spot-num">10-bit <small>HDR</small></div>
+          <h3>Up to 4K HDR</h3>
+          <p>Full support for 10-bit color depth and HDR sources. Convert HDR10 footage without flattening it into dull, banded SDR.</p>
+        </article>
+
+        <article class="card spot-card reveal">
+          <span class="spot-tag k8">Extreme</span>
+          <div class="spot-num">8K <small>capable</small></div>
+          <h3>For strong hardware</h3>
+          <p>Got a recent GPU with plenty of VRAM? VidFlux will happily chew through 8K footage at hardware speed.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FORMATS ══ -->
+  <section id="formats" aria-labelledby="fmtTitle">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow"><span class="ms ms-fill" aria-hidden="true">swap_horiz</span> Format support</span>
+        <h2 id="fmtTitle">All the formats you actually use</h2>
+        <p>Containers, codecs and presets covering everything from web delivery to professional post-production.</p>
+      </div>
+
+      <div class="chips reveal" role="list" aria-label="Supported output formats">
+        <span class="chip" role="listitem"><span class="dot" style="background:#A78BFA"></span>MP4</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#6EE7B7"></span>MOV</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#F472B6"></span>MKV</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#FBBF24"></span>WebM</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#60A5FA"></span>AVI</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#22D3EE"></span>H.264 / AVC</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#A3E635"></span>H.265 / HEVC</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#FB923C"></span>ProRes</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#A78BFA"></span>VP9</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#6EE7B7"></span>AV1</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#F472B6"></span>MPEG-4</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#FBBF24"></span>GIF</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#60A5FA"></span>MP3 / audio only</span>
+        <span class="chip" role="listitem"><span class="dot" style="background:#22D3EE"></span>And many more…</span>
+      </div>
+      <p class="chip-note reveal">
+        Under the hood VidFlux drives <strong style="color:var(--on-surface)">FFmpeg</strong> — the same battle-tested engine used across the film and broadcast industry — so virtually any codec FFmpeg understands is fair game.
+      </p>
+    </div>
+  </section>
+
+  <!-- ══ DOWNLOAD ══ -->
+  <section id="download" aria-labelledby="dlTitle">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow"><span class="ms ms-fill" aria-hidden="true">desktop_windows</span> Download</span>
+        <h2 id="dlTitle">Get VidFlux 1.0.0</h2>
+        <p>Available now for Windows 64-bit. Free, open source, and yours to keep.</p>
+      </div>
+
+      <div class="dl-grid">
+        <!-- EXE -->
+        <article class="dl-card recommended reveal" id="cardExe">
+          <span class="rec-pill">
+            <span class="rec-pill-text" id="recPillText">Recommended</span>
+            <svg class="rec-pill-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4875 4875" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M0 0h2311v2310H0zm2564 0h2311v2310H2564zM0 2564h2311v2311H0zm2564 0h2311v2311H2564"/>
+            </svg>
+          </span>
+          <div class="dl-top">
+            <div class="ic ic-violet"><span class="ms ms-fill" aria-hidden="true">download_for_offline</span></div>
+            <div style="min-width:0">
+              <div class="dl-title">Windows Installer (.exe)</div>
+              <div class="dl-file">VidFlux_1.0.0_x64-setup.exe</div>
+            </div>
+          </div>
+          <p class="dl-desc">The easiest way to install. Runs a friendly setup wizard — ideal for most people.</p>
+          <ul class="dl-list">
+            <li><span class="ms" aria-hidden="true">check_circle</span> Simple guided setup</li>
+            <li><span class="ms" aria-hidden="true">check_circle</span> Start menu shortcut &amp; uninstaller</li>
+            <li><span class="ms" aria-hidden="true">check_circle</span> Windows 10 / 11 · 64-bit</li>
+          </ul>
+          <a class="btn btn-filled btn-block" href="https://github.com/airsilo/vidflux/releases/latest/download/VidFlux_1.0.0_x64-setup.exe" rel="noopener noreferrer">
+            <span class="ms ms-fill" aria-hidden="true">download</span>
+            Download .exe
+          </a>
+          <div class="dl-meta">
+            <span><span class="ms" aria-hidden="true">verified</span> Free &amp; open source</span>
+            <span><span class="ms" aria-hidden="true">tag</span> v1.0.0</span>
+          </div>
+        </article>
+
+        <!-- MSI -->
+        <article class="dl-card reveal" id="cardMsi">
+          <div class="dl-top">
+            <div class="ic ic-cyan"><span class="ms ms-fill" aria-hidden="true">deployed_code</span></div>
+            <div style="min-width:0">
+              <div class="dl-title">Windows MSI Package</div>
+              <div class="dl-file">VidFlux_1.0.0_x64_en-US.msi</div>
+            </div>
+          </div>
+          <p class="dl-desc">For managed machines, silent installs and enterprise deployment via Group Policy or Intune.</p>
+          <ul class="dl-list">
+            <li><span class="ms" aria-hidden="true">check_circle</span> Silent / unattended install</li>
+            <li><span class="ms" aria-hidden="true">check_circle</span> Deployable via GPO &amp; Intune</li>
+            <li><span class="ms" aria-hidden="true">check_circle</span> Windows 10 / 11 · 64-bit</li>
+          </ul>
+          <a class="btn btn-outlined btn-block" href="https://github.com/airsilo/vidflux/releases/latest/download/VidFlux_1.0.0_x64_en-US.msi" rel="noopener noreferrer">
+            <span class="ms" aria-hidden="true">download</span>
+            Download .msi
+          </a>
+          <div class="dl-meta">
+            <span><span class="ms" aria-hidden="true">verified</span> Free &amp; open source</span>
+            <span><span class="ms" aria-hidden="true">tag</span> v1.0.0</span>
+          </div>
+        </article>
+      </div>
+
+      <!-- Coming soon -->
+      <div class="soon-grid">
+        <div class="soon reveal">
+          <div class="ic ic-pink"><span class="ms" aria-hidden="true">laptop_mac</span></div>
+          <div>
+            <h4>macOS <span class="badge" style="background:rgba(244,114,182,.14);color:var(--pink);border:1px solid rgba(244,114,182,.3);vertical-align:middle">Coming soon</span></h4>
+            <p>Apple Silicon &amp; Intel builds in the works.</p>
+          </div>
+        </div>
+        <div class="soon reveal">
+          <div class="ic ic-amber"><span class="ms" aria-hidden="true">terminal</span></div>
+          <div>
+            <h4>Linux <span class="badge" style="background:rgba(251,191,36,.14);color:var(--amber);border:1px solid rgba(251,191,36,.3);vertical-align:middle">Coming soon</span></h4>
+            <p>AppImage &amp; .deb packages planned.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ DETAILS ══ -->
+  <section id="details" aria-labelledby="detTitle">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow"><span class="ms ms-fill" aria-hidden="true">fact_check</span> The details</span>
+        <h2 id="detTitle">Open, honest, and verifiable</h2>
+        <p>Everything about VidFlux is public — read the code, build it yourself, or report an issue.</p>
+      </div>
+
+      <dl class="spec-list reveal">
+        <div class="spec-row">
+          <dt>Application</dt>
+          <dd>VidFlux <span style="color:var(--outline)">by AirSilo</span></dd>
+        </div>
+        <div class="spec-row">
+          <dt>Version</dt>
+          <dd>1.0.0</dd>
+        </div>
+        <div class="spec-row">
+          <dt>Platform</dt>
+          <dd>Windows 10 / 11 · 64-bit <span style="color:var(--outline)">(macOS &amp; Linux coming soon)</span></dd>
+        </div>
+        <div class="spec-row">
+          <dt>Conversion engine</dt>
+          <dd>FFmpeg</dd>
+        </div>
+        <div class="spec-row">
+          <dt>Hardware acceleration</dt>
+          <dd>NVIDIA NVENC · Intel QSV · AMD AMF</dd>
+        </div>
+        <div class="spec-row">
+          <dt>Max resolution</dt>
+          <dd>4K 10-bit HDR · 8K on capable hardware</dd>
+        </div>
+        <div class="spec-row">
+          <dt>Network activity</dt>
+          <dd style="color:var(--mint)">None — fully offline</dd>
+        </div>
+        <div class="spec-row">
+          <dt>License</dt>
+          <dd>GNU GPL v3</dd>
+        </div>
+        <div class="spec-row">
+          <dt>Source code</dt>
+          <dd><a href="https://github.com/airsilo/vidflux" rel="noopener noreferrer">github.com/airsilo/vidflux</a></dd>
+        </div>
+        <div class="spec-row">
+          <dt>Developer</dt>
+          <dd><a href="https://airsilo.pages.dev" rel="noopener noreferrer">AirSilo</a></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ══ CTA BANNER ══ -->
+  <section aria-labelledby="ctaTitle" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-banner reveal">
+        <h2 id="ctaTitle">Stop uploading your videos.</h2>
+        <p>Install VidFlux once and convert anything, anywhere, with the network completely off. Free forever, open source, no strings attached.</p>
+        <div class="cta-actions">
+          <a class="btn btn-filled btn-lg" href="https://github.com/airsilo/vidflux/releases/latest/download/VidFlux_1.0.0_x64-setup.exe" rel="noopener noreferrer">
+            <span class="ms ms-fill" aria-hidden="true">download</span>
+            Download for Windows
+          </a>
+          <a class="btn btn-tonal btn-lg" href="#download">
+            <span class="ms" aria-hidden="true">grid_view</span>
+            All downloads
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="vidflux-icon-bg-footer" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#C4B5FD"/>
+            <stop offset="0.5" stop-color="#6EE7B7"/>
+            <stop offset="1" stop-color="#FBCFE8"/>
+          </linearGradient>
+        </defs>
+        <rect width="1024" height="1024" rx="256" fill="url(#vidflux-icon-bg-footer)"/>
+        <path d="M384 320 L704 512 L384 704 Z" fill="#0B0A0F" stroke="#0B0A0F" stroke-width="32" stroke-linejoin="round"/>
+        <path d="M736 352 A 160 160 0 0 1 864 512" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+        <path d="M864 512 L928 448 M864 512 L800 448" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+        <path d="M288 672 A 160 160 0 0 1 160 512" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+        <path d="M160 512 L96 576 M160 512 L224 576" stroke="#0B0A0F" stroke-width="48" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="footer-brand-text">
+        <strong>VidFlux</strong>
+        <span>by AirSilo · v1.0.0</span>
+      </span>
+    </div>
+
+    <div class="footer-links">
+      <a class="flink" href="https://airsilo.pages.dev" rel="noopener noreferrer">
+        <span class="ms" aria-hidden="true">arrow_back</span> Back to AirSilo
+      </a>
+      <a class="flink" href="https://github.com/airsilo/vidflux" rel="noopener noreferrer">
+        <span class="ms" aria-hidden="true">code</span> GitHub
+      </a>
+      <button class="flink" type="button" id="infoBtn2">
+        <span class="ms" aria-hidden="true">info</span> About
+      </button>
+    </div>
+  </div>
+
+  <div class="wrap" style="margin-top:22px">
+    <p class="footer-line">
+      <span class="ms ms-fill" aria-hidden="true">shield</span>
+      Made by AirSilo
+      <span class="sep">·</span>
+      100% offline
+      <span class="sep">·</span>
+      No tracking
+    </p>
+    <p class="footer-copy" style="text-align:center;margin-top:10px">
+      Made with <span style="color:var(--pink)">❤</span> by AirSilo · Licensed under GPL v3 · Powered by FFmpeg
+    </p>
+  </div>
+</footer>
+
+<!-- ══ ABOUT MODAL ══ -->
+<div class="scrim" id="scrim" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+  <div class="modal" role="document">
+    <div class="modal-head">
+      <div class="ic ic-violet" style="margin:0"><span class="ms ms-fill" aria-hidden="true">movie</span></div>
+      <h2 id="modalTitle">About VidFlux</h2>
+      <button class="modal-close" type="button" id="modalClose" aria-label="Close dialog">
+        <span class="ms" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <p>
+      VidFlux is a fully offline, privacy-first video converter for Windows. It runs entirely on your
+      machine — there is no server, no upload step and no telemetry. Your files never leave your device.
+    </p>
+
+    <div class="kv">
+      <span>Version</span>
+      <strong>1.0.0</strong>
+    </div>
+    <div class="kv">
+      <span>Platform</span>
+      <strong>Windows 10 / 11 · 64-bit — macOS &amp; Linux coming soon</strong>
+    </div>
+    <div class="kv">
+      <span>Engine</span>
+      <strong>FFmpeg · NVIDIA NVENC · Intel QSV · AMD AMF</strong>
+    </div>
+    <div class="kv">
+      <span>License</span>
+      <strong>GNU General Public License v3.0</strong>
+    </div>
+    <div class="kv">
+      <span>Developer</span>
+      <strong><a href="https://airsilo.pages.dev" rel="noopener noreferrer">AirSilo</a></strong>
+    </div>
+    <div class="kv">
+      <span>Repository</span>
+      <strong><a href="https://github.com/airsilo/vidflux" rel="noopener noreferrer">github.com/airsilo/vidflux</a></strong>
+    </div>
+
+    <div class="modal-actions">
+      <a class="btn btn-filled" href="https://github.com/airsilo/vidflux/releases/latest/download/VidFlux_1.0.0_x64-setup.exe" rel="noopener noreferrer">
+        <span class="ms ms-fill" aria-hidden="true">download</span> Download .exe
+      </a>
+      <a class="btn btn-outlined" href="https://github.com/airsilo/vidflux/releases/latest/download/VidFlux_1.0.0_x64_en-US.msi" rel="noopener noreferrer">
+        <span class="ms" aria-hidden="true">download</span> Download .msi
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ── Scroll progress bar ───────────────────────── */
+  var progressFill = document.getElementById("scrollProgressFill");
+  if (progressFill) {
+    var updateProgress = function () {
+      var doc = document.documentElement;
+      var scrollTop = window.pageYOffset || doc.scrollTop || 0;
+      var scrollHeight = doc.scrollHeight - doc.clientHeight;
+      var pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      if (pct > 100) pct = 100;
+      if (pct < 0) pct = 0;
+      progressFill.style.width = pct + "%";
+    };
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress, { passive: true });
+    updateProgress();
+  }
+
+  /* ── Scroll reveal ─────────────────────────────── */
+  var revealEls = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    revealEls.forEach(function (el) { el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+
+    revealEls.forEach(function (el, i) {
+      el.style.transitionDelay = (Math.min(i % 4, 3) * 70) + "ms";
+      io.observe(el);
+    });
+  }
+
+  /* ── Mock progress animation ───────────────────── */
+  var fill = document.getElementById("progressFill");
+  var pct = document.getElementById("progressPct");
+
+  if (fill && pct && !reduceMotion) {
+    var CYCLE = 7200;      // full loop
+    var WORK = 5400;       // time spent converting
+    var start = null;
+
+    var easeOutCubic = function (t) { return 1 - Math.pow(1 - t, 3); };
+
+    var tick = function (now) {
+      if (start === null) start = now;
+      var elapsed = (now - start) % CYCLE;
+      var value;
+
+      if (elapsed < WORK) {
+        value = Math.round(easeOutCubic(elapsed / WORK) * 100);
+      } else {
+        value = 100;
+      }
+
+      fill.style.width = value + "%";
+      pct.textContent = value === 100 ? "Done" : value + "%";
+
+      requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  } else if (fill && pct) {
+    fill.style.width = "100%";
+    pct.textContent = "Done";
+  }
+
+  /* ── Modal ─────────────────────────────────────── */
+  var scrim = document.getElementById("scrim");
+  var openers = [document.getElementById("infoBtn"), document.getElementById("infoBtn2")];
+  var closeBtn = document.getElementById("modalClose");
+  var lastFocus = null;
+
+  function openModal() {
+    lastFocus = document.activeElement;
+    scrim.hidden = false;
+    void scrim.offsetWidth; /* force reflow so the transition runs */
+    scrim.classList.add("open");
+    document.body.style.overflow = "hidden";
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeModal() {
+    scrim.classList.remove("open");
+    document.body.style.overflow = "";
+    window.setTimeout(function () { scrim.hidden = true; }, 400);
+    if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+  }
+
+  openers.forEach(function (btn) {
+    if (btn) btn.addEventListener("click", openModal);
+  });
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+
+  if (scrim) {
+    scrim.addEventListener("click", function (e) {
+      if (e.target === scrim) closeModal();
+    });
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && scrim && !scrim.hidden) closeModal();
+
+    /* simple focus trap */
+    if (e.key === "Tab" && scrim && !scrim.hidden) {
+      var focusables = scrim.querySelectorAll(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusables.length) return;
+      var first = focusables[0];
+      var last = focusables[focusables.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    }
+  });
+
+  /* ── Highlight the matching installer for the OS ── */
+  try {
+    var ua = navigator.userAgent || "";
+    var isWindows = /Windows/i.test(ua);
+    if (!isWindows) {
+      var recText = document.getElementById("recPillText");
+      if (recText) recText.textContent = "Windows only";
+    }
+  } catch (err) { /* no-op */ }
+
+  /* ── Card pointer glow ─────────────────────────── */
+  if (!reduceMotion) {
+    Array.prototype.forEach.call(document.querySelectorAll(".card, .dl-card"), function (card) {
+      card.addEventListener("pointermove", function (e) {
+        var r = card.getBoundingClientRect();
+        card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100) + "%");
+        card.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100) + "%");
+      });
+    });
+  }
+
+  /* ── Navbar: subtle shadow boost once scrolled ── */
+  var navbar = document.querySelector(".navbar");
+  if (navbar) {
+    var onScroll = function () {
+      if (window.scrollY > 12) {
+        navbar.style.borderColor = "rgba(196,181,253,.26)";
+        navbar.style.boxShadow =
+          "0 14px 34px -14px rgba(0,0,0,.85), 0 3px 10px -4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08)";
+      } else {
+        navbar.style.borderColor = "rgba(196,181,253,.17)";
+        navbar.style.boxShadow =
+          "0 10px 28px -14px rgba(0,0,0,.75), 0 2px 8px -4px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.07)";
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+})();
+</script>
+</body>
+</html>
