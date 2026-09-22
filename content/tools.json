@@ -2,7 +2,7 @@
   "tools": [
     {
       "accent": "#A3E635",
-      "logo": "https://raw.githubusercontent.com/airsilo/airsilo/main/logos/waveflux.svg",
+      "logo": "/logos/waveflux.svg",
       "name": "WaveFlux",
       "featured": true,
       "status": "available",
