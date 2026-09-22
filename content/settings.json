@@ -33,11 +33,6 @@
       "icon": "code"
     },
     {
-      "label": "Twitter / X",
-      "url": "https://twitter.com/airsilo",
-      "icon": "alternate_email"
-    },
-    {
       "label": "Email",
       "url": "mailto:hello@airsilo.com",
       "icon": "mail"
