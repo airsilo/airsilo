@@ -821,8 +821,16 @@ h2.section-title {
   background: color-mix(in srgb, var(--card-accent, var(--primary)) 20%, transparent);
   color: var(--card-accent, var(--primary));
   overflow: hidden;
+  position: relative;
 }
-.modal-icon img { width: 100%; height: 100%; object-fit: cover; }
+.modal-icon img,
+.modal-icon svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: inherit;
+}
 .modal-icon .ms { font-size: 30px; }
 .modal-head h3 { font-size: 1.4rem; letter-spacing: -0.02em; }
 .modal-meta { font-size: 0.8125rem; color: var(--on-surface-variant); margin-top: 4px; font-weight: 500; }
