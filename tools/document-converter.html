@@ -234,6 +234,65 @@ select:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgb
 .modal li{margin-bottom:4px}
 .modal .modal-close{display:inline-flex; margin-top:8px}
 
+/* Beta badge next to logo/text */
+.pf-beta-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:2px 8px;
+  margin-left:8px;
+  font-size:.6rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--on-primary);
+  background:linear-gradient(135deg,var(--primary),var(--tertiary));
+  border-radius:var(--r-full);
+  vertical-align:middle;
+  align-self:flex-start;
+  line-height:1.4;
+  white-space:nowrap;
+  box-shadow:0 2px 6px rgba(196,181,253,.25);
+}
+.pf-beta-badge .ms{font-size:.75rem; font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+/* Warning banner below the privacy badge */
+.pf-warning{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px 16px;
+  margin:0 auto 20px;
+  max-width:720px;
+  background:rgba(251,191,36,.08);
+  border:1px solid rgba(251,191,36,.28);
+  border-radius:var(--r-md);
+  color:#FDE68A;
+  font-size:.8125rem;
+  line-height:1.55;
+  text-align:left;
+}
+.pf-warning .ms{
+  color:var(--accent-amber);
+  font-size:1.125rem;
+  flex-shrink:0;
+  margin-top:1px;
+}
+.pf-warning strong{color:#FEF3C7; font-weight:700}
+.pf-warning code{
+  background:rgba(251,191,36,.14);
+  padding:1px 5px;
+  border-radius:var(--r-xs);
+  font-family:ui-monospace,'Courier New',monospace;
+  font-size:.72rem;
+  color:#FCD34D;
+}
+
+@media (max-width:520px){
+  .pf-beta-badge{margin-left:6px; padding:2px 6px; font-size:.55rem}
+  .pf-warning{font-size:.75rem; padding:10px 12px}
+}
+
 @media (max-width:520px){
   .app-header .brand-text{display:none}
   .app-header .title-block{border-left:none; padding-left:0; margin-left:0}
@@ -3849,6 +3908,47 @@ renderQueue();
 refreshFormatHint();
 console.log('[PaperFlow] ready', window.DocForge);
 
+})();
+</script>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---- 1. Beta badge next to the brand text ---- */
+  var brandText = document.querySelector('.app-header .brand-text');
+  if (brandText && !brandText.querySelector('.pf-beta-badge')){
+    var badge = document.createElement('span');
+    badge.className = 'pf-beta-badge';
+    badge.setAttribute('aria-label', 'Beta release');
+    badge.textContent = 'BETA';
+    /* Attach to the .name span so it sits inline next to "PaperFlow" */
+    var nameEl = brandText.querySelector('.name');
+    if (nameEl){
+      nameEl.style.display = 'inline-flex';
+      nameEl.style.alignItems = 'center';
+      nameEl.appendChild(badge);
+    } else {
+      brandText.appendChild(badge);
+    }
+  }
+
+  /* ---- 2. Warning banner below the privacy badge ---- */
+  var privacyWrap = document.querySelector('.privacy-wrap');
+  if (privacyWrap && !document.querySelector('.pf-warning')){
+    var warn = document.createElement('div');
+    warn.className = 'pf-warning';
+    warn.setAttribute('role', 'note');
+    warn.innerHTML =
+      '<span class="ms ms-fill" aria-hidden="true">warning</span>' +
+      '<div>' +
+        '<strong>Beta — under active testing.</strong> ' +
+        'Complex PDFs, heavily formatted documents, and non-Latin scripts may convert imperfectly. ' +
+        'Please verify your output before relying on it. ' +
+        'Report issues on GitHub.' +
+      '</div>';
+    privacyWrap.parentNode.insertBefore(warn, privacyWrap.nextSibling);
+  }
 })();
 </script>
 
