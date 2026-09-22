@@ -130,6 +130,7 @@ collections:
               - { label: "Featured", name: "featured", widget: "boolean", default: false, required: false }
               - { label: "Accent color", name: "accent", widget: "color", required: false, default: "#C4B5FD" }
               - { label: "Download URL", name: "download_url", widget: "string", required: false, hint: "e.g. /tools/pixflux.html OR a full external URL" }
+              - { label: "External — no download, opens URL (use for VidFlux)", name: "external", widget: "boolean", default: false, required: false, hint: "Turn ON to hide the Download HTML button and show only 'Visit <Tool>' — clicking opens the URL in a new tab." }
               - { label: "Screenshot", name: "screenshot", widget: "image", required: false }
               - { label: "Custom Logo — URL or raw SVG (optional)", name: "logo", widget: "text", required: false, hint: "Paste an image URL (https://...) OR a full <svg>...</svg> block. Leave empty to use the fallback icon above." }
               - { label: "Changelog", name: "changelog", widget: "text", required: false }
