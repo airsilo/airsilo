@@ -5,28 +5,26 @@
   "hero": {
     "title_line1": "Utilities,",
     "title_line2": "unplugged.",
-    "subtitle": "A collection of handy utilities that run entirely in your browser. Your files never leave your device."
+    "subtitle": "A growing collection of tiny, private tools — PixFlux, PaperFlow, CropFlow, QrFlux, CryptSilo, PrismPick and more. Every one runs entirely in your browser."
   },
   "donation": {
     "heading": "Keep it free. Keep it ad-free.",
     "subheading": "AirSilo will always be free, private, and ad-free. If a tool saved you time today, a small tip keeps the lights on.",
-    "bmc_url": "https://buymeacoffee.com/airsilo",
+    "paypal_url": "https://paypal.me/airsilo",
     "kofi_url": "https://ko-fi.com/airsilo",
     "form_endpoint": "",
     "upi": {
       "enabled": true,
-      "upi_id": "bhargov@superyes",
-      "qr_image": "https://airsilo.pages.dev/admin/assets/uploads/upi-qr.png",
-      "note": "Works with PhonePe, Paytm, GPay, BHIM and every UPI app.",
-      "apps": [
-        "PhonePe",
-        "Paytm",
-        "GPay",
-        "BHIM",
-        "Amazon Pay"
-      ]
+      "upi_id": "airsilo@upi",
+      "qr_image": "https://raw.githubusercontent.com/airsilo/airsilo/main/admin/assets/uploads/upi-qr.png",
+      "apps": ["PhonePe", "Paytm", "GPay", "BHIM", "Amazon Pay"]
     }
   },
+  "connect_links": [
+    { "label": "GitHub",      "url": "https://github.com/airsilo",       "icon": "code" },
+    { "label": "Twitter / X", "url": "https://twitter.com/airsilo",      "icon": "alternate_email" },
+    { "label": "Email",       "url": "mailto:hello@airsilo.com",         "icon": "mail" }
+  ],
   "contact_email": "hello@airsilo.com",
   "github_url": "https://github.com/airsilo"
 }
