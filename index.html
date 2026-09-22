@@ -43,7 +43,6 @@
   --on-error: #450A0A;
 
   --surface: #0B0A0F;
-  --surface-dim: #08070C;
   --surface-container-lowest: #08070C;
   --surface-container-low: #12101A;
   --surface-container: #181624;
@@ -64,7 +63,6 @@
   --r-full: 999px;
 
   --ease-emph: cubic-bezier(0.05, 0.7, 0.1, 1);
-  --ease-emph-dec: cubic-bezier(0.05, 0.7, 0.1, 1);
   --ease-std: cubic-bezier(0.2, 0, 0, 1);
   --t-short: 200ms;
   --t-med: 400ms;
@@ -368,13 +366,6 @@ p { margin: 0; }
   animation: float 6s ease-in-out infinite;
   will-change: transform;
 }
-.float-card .fc-icon {
-  width: 44px; height: 44px; flex-shrink: 0;
-  border-radius: var(--r-md);
-  display: grid; place-items: center;
-  overflow: hidden;
-}
-.float-card .fc-icon img { width: 100%; height: 100%; object-fit: cover; }
 .float-card .fc-text { min-width: 0; }
 .float-card .fc-title { font-size: 0.875rem; font-weight: 600; color: var(--on-surface); margin-bottom: 2px; }
 .float-card .fc-meta { font-size: 0.6875rem; color: var(--on-surface-variant); font-weight: 500; }
@@ -399,6 +390,65 @@ p { margin: 0; }
 }
 .orb-a { width: 300px; height: 300px; background: #7C3AED; top: 20px; left: 20%; animation: drift1 18s ease-in-out infinite; }
 .orb-b { width: 260px; height: 260px; background: #10B981; bottom: 40px; right: 10%; animation: drift2 22s ease-in-out infinite; }
+
+/* ============ ICON CONTAINERS (unified, mobile-safe) ============ */
+.tool-icon,
+.modal-icon,
+.float-card .fc-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  position: relative;
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--card-accent, var(--primary)) 16%, transparent);
+  color: var(--card-accent, var(--primary));
+  transition: border-radius var(--t-med) var(--ease-emph), transform var(--t-med) var(--ease-emph);
+}
+.tool-icon { width: 52px; height: 52px; min-width: 52px; min-height: 52px; }
+.modal-icon { width: 60px; height: 60px; min-width: 60px; min-height: 60px; border-radius: var(--r-lg); }
+.float-card .fc-icon { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+
+.tool-icon .ms { font-size: 26px; }
+.modal-icon .ms { font-size: 30px; }
+.float-card .fc-icon .ms { font-size: 22px; }
+
+/* When a custom logo is present, drop the tinted background */
+.tool-icon.has-custom-logo,
+.modal-icon.has-custom-logo,
+.float-card .fc-icon.has-custom-logo {
+  background: transparent;
+}
+
+/* Custom logo wrapper — always fills its container */
+.custom-logo-wrap {
+  display: block;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  position: relative;
+}
+.custom-logo-wrap > svg,
+.custom-logo-wrap > img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.custom-logo-wrap > svg {
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+}
+
+.tool-card:hover .tool-icon {
+  border-radius: var(--r-lg);
+  transform: scale(1.06) rotate(-4deg);
+}
 
 /* ---- Marquee ---- */
 .marquee {
@@ -531,26 +581,6 @@ h2.section-title {
 .tool-card.soon:hover { transform: translateY(-3px); }
 
 .tool-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.tool-icon {
-  width: 52px; height: 52px; flex-shrink: 0;
-  border-radius: var(--r-md); display: grid; place-items: center;
-  background: color-mix(in srgb, var(--card-accent, var(--primary)) 16%, transparent);
-  color: var(--card-accent, var(--primary));
-  transition: border-radius var(--t-med) var(--ease-emph), transform var(--t-med) var(--ease-emph);
-  overflow: hidden;
-  position: relative;
-}
-.tool-icon img,
-.tool-icon svg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;   /* fills the container, cropping any overflow */
-  display: block;
-  border-radius: inherit;
-}
-.tool-icon .ms { font-size: 26px; }
-.tool-card:hover .tool-icon { border-radius: var(--r-lg); transform: scale(1.06) rotate(-4deg); }
-
 .tool-badges { display: flex; gap: 6px; flex-wrap: wrap; }
 .badge {
   font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.04em;
@@ -815,23 +845,6 @@ h2.section-title {
 
 .modal-body { padding: 28px; }
 .modal-head { display: flex; gap: 16px; align-items: center; margin-bottom: 20px; }
-.modal-icon {
-  width: 60px; height: 60px; border-radius: var(--r-lg);
-  display: grid; place-items: center; flex-shrink: 0;
-  background: color-mix(in srgb, var(--card-accent, var(--primary)) 20%, transparent);
-  color: var(--card-accent, var(--primary));
-  overflow: hidden;
-  position: relative;
-}
-.modal-icon img,
-.modal-icon svg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  border-radius: inherit;
-}
-.modal-icon .ms { font-size: 30px; }
 .modal-head h3 { font-size: 1.4rem; letter-spacing: -0.02em; }
 .modal-meta { font-size: 0.8125rem; color: var(--on-surface-variant); margin-top: 4px; font-weight: 500; }
 .modal-desc { font-size: 0.9375rem; color: var(--on-surface-variant); line-height: 1.6; margin-bottom: 20px; }
@@ -1324,7 +1337,7 @@ h2.section-title {
   const $$ = (s, r=document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  /* ---- Material Symbols icon map (fallback when no custom logo) ---- */
+  /* ---- Fallback Material Symbol per tool ---- */
   const ICON_MAP = {
     'pixflux': 'image',
     'cropflow': 'photo_size_select_large',
@@ -1350,25 +1363,71 @@ h2.section-title {
     'pdfflow': '#FB923C',
   };
 
-  /* ---- How to render an icon: custom logo (image/svg) OR Material Symbol ---- */
+  /* ---- Robust icon renderer (handles raw SVG, data URL, remote URL) ---- */
+  const fallbackIcon = (toolId) =>
+    `<span class="ms ms-fill">${ICON_MAP[toolId] || 'apps'}</span>`;
+
   const renderIcon = (tool) => {
-    const logo = tool.logo;
-    if (logo) {
-      // Data URL (uploaded image)
-      if (logo.startsWith('data:')) {
-        return `<img src="${esc(logo)}" alt="" />`;
+    const raw = tool.logo;
+    const logo = typeof raw === 'string' ? raw.trim() : '';
+
+    // ---- Case A: Raw SVG markup ----
+    if (logo.startsWith('<svg') || logo.startsWith('<?xml')) {
+      let svg = logo;
+
+      // 1. Un-escape JSON artifacts
+      svg = svg
+        .replace(/\\n/g, ' ')
+        .replace(/\\r/g, ' ')
+        .replace(/\\t/g, ' ')
+        .replace(/\\"/g, '"')
+        .replace(/\\'/g, "'")
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      // 2. Ensure xmlns (iOS Safari requires it)
+      if (!/\sxmlns=/.test(svg)) {
+        svg = svg.replace(/<svg/i, '<svg xmlns="http://www.w3.org/2000/svg"');
       }
-      // URL to an image
-      if (/^https?:\/\//i.test(logo)) {
-        return `<img src="${esc(logo)}" alt="" />`;
+
+      // 3. Ensure viewBox
+      if (!/viewBox=/i.test(svg)) {
+        svg = svg.replace(/<svg/i, '<svg viewBox="0 0 512 512"');
       }
-      // Raw SVG markup pasted via CMS
-      if (logo.trim().startsWith('<svg')) {
-        return logo; // trusted content from CMS
+
+      // 4. Strip outer width/height (CSS controls size)
+      svg = svg.replace(/<svg([^>]*?)\swidth="[^"]*"/i, '<svg$1');
+      svg = svg.replace(/<svg([^>]*?)\sheight="[^"]*"/i, '<svg$1');
+
+      // 5. Inline sizing safety net
+      svg = svg.replace(/<svg([^>]*)>/i,
+        '<svg$1 style="width:100%;height:100%;display:block;">');
+
+      // 6. Ensure closing tag
+      if (!svg.includes('</svg>')) svg += '</svg>';
+
+      // 7. Sanity check: has visual children?
+      if (!/<(path|rect|circle|ellipse|polygon|polyline|line|text|g|image)\b/i.test(svg)) {
+        return fallbackIcon(tool.id);
       }
+
+      return `<span class="custom-logo-wrap">${svg}</span>`;
     }
-    // Fallback to Material Symbol
-    return `<span class="ms ms-fill">${ICON_MAP[tool.id] || 'apps'}</span>`;
+
+    // ---- Case B: Data URL ----
+    if (logo.startsWith('data:image/')) {
+      const fb = fallbackIcon(tool.id);
+      return `<span class="custom-logo-wrap"><img src="${esc(logo)}" alt="" onerror="this.parentNode.innerHTML='${fb.replace(/'/g, "\\'")}'" /></span>`;
+    }
+
+    // ---- Case C: Remote URL ----
+    if (/^https?:\/\//i.test(logo)) {
+      const fb = fallbackIcon(tool.id);
+      return `<span class="custom-logo-wrap"><img src="${esc(logo)}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='${fb.replace(/'/g, "\\'")}'" /></span>`;
+    }
+
+    // ---- Case D: Fallback ----
+    return fallbackIcon(tool.id);
   };
 
   /* ---- Embedded fallback data ---- */
@@ -1403,14 +1462,14 @@ h2.section-title {
   };
 
   const FALLBACK_TOOLS = [
-    { id:'pixflux', name:'PixFlux', description:'Convert PNG, JPEG, and WebP files locally. Adjust quality, preserve transparency, batch convert in one go.', icon:'pixflux', category:'Images', version:'1.0.0', size:'~120 KB', status:'available', featured:true, download_url:'/tools/pixflux.html', screenshot:'', logo:'', changelog:'Initial release.\n- PNG ↔ JPEG ↔ WebP\n- Batch conversion\n- Quality control' },
-    { id:'cropflow', name:'CropFlow', description:'Resize, crop, and compress images with pixel precision. Aspect-ratio lock, custom dimensions, file-size targets.', icon:'cropflow', category:'Images', version:'1.0.0', size:'~110 KB', status:'available', download_url:'/tools/cropflow.html', screenshot:'', logo:'', changelog:'Initial release.' },
-    { id:'paperflow', name:'PaperFlow', description:'Merge, split, rotate, and convert PDFs and documents — all without uploading a single page.', icon:'paperflow', category:'Documents', version:'1.0.0', size:'~180 KB', status:'available', download_url:'/tools/paperflow.html', screenshot:'', logo:'', changelog:'Initial release.\n- PDF merge / split\n- Rotate & reorder pages\n- Images → PDF' },
-    { id:'qrflux', name:'QrFlux', description:'Generate styled QR codes and scan them from your camera or an uploaded image — completely offline.', icon:'qrflux', category:'Utilities', version:'1.0.0', size:'~90 KB', status:'available', download_url:'/tools/qrflux.html', screenshot:'', logo:'', changelog:'Initial release.' },
-    { id:'cryptsilo', name:'CryptSilo', description:'Generate MD5, SHA-1, SHA-256, SHA-512 hashes and create strong, cryptographically random passwords.', icon:'cryptsilo', category:'Security', version:'1.0.0', size:'~70 KB', status:'available', featured:true, download_url:'/tools/cryptsilo.html', screenshot:'', logo:'', changelog:'Initial release.\n- MD5, SHA-1, SHA-256, SHA-512\n- Password generator with entropy meter' },
-    { id:'prismpick', name:'PrismPick', description:'Pick colors from any image, extract palettes, and preview combinations — perfect for designers.', icon:'prismpick', category:'Design', version:'1.0.0', size:'~85 KB', status:'available', download_url:'/tools/prismpick.html', screenshot:'', logo:'', changelog:'Initial release.' },
-    { id:'vidflux', name:'VidFlux', description:'Convert between common video formats right in your browser. Works offline once loaded.', icon:'vidflux', category:'Media', status:'coming-soon', download_url:'', logo:'' },
-    { id:'waveflux', name:'WaveFlux', description:'MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.', icon:'waveflux', category:'Media', status:'coming-soon', download_url:'', logo:'' },
+    { id:'pixflux', name:'PixFlux', description:'Convert PNG, JPEG, and WebP files locally. Adjust quality, preserve transparency, batch convert in one go.', icon:'pixflux', category:'Images', version:'1.0.0', size:'~120 KB', status:'available', featured:true, download_url:'/tools/pixflux.html', screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'cropflow', name:'CropFlow', description:'Resize, crop, and compress images with pixel precision.', icon:'cropflow', category:'Images', version:'1.0.0', size:'~110 KB', status:'available', download_url:'/tools/cropflow.html', screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'paperflow', name:'PaperFlow', description:'Merge, split, rotate, and convert PDFs — without uploading a single page.', icon:'paperflow', category:'Documents', version:'1.0.0', size:'~180 KB', status:'available', download_url:'/tools/paperflow.html', screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'qrflux', name:'QrFlux', description:'Generate styled QR codes and scan them from your camera — completely offline.', icon:'qrflux', category:'Utilities', version:'1.0.0', size:'~90 KB', status:'available', download_url:'/tools/qrflux.html', screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'cryptsilo', name:'CryptSilo', description:'Generate MD5, SHA-1, SHA-256, SHA-512 hashes and strong random passwords.', icon:'cryptsilo', category:'Security', version:'1.0.0', size:'~70 KB', status:'available', featured:true, download_url:'/tools/cryptsilo.html', screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'prismpick', name:'PrismPick', description:'Pick colors from any image, extract palettes, preview combinations.', icon:'prismpick', category:'Design', version:'1.0.0', size:'~85 KB', status:'available', download_url:'/tools/prismpick.html', screenshot:'', logo:'', changelog:'Initial release.' },
+    { id:'vidflux', name:'VidFlux', description:'Convert between common video formats right in your browser.', icon:'vidflux', category:'Media', status:'coming-soon', download_url:'', logo:'' },
+    { id:'waveflux', name:'WaveFlux', description:'MP3, WAV, OGG, and more — convert audio locally with a waveform preview.', icon:'waveflux', category:'Media', status:'coming-soon', download_url:'', logo:'' },
     { id:'pdfflow', name:'PdfFlow', description:'Advanced PDF editing, form filling, and OCR — no uploads, ever.', icon:'pdfflow', category:'Documents', status:'coming-soon', download_url:'', logo:'' }
   ];
 
@@ -1545,16 +1604,11 @@ h2.section-title {
 
   function renderMarquee() {
     const track = $('#marqueeTrack');
-    const items = [
-      'No uploads','Zero tracking','Fully offline','No accounts','No ads',
-      'No cookies','No servers','Open HTML files','Works forever','Runs locally',
-      'Private by design','Yours to keep'
-    ];
+    const items = ['No uploads','Zero tracking','Fully offline','No accounts','No ads','No cookies','No servers','Open HTML files','Works forever','Runs locally','Private by design','Yours to keep'];
     const html = items.map(t => `<span class="marquee-item"><span class="dot"></span>${esc(t)}</span>`).join('');
     track.innerHTML = html + html;
   }
 
-  /* ---- Footer Connect links (editable via CMS) ---- */
   function renderConnectLinks() {
     const list = $('#connectLinks');
     const links = SETTINGS.connect_links || FALLBACK_SETTINGS.connect_links;
@@ -1607,10 +1661,11 @@ h2.section-title {
       if (t.featured) sizeClass = 'featured';
       const delay = `${(i % 6) * 60}ms`;
       const hasDownload = !soon && t.download_url;
+      const hasCustomLogo = !!t.logo;
       return `
         <article class="tool-card ${sizeClass}${soon ? ' soon' : ''}" style="--card-accent:${accent}; animation-delay:${delay}" data-id="${esc(t.id)}" ${soon ? '' : 'tabindex="0" role="button" aria-label="Open ' + esc(t.name) + '"'}>
           <div class="tool-top">
-            <div class="tool-icon">${renderIcon(t)}</div>
+            <div class="tool-icon${hasCustomLogo ? ' has-custom-logo' : ''}">${renderIcon(t)}</div>
             <div class="tool-badges">
               ${t.featured && !soon ? `<span class="badge badge-featured">Featured</span>` : ''}
               ${soon ? `<span class="badge badge-soon">Soon</span>` : `<span class="badge badge-soft">${esc(meta || 'v1.0.0')}</span>`}
@@ -1630,8 +1685,7 @@ h2.section-title {
         </article>`;
     }).join('');
 
-    const cards = grid.querySelectorAll('.tool-card');
-    cards.forEach((c, i) => {
+    grid.querySelectorAll('.tool-card').forEach((c, i) => {
       c.style.opacity = '0';
       c.style.transform = 'translateY(20px)';
       requestAnimationFrame(() => {
@@ -1664,7 +1718,11 @@ h2.section-title {
 
     $('#toolModalTitle').textContent = tool.name;
     $('#toolModalDesc').textContent = tool.description || '';
-    $('#toolModalIcon').innerHTML = renderIcon(tool);
+
+    const iconEl = $('#toolModalIcon');
+    iconEl.innerHTML = renderIcon(tool);
+    iconEl.classList.toggle('has-custom-logo', !!tool.logo);
+
     $('#toolModalMeta').textContent = [tool.category, tool.version ? `v${tool.version}` : null, tool.size].filter(Boolean).join(' · ');
 
     const shot = $('#toolModalShot');
@@ -1824,12 +1882,14 @@ h2.section-title {
     els.forEach(el => io.observe(el));
   }
 
-  /* Swap hero float-card icons with real tool logos if provided */
   function hydrateHeroIcons() {
     $$('[data-hero-icon]').forEach(el => {
       const id = el.dataset.heroIcon;
       const tool = TOOLS.find(t => t.id === id);
-      if (tool && tool.logo) el.innerHTML = renderIcon(tool);
+      if (tool && tool.logo) {
+        el.innerHTML = renderIcon(tool);
+        el.classList.add('has-custom-logo');
+      }
     });
   }
 })();
