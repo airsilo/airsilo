@@ -1,15 +1,17 @@
 {
   "tools": [
     {
-      "accent": "#A3E635",
-      "logo": "https://raw.githubusercontent.com/airsilo/airsilo/main/logos/waveflux.svg",
-      "name": "WaveFlux",
-      "external": false,
+      "size": "69 MB",
+      "accent": "#2effda",
+      "name": "Chalchitra",
+      "external": true,
+      "featured": false,
       "status": "available",
-      "download_url": "/tools/audio-converter.html",
-      "icon": "waveflux",
-      "id": "waveflux",
-      "description": "MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.",
+      "version": "1.0.0",
+      "download_url": "https://airsilo.pages.dev/chalchitra/",
+      "icon": "vidflux",
+      "id": "chalchitra",
+      "description": "A fully offline media player for Windows that plays almost any video format with GPU acceleration — no internet, no uploads, no ads.",
       "category": "Media"
     },
     {
@@ -28,6 +30,18 @@
       "icon": "vidflux",
       "id": "vidflux",
       "description": "Convert between common video formats right in your browser. Works offline once loaded.",
+      "category": "Media"
+    },
+    {
+      "accent": "#A3E635",
+      "logo": "https://raw.githubusercontent.com/airsilo/airsilo/main/logos/waveflux.svg",
+      "name": "WaveFlux",
+      "external": false,
+      "status": "available",
+      "download_url": "/tools/audio-converter.html",
+      "icon": "waveflux",
+      "id": "waveflux",
+      "description": "MP3, WAV, OGG, and more — convert audio locally with a clean waveform preview.",
       "category": "Media"
     },
     {
@@ -149,20 +163,6 @@
       "id": "pdfflow",
       "description": "Advanced PDF editing, form filling, and OCR — no uploads, ever.",
       "category": "Documents"
-    },
-    {
-      "size": "69 MB",
-      "accent": "#2effda",
-      "name": "Chalchitra",
-      "external": true,
-      "featured": false,
-      "status": "available",
-      "version": "1.0.0",
-      "download_url": "https://airsilo.pages.dev/chalchitra/",
-      "icon": "vidflux",
-      "id": "chalchitra",
-      "description": "A fully offline media player for Windows that plays almost any video format with GPU acceleration — no internet, no uploads, no ads.",
-      "category": "Media"
     }
   ]
 }
