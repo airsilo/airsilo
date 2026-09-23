@@ -149,6 +149,20 @@
       "id": "pdfflow",
       "description": "Advanced PDF editing, form filling, and OCR — no uploads, ever.",
       "category": "Documents"
+    },
+    {
+      "size": "69 MB",
+      "accent": "#2effda",
+      "name": "Chalchitra",
+      "external": true,
+      "featured": false,
+      "status": "available",
+      "version": "1.0.0",
+      "download_url": "https://airsilo.pages.dev/chalchitra/",
+      "icon": "vidflux",
+      "id": "chalchitra",
+      "description": "A fully offline media player for Windows that plays almost any video format with GPU acceleration — no internet, no uploads, no ads.",
+      "category": "Media"
     }
   ]
 }
