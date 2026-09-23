@@ -1,1 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0B0A0F">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;font-src https://fonts.gstatic.com;img-src 'self' data: blob:;media-src blob:;connect-src 'none';worker-src blob:;form-action 'none';base-uri 'none'">
+<title>Chalchitra by AirSilo — The Fully Offline Media Player</title>
+<meta name="description" content="Chalchitra by AirSilo — a 100% offline, privacy-first media player for Windows. Plays MP4, MKV, MOV, ProRes, H.265, WebM and HDR with AMD, Intel and NVIDIA hardware acceleration. No internet, no uploads, no ads.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='64' height='64' rx='14' fill='%230B0A0F'/%3E%3Cpath d='M18 21 L18 43 L34 32 Z' fill='%23A78BFA' opacity='0.45'/%3E%3Cpath d='M28 17 L28 47 L48 32 Z' fill='%236EE7B7'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
+<style>
+/* ══════════════ TOKENS ══════════════ */
+:root{
+  --primary:#C4B5FD; --on-primary:#2E1065; --primary-container:#5B21B6;
+  --secondary:#6EE7B7; --on-secondary:#064E3B; --secondary-container:#065F46; --on-secondary-container:#A7F3D0;
+  --tertiary:#FBCFE8; --on-tertiary:#831843; --tertiary-container:#9D174D;
+  --error:#FCA5A5; --on-error:#450A0A;
+  --surface:#0B0A0F; --surface-container-low:#12101A; --surface-container:#181624;
+  --surface-container-high:#221F30; --surface-container-highest:#2C2838;
+  --on-surface:#E8E2F0; --on-surface-variant:#C8BFD8;
+  --outline:#8B82A0; --outline-variant:#3D3650;
+  --violet:#A78BFA; --mint:#6EE7B7; --pink:#F472B6; --amber:#FBBF24;
+  --blue:#60A5FA; --cyan:#22D3EE; --lime:#A3E635; --orange:#FB923C; --rose:#FBCFE8;
+  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:28px; --r-xxl:40px; --r-full:999px;
+  --ease-emph:cubic-bezier(0.05,0.7,0.1,1);
+  --t-short:200ms; --t-med:400ms;
+}
 
+/* ══════════════ BASE ══════════════ */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;overflow-x:hidden;
+  font-family:'Roboto',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--surface);color:var(--on-surface);
+  line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4,p{margin:0}
+a{color:inherit}
+img,svg{display:block;max-width:100%}
+::selection{background:rgba(196,181,253,.3);color:#fff}
+
+.ms{
+  font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;
+  font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;
+  display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;
+  -webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  user-select:none;
+}
+.ms-fill{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+
+:focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:var(--r-xs)}
+
+.wrap{width:min(1180px,100% - 36px);margin-inline:auto}
+@media(max-width:420px){.wrap{width:calc(100% - 28px)}}
+
+/* ══════════════ AMBIENT BACKGROUND ══════════════ */
+.mesh{position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse at top,#1A1530 0%,var(--surface) 55%)}
+.mesh::before,.mesh::after,.mesh .blob{content:"";position:absolute;border-radius:50%;filter:blur(120px);opacity:.35}
+.mesh::before{width:620px;height:620px;background:#7C3AED;top:-200px;left:-160px;animation:drift1 26s ease-in-out infinite}
+.mesh::after{width:560px;height:560px;background:#10B981;top:30%;right:-200px;animation:drift2 32s ease-in-out infinite}
+.mesh .blob{width:520px;height:520px;background:#EC4899;bottom:-180px;left:30%;animation:drift3 38s ease-in-out infinite}
+@keyframes drift1{50%{transform:translate(80px,60px) scale(1.15)}}
+@keyframes drift2{50%{transform:translate(-90px,50px) scale(1.1)}}
+@keyframes drift3{50%{transform:translate(50px,-80px) scale(1.12)}}
+.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ══════════════ PROGRESS BAR ══════════════ */
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--tertiary));
+  z-index: 9999;
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 12px rgba(110, 231, 183, 0.6);
+  border-radius: 0 var(--r-full) var(--r-full) 0;
+}
+
+/* ══════════════ NAVBAR (CONDENSED CAPSULE, TRANSPARENT GLASS) ══════════════ */
+.navbar {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  /* Fit-content: capsule hugs its contents — no dead space */
+  width: auto; max-width: calc(100% - 32px);
+  /* More transparent glass surface */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.01) 42%, rgba(0,0,0,0.14) 100%),
+    rgba(18, 16, 26, 0.62);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  backdrop-filter: blur(26px) saturate(170%);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-top-color: rgba(255,255,255,0.2);
+  border-bottom-color: rgba(0,0,0,0.4);
+  border-radius: var(--r-full);
+  /* Generous inner padding while still hugging contents */
+  padding: 9px 9px 9px 18px;
+  display: flex; align-items: center;
+  gap: 14px; /* comfortable spacing between sections */
+  z-index: 1000;
+  box-shadow:
+    0 8px 28px -8px rgba(0,0,0,0.85),
+    0 1px 0 rgba(255,255,255,0.06) inset,
+    0 -1px 0 rgba(0,0,0,0.4) inset;
+  transition: background 0.3s var(--ease-emph), box-shadow 0.3s var(--ease-emph), padding 0.3s var(--ease-emph);
+}
+.navbar.scrolled {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 42%, rgba(0,0,0,0.18) 100%),
+    rgba(11, 10, 15, 0.74);
+  box-shadow:
+    0 16px 40px -10px rgba(0,0,0,0.95),
+    0 1px 0 rgba(255,255,255,0.05) inset,
+    0 -1px 0 rgba(0,0,0,0.5) inset;
+}
+
+.nav-brand {
+  display: flex; align-items: center; gap: 9px;
+  text-decoration: none; color: var(--on-surface);
+  flex: none;
+}
+.nav-brand svg { width: 28px; height: 28px; border-radius: 8px; transition: transform 0.3s var(--ease-emph); flex: none; }
+.nav-brand:hover svg { transform: rotate(-4deg) scale(1.08); }
+.nav-brand-text { display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+.brand-main { font-weight: 700; font-size: 0.9375rem; letter-spacing: -0.01em; }
+.brand-sub { font-size: 0.75rem; font-weight: 400; color: var(--on-surface-variant); opacity: 0.85; }
+
+/* Thin divider between sections */
+.nav-divider {
+  width: 1px; height: 20px; flex: none;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.16), transparent);
+}
+
+.nav-links { display: flex; gap: 0; flex: none; }
+.nav-links a {
+  color: var(--on-surface-variant); text-decoration: none;
+  font-size: 0.8125rem; font-weight: 500; padding: 7px 13px;
+  border-radius: var(--r-full); transition: all 0.2s var(--ease-emph);
+  white-space: nowrap;
+}
+.nav-links a:hover { color: var(--on-surface); background: rgba(255,255,255,0.07); }
+
+.nav-actions { display: flex; align-items: center; gap: 6px; flex: none; }
+
+.icon-btn {
+  width: 34px; height: 34px; flex: none; display: grid; place-items: center;
+  border-radius: var(--r-full); border: 1px solid transparent;
+  background: transparent; color: var(--on-surface-variant); cursor: pointer;
+  transition: all 0.2s var(--ease-emph);
+}
+.icon-btn:hover { color: var(--on-surface); background: var(--surface-container-high); }
+.icon-btn:active { transform: scale(0.94); }
+.icon-btn .ms { font-size: 18px; }
+
+.nav-dl {
+  padding: 0 16px; min-height: 34px; height: 34px; font-size: 0.8125rem;
+  background: linear-gradient(135deg, var(--primary), var(--tertiary));
+  color: var(--on-primary); border-radius: var(--r-full);
+  font-weight: 700; display: inline-flex; align-items: center; gap: 6px;
+  text-decoration: none; transition: all 0.2s var(--ease-emph);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-top-color: rgba(255,255,255,0.5);
+  box-shadow: 0 4px 12px -4px rgba(196,181,253,0.6), 0 1px 0 rgba(255,255,255,0.4) inset;
+  white-space: nowrap;
+}
+.nav-dl:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 6px 16px -4px rgba(196,181,253,0.8), 0 1px 0 rgba(255,255,255,0.5) inset; }
+.nav-dl:active { transform: scale(0.96); }
+.nav-dl .ms { font-size: 16px; }
+
+@media(max-width: 720px) {
+  .nav-links, .nav-divider { display: none; }
+}
+@media(max-width: 440px) {
+  .brand-sub { display: none; }
+  .nav-dl .dl-label { display: none; }
+  .nav-dl { padding: 0 12px; }
+  .navbar { gap: 10px; padding: 7px 7px 7px 14px; }
+}
+
+/* ══════════════ BUTTONS ══════════════ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 22px;min-height:40px;border-radius:var(--r-full);
+  font-family:inherit;font-size:.875rem;font-weight:600;letter-spacing:.01em;
+  border:1px solid transparent;cursor:pointer;text-decoration:none;
+  white-space:nowrap;
+  transition:transform var(--t-short) var(--ease-emph),box-shadow var(--t-short) var(--ease-emph),background var(--t-short) var(--ease-emph),border-color var(--t-short) var(--ease-emph),filter var(--t-short) var(--ease-emph);
+}
+.btn:active{transform:scale(.96)}
+.btn .ms{font-size:19px}
+.btn-filled{background:linear-gradient(135deg,var(--primary),var(--tertiary));color:var(--on-primary);box-shadow:0 10px 30px -14px rgba(196,181,253,.9)}
+.btn-filled:hover{filter:brightness(1.08);box-shadow:0 16px 40px -14px rgba(196,181,253,1)}
+.btn-tonal{background:var(--secondary-container);color:var(--on-secondary-container)}
+.btn-tonal:hover{background:#077054}
+.btn-outlined{background:transparent;border-color:var(--outline);color:var(--on-surface)}
+.btn-outlined:hover{border-color:var(--primary);background:rgba(196,181,253,.08)}
+.btn-lg{padding:14px 28px;min-height:50px;font-size:.9375rem}
+.btn-lg .ms{font-size:21px}
+.btn-block{width:100%}
+.btn[aria-disabled="true"]{opacity:.5;cursor:not-allowed;pointer-events:none}
+
+/* ══════════════ HERO ══════════════ */
+.hero{padding:clamp(120px,14vw,165px) 0 clamp(36px,5vw,64px);position:relative}
+.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(32px,5vw,68px);align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:48px}}
+
+.privacy-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 16px 7px 12px;border-radius:var(--r-full);
+  background:rgba(110,231,183,.1);
+  border:1px solid rgba(110,231,183,.3);
+  color:var(--secondary);font-size:.75rem;font-weight:700;
+  letter-spacing:.02em;margin-bottom:22px;
+}
+.privacy-badge .ms{font-size:17px}
+
+.hero-title{
+  font-size:clamp(2.6rem,6.4vw,5.2rem);
+  font-weight:900;letter-spacing:-.045em;line-height:1.0;
+  margin-bottom:20px;
+}
+.hero-accent{
+  display:block;font-size:.44em;font-weight:800;letter-spacing:-.03em;
+  margin-top:.18em;
+  background:linear-gradient(120deg,var(--primary),var(--secondary) 52%,var(--tertiary));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero-sub{
+  font-size:clamp(1rem,1.5vw,1.125rem);color:var(--on-surface-variant);
+  max-width:56ch;margin-bottom:28px;
+}
+.hero-sub strong{color:var(--on-surface);font-weight:600}
+
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:26px}
+
+.meta-row{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;
+  font-size:.8125rem;color:var(--on-surface-variant);font-weight:500;
+}
+.meta-item{display:inline-flex;align-items:center;gap:6px}
+.meta-item .ms{font-size:16px;color:var(--outline)}
+.meta-item.ok .ms{color:var(--secondary)}
+
+/* ── Player mock ── */
+.hero-visual{position:relative}
+.player-card{
+  position:relative;padding:12px;border-radius:var(--r-xl);
+  background:linear-gradient(145deg,rgba(28,24,38,.9),rgba(18,16,26,.72));
+  border:1px solid var(--outline-variant);
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.95);
+  transition:transform var(--t-med) var(--ease-emph),border-radius var(--t-med) var(--ease-emph),box-shadow var(--t-med) var(--ease-emph);
+}
+.player-card:hover{transform:translateY(-6px);border-radius:var(--r-xxl);box-shadow:0 56px 110px -42px rgba(0,0,0,1)}
+
+.player-topbar{
+  display:flex;align-items:center;gap:8px;padding:4px 8px 12px;
+  font-size:.6875rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--on-surface-variant);
+}
+.player-topbar .dots{display:flex;gap:5px;margin-right:4px}
+.player-topbar .dots i{width:9px;height:9px;border-radius:50%;background:var(--surface-container-highest);display:block}
+.player-topbar .dots i:first-child{background:rgba(252,165,165,.6)}
+.player-topbar .dots i:nth-child(2){background:rgba(251,191,36,.6)}
+.player-topbar .dots i:nth-child(3){background:rgba(110,231,183,.6)}
+.filename{color:var(--on-surface-variant);font-weight:500;letter-spacing:0;text-transform:none;font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.player-screen{
+  position:relative;aspect-ratio:16/9;border-radius:var(--r-lg);overflow:hidden;
+  background:
+    radial-gradient(circle at 22% 28%,rgba(124,58,237,.5),transparent 58%),
+    radial-gradient(circle at 78% 72%,rgba(16,185,129,.38),transparent 58%),
+    linear-gradient(150deg,#1a1530,#0d0b14 70%);
+  display:grid;place-items:center;
+  border:1px solid rgba(61,54,80,.7);
+  transition:border-radius var(--t-med) var(--ease-emph);
+}
+.player-card:hover .player-screen{border-radius:var(--r-xl)}
+.player-screen::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.07) 48%,transparent 62%);
+  transform:translateX(-120%);animation:sheen 7s var(--ease-emph) infinite;
+}
+@keyframes sheen{0%,62%{transform:translateX(-120%)}82%,100%{transform:translateX(120%)}}
+
+.screen-art{position:relative;z-index:1;filter:drop-shadow(0 12px 34px rgba(110,231,183,.35))}
+.screen-art .ghost{animation:ghostPulse 3.2s var(--ease-emph) infinite}
+.screen-art .main{animation:mainPulse 3.2s var(--ease-emph) infinite}
+@keyframes ghostPulse{0%,100%{opacity:.45;transform:translateX(0)}50%{opacity:.18;transform:translateX(-4px)}}
+@keyframes mainPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+
+.screen-chips{position:absolute;left:12px;bottom:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:2}
+.screen-chips span{
+  font-size:.625rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:4px 9px;border-radius:var(--r-full);
+  background:rgba(11,10,15,.66);border:1px solid rgba(139,130,160,.4);
+  color:var(--on-surface-variant);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+.screen-chips span.hl{color:var(--mint);border-color:rgba(110,231,183,.45)}
+
+.player-controls{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 10px 6px;color:var(--on-surface-variant);
+}
+.player-controls .ms{font-size:20px}
+.player-controls .ms.big{font-size:24px;color:var(--on-surface)}
+.track{flex:1;height:4px;border-radius:var(--r-full);background:rgba(255,255,255,.1);overflow:hidden}
+.track-fill{
+  height:100%;width:22%;border-radius:var(--r-full);
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  animation:seek 16s var(--ease-emph) infinite alternate;
+}
+@keyframes seek{from{width:14%}to{width:86%}}
+.ptime{font-size:.6875rem;font-weight:600;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.float-chip{
+  position:absolute;display:flex;align-items:center;gap:8px;
+  padding:10px 15px;border-radius:var(--r-full);
+  background:rgba(24,22,36,.9);
+  border:1px solid var(--outline-variant);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  font-size:.75rem;font-weight:700;letter-spacing:.01em;color:var(--on-surface);
+  box-shadow:0 18px 44px -18px rgba(0,0,0,.95);
+  white-space:nowrap;
+}
+.float-chip .ms{font-size:17px}
+.float-a{top:-18px;right:-14px;animation:float1 7s ease-in-out infinite}
+.float-a .ms{color:var(--secondary)}
+.float-b{bottom:-20px;left:-18px;animation:float2 8.5s ease-in-out infinite}
+.float-b .ms{color:var(--primary)}
+@keyframes float1{50%{transform:translateY(-12px)}}
+@keyframes float2{50%{transform:translateY(12px)}}
+@media(max-width:940px){.float-chip{display:none}}
+
+/* ══════════════ SECTIONS ══════════════ */
+.section{padding:clamp(52px,7.5vw,100px) 0;scroll-margin-top:100px}
+.section-head{max-width:66ch;margin-bottom:clamp(28px,4vw,46px)}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:.6875rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--primary);margin-bottom:14px;
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:linear-gradient(90deg,var(--primary),transparent)}
+.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin-bottom:14px}
+.section-sub{font-size:1rem;color:var(--on-surface-variant);max-width:62ch}
+
+/* ══════════════ CARDS ══════════════ */
+.grid{display:grid;gap:20px}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(268px,1fr))}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+
+.card{
+  position:relative;
+  background:linear-gradient(145deg,rgba(28,24,38,.85),rgba(18,16,26,.7));
+  border:1px solid var(--outline-variant);
+  border-radius:var(--r-xl);padding:24px;
+  transition:transform var(--t-med) var(--ease-emph),border-radius var(--t-med) var(--ease-emph),border-color var(--t-med) var(--ease-emph),box-shadow var(--t-med) var(--ease-emph);
+}
+.card:hover{
+  transform:translateY(-6px);border-radius:var(--r-xxl);
+  border-color:rgba(196,181,253,.42);
+  box-shadow:0 30px 66px -30px rgba(0,0,0,.95);
+}
+.card-title{font-size:1.1875rem;font-weight:700;letter-spacing:-.015em;margin-bottom:8px}
+.card-text{font-size:.9375rem;color:var(--on-surface-variant)}
+
+.icon-box{
+  width:50px;height:50px;border-radius:var(--r-md);
+  display:grid;place-items:center;margin-bottom:18px;
+  background:rgba(196,181,253,.12);color:var(--primary);
+  transition:border-radius var(--t-med) var(--ease-emph),transform var(--t-med) var(--ease-emph);
+}
+.icon-box .ms{font-size:25px}
+.card:hover .icon-box{border-radius:var(--r-lg);transform:rotate(-4deg) scale(1.06)}
+.ib-violet{background:rgba(167,139,250,.14);color:var(--violet)}
+.ib-mint{background:rgba(110,231,183,.13);color:var(--mint)}
+.ib-pink{background:rgba(244,114,182,.13);color:var(--pink)}
+.ib-amber{background:rgba(251,191,36,.13);color:var(--amber)}
+.ib-blue{background:rgba(96,165,250,.13);color:var(--blue)}
+.ib-cyan{background:rgba(34,211,238,.13);color:var(--cyan)}
+.ib-lime{background:rgba(163,230,53,.13);color:var(--lime)}
+.ib-orange{background:rgba(251,146,60,.13);color:var(--orange)}
+
+/* ══════════════ CHIPS / FORMATS ══════════════ */
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 15px;border-radius:var(--r-full);
+  border:1px solid var(--outline-variant);
+  background:rgba(34,31,48,.6);
+  font-size:.8125rem;font-weight:600;color:var(--on-surface-variant);
+  transition:transform var(--t-short) var(--ease-emph),color var(--t-short) var(--ease-emph),border-color var(--t-short) var(--ease-emph),background var(--t-short) var(--ease-emph);
+}
+.chip:hover{transform:translateY(-3px);color:var(--on-surface);border-color:var(--primary);background:rgba(196,181,253,.11)}
+.chip .ms{font-size:15px;color:var(--mint)}
+.chip.set{border-color:rgba(196,181,253,.35);background:rgba(196,181,253,.09);color:var(--on-surface)}
+
+.fmt-group{margin-bottom:26px}
+.fmt-group:last-child{margin-bottom:0}
+.fmt-label{
+  font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--outline);margin-bottom:12px;display:block;
+}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:10px}
+
+/* ══════════════ GPU STRIP ══════════════ */
+.gpu-card{display:flex;flex-direction:column;gap:10px}
+.gpu-name{font-size:1.1875rem;font-weight:700;letter-spacing:-.015em}
+.gpu-tech{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.gpu-tech span{
+  font-size:.6875rem;font-weight:700;letter-spacing:.03em;
+  padding:3px 9px;border-radius:var(--r-full);
+  background:var(--surface-container-high);color:var(--on-surface-variant);
+  border:1px solid var(--outline-variant);
+}
+
+/* ══════════════ DOWNLOAD ══════════════ */
+.dl-card{display:flex;flex-direction:column;gap:16px}
+.dl-card.featured{border-color:rgba(196,181,253,.45);box-shadow:0 0 0 1px rgba(196,181,253,.12),0 40px 80px -46px rgba(124,58,237,.95)}
+.dl-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.dl-os{display:flex;align-items:center;gap:12px}
+.dl-os .icon-box{margin-bottom:0;width:46px;height:46px}
+.dl-note{font-size:.8125rem;color:var(--on-surface-variant)}
+.dl-actions{display:flex;flex-direction:column;gap:10px;margin-top:auto}
+.status-pill{
+  display:inline-flex;align-items:center;gap:6px;flex:none;
+  font-size:.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:5px 11px;border-radius:var(--r-full);
+}
+.status-live{background:rgba(110,231,183,.14);color:var(--secondary);border:1px solid rgba(110,231,183,.32)}
+.status-soon{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+.status-pill .ms{font-size:14px}
+
+.notice{
+  display:flex;align-items:flex-start;gap:12px;
+  margin-top:22px;padding:16px 20px;
+  border-radius:var(--r-lg);border:1px dashed var(--outline-variant);
+  background:rgba(34,31,48,.4);
+  font-size:.875rem;color:var(--on-surface-variant);
+}
+.notice .ms{font-size:20px;color:var(--primary);flex:none;margin-top:2px}
+
+/* ══════════════ SPEC LIST ══════════════ */
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.spec{
+  padding:20px;border-radius:var(--r-lg);
+  background:var(--surface-container-low);
+  border:1px solid var(--outline-variant);
+  transition:transform var(--t-med) var(--ease-emph),border-radius var(--t-med) var(--ease-emph),border-color var(--t-med) var(--ease-emph);
+}
+.spec:hover{transform:translateY(-6px);border-radius:var(--r-xl);border-color:rgba(196,181,253,.4)}
+.spec-k{font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--outline);margin-bottom:6px}
+.spec-v{font-size:.9375rem;font-weight:600;color:var(--on-surface);word-break:break-word}
+.spec-v code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;
+  background:var(--surface-container-high);padding:2px 7px;border-radius:var(--r-xs);
+  color:var(--mint);border:1px solid var(--outline-variant);
+}
+
+/* ══════════════ FAQ ══════════════ */
+.faq-list{display:grid;gap:12px;max-width:860px}
+details.faq{
+  border:1px solid var(--outline-variant);border-radius:var(--r-lg);
+  background:var(--surface-container-low);overflow:hidden;
+  transition:border-color var(--t-med) var(--ease-emph),border-radius var(--t-med) var(--ease-emph),background var(--t-med) var(--ease-emph);
+}
+details.faq:hover{border-color:rgba(196,181,253,.4);border-radius:var(--r-xl);background:var(--surface-container)}
+details.faq[open]{border-color:rgba(196,181,253,.4);border-radius:var(--r-xl)}
+summary{
+  list-style:none;cursor:pointer;
+  padding:17px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  font-size:.9375rem;font-weight:600;color:var(--on-surface);
+}
+summary::-webkit-details-marker{display:none}
+summary .ms{flex:none;color:var(--primary);transition:transform var(--t-med) var(--ease-emph)}
+details[open] summary .ms{transform:rotate(180deg)}
+.faq-body{padding:0 20px 20px;font-size:.9375rem;color:var(--on-surface-variant);max-width:74ch}
+.faq-body a{color:var(--secondary);text-decoration:none;border-bottom:1px solid rgba(110,231,183,.4)}
+.faq-body a:hover{border-bottom-color:var(--secondary)}
+
+/* ══════════════ FINAL CTA ══════════════ */
+.final-cta{
+  position:relative;overflow:hidden;text-align:center;
+  padding:clamp(36px,5vw,60px) clamp(20px,4vw,48px);
+  border-radius:var(--r-xl);
+  background:linear-gradient(145deg,rgba(28,24,38,.9),rgba(18,16,26,.72));
+  border:1px solid var(--outline-variant);
+  transition:border-radius var(--t-med) var(--ease-emph),transform var(--t-med) var(--ease-emph);
+}
+.final-cta:hover{border-radius:var(--r-xxl);transform:translateY(-6px)}
+.final-cta::before{
+  content:"";position:absolute;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,rgba(124,58,237,.4),transparent 68%);
+  top:-300px;left:50%;transform:translateX(-50%);filter:blur(40px);pointer-events:none;
+}
+.final-cta h2{position:relative;font-size:clamp(1.6rem,3.2vw,2.5rem);font-weight:800;letter-spacing:-.03em;margin-bottom:12px}
+.final-cta p{position:relative;color:var(--on-surface-variant);max-width:52ch;margin:0 auto 26px}
+.final-cta .cta-row{position:relative;justify-content:center;margin-bottom:0}
+
+/* ══════════════ FOOTER ══════════════ */
+.site-footer{
+  margin-top:clamp(40px,6vw,72px);
+  border-top:1px solid var(--outline-variant);
+  padding:36px 0 44px;
+}
+.footer-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px}
+.footer-brand{display:flex;align-items:center;gap:12px}
+.footer-brand .brand-svg{border-radius:12px}
+.footer-title{font-weight:700;font-size:.9375rem}
+.footer-note{font-size:.8125rem;color:var(--on-surface-variant);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.footer-note .ms{font-size:15px;color:var(--secondary)}
+.footer-links{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.footer-links a{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:.8125rem;font-weight:600;color:var(--on-surface-variant);
+  text-decoration:none;padding:8px 15px;border-radius:var(--r-full);
+  border:1px solid var(--outline-variant);
+  transition:color var(--t-short) var(--ease-emph),border-color var(--t-short) var(--ease-emph),background var(--t-short) var(--ease-emph),transform var(--t-short) var(--ease-emph);
+}
+.footer-links a:hover{color:var(--on-surface);border-color:var(--primary);background:rgba(196,181,253,.08);transform:translateY(-2px)}
+.footer-links a .ms{font-size:16px}
+.footer-bottom{
+  margin-top:26px;padding-top:20px;border-top:1px solid var(--outline-variant);
+  display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;
+  font-size:.75rem;color:var(--outline);
+}
+
+/* ══════════════ MODAL ══════════════ */
+.scrim{
+  position:fixed;inset:0;z-index:2000;
+  display:grid;place-items:center;padding:18px;
+  background:rgba(0,0,0,.7);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;
+  transition:opacity var(--t-med) var(--ease-emph);
+}
+.scrim.open{opacity:1;pointer-events:auto}
+.modal{
+  width:min(580px,100%);max-height:86vh;overflow-y:auto;
+  background:var(--surface-container);
+  border:1px solid var(--outline-variant);
+  border-radius:var(--r-xl);padding:clamp(22px,4vw,30px);
+  box-shadow:0 50px 110px -34px rgba(0,0,0,.98);
+  transform:translateY(32px) scale(.94);
+  transition:transform var(--t-med) var(--ease-emph);
+}
+.scrim.open .modal{transform:none}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+.modal-title{font-size:1.375rem;font-weight:800;letter-spacing:-.02em}
+.modal-sub{font-size:.8125rem;color:var(--on-surface-variant);margin-top:2px}
+.modal p{font-size:.9375rem;color:var(--on-surface-variant);margin-bottom:16px}
+.modal-rows{display:grid;gap:2px;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--outline-variant)}
+.modal-row{display:flex;justify-content:space-between;gap:18px;padding:12px 16px;background:var(--surface-container-low);font-size:.8125rem}
+.modal-row span:first-child{color:var(--on-surface-variant);font-weight:600;flex:none}
+.modal-row span:last-child{color:var(--on-surface);text-align:right;word-break:break-word}
+.modal-row a{color:var(--secondary);text-decoration:none}
+.modal-row a:hover{text-decoration:underline}
+
+/* ══════════════ REVEAL ══════════════ */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 620ms var(--ease-emph),transform 620ms var(--ease-emph)}
+.reveal.in{opacity:1;transform:none}
+
+/* ══════════════ RESPONSIVE ══════════════ */
+@media(max-width:600px){
+  .btn-lg{padding:13px 20px;min-height:48px;font-size:.875rem}
+  .cta-row{gap:10px}
+  .cta-row .btn{flex:1 1 100%}
+  .card{padding:20px}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:360px){
+  .hero-title{font-size:2.2rem}
+}
+
+/* ══════════════ REDUCED MOTION ══════════════ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;
+  }
+  .reveal{opacity:1;transform:none}
+  .player-screen::after{display:none}
+  #progress-bar{transition:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ PROGRESS BAR ══ -->
+<div id="progress-bar" aria-hidden="true"></div>
+
+<!-- ══ AMBIENT BACKGROUND ══ -->
+<div class="mesh"><div class="blob"></div></div>
+<div class="grain"></div>
+
+<!-- ══ NAVBAR — condensed, transparent glass capsule ══ -->
+<nav class="navbar" id="navbar">
+  <a class="nav-brand" href="#" aria-label="Chalchitra by AirSilo — home">
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="64" height="64" rx="14" fill="#0B0A0F"/>
+      <path d="M18 21 L18 43 L34 32 Z" fill="#A78BFA" opacity="0.45"/>
+      <path d="M28 17 L28 47 L48 32 Z" fill="#6EE7B7"/>
+    </svg>
+    <span class="nav-brand-text">
+      <span class="brand-main">Chalchitra</span>
+      <span class="brand-sub">by AirSilo</span>
+    </span>
+  </a>
+
+  <span class="nav-divider" aria-hidden="true"></span>
+
+  <div class="nav-links">
+    <a href="#why">Features</a>
+    <a href="#formats">Formats</a>
+    <a href="#download">Details</a>
+  </div>
+
+  <span class="nav-divider" aria-hidden="true"></span>
+
+  <div class="nav-actions">
+    <button class="icon-btn" id="infoBtn" type="button" aria-label="About Chalchitra" aria-haspopup="dialog">
+      <span class="ms" aria-hidden="true">info</span>
+    </button>
+    <a class="nav-dl" href="#download">
+      <span class="ms" aria-hidden="true">grid_view</span>
+      <span class="dl-label">Download</span>
+    </a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero" id="home">
+    <div class="wrap hero-grid">
+
+      <div class="hero-copy">
+        <div class="privacy-badge reveal">
+          <span class="ms" aria-hidden="true">shield</span>
+          100% offline · Files never leave your device
+        </div>
+
+        <h1 class="hero-title reveal" style="transition-delay:60ms">
+          Chalchitra<span class="hero-accent">by AirSilo</span>
+        </h1>
+
+        <p class="hero-sub reveal" style="transition-delay:120ms">
+          A <strong>fully offline media player</strong> that just plays your files.
+          No internet. No uploads. No accounts. No ads. No boring UI.
+          Double-click, and it plays — in <strong>MP4, MKV, MOV, ProRes, H.265, WebM, HDR</strong> and basically everything else.
+        </p>
+
+        <div class="cta-row reveal" style="transition-delay:180ms">
+          <a class="btn btn-filled btn-lg" href="https://github.com/airsilo/chalchitra/releases/latest/download/Chalchitra-Setup-1.0.0.exe" target="_blank" rel="noopener noreferrer">
+            <span class="ms" aria-hidden="true">desktop_windows</span> Download for Windows
+          </a>
+          <a class="btn btn-tonal btn-lg" href="https://github.com/airsilo/chalchitra/releases/latest/download/Chalchitra-Portable-1.0.0.zip" target="_blank" rel="noopener noreferrer">
+            <span class="ms" aria-hidden="true">archive</span> Portable ZIP
+          </a>
+        </div>
+
+        <div class="meta-row reveal" style="transition-delay:240ms">
+          <span class="meta-item ok"><span class="ms" aria-hidden="true">check_circle</span> Version 1.0.0</span>
+          <span class="meta-item"><span class="ms" aria-hidden="true">desktop_windows</span> Windows 10/11 · 64-bit</span>
+          <span class="meta-item"><span class="ms" aria-hidden="true">laptop_mac</span> macOS &amp; Linux coming soon</span>
+          <span class="meta-item"><span class="ms" aria-hidden="true">balance</span> GPL v3 · Open source</span>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal" style="transition-delay:200ms">
+        <div class="float-chip float-a"><span class="ms" aria-hidden="true">wifi_off</span> Zero network calls</div>
+
+        <div class="player-card">
+          <div class="player-topbar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="filename">Interstellar.2014.2160p.HDR.mkv</span>
+          </div>
+
+          <div class="player-screen">
+            <div class="screen-art" aria-hidden="true">
+              <svg viewBox="0 0 64 64" width="118" height="118" xmlns="http://www.w3.org/2000/svg">
+                <path class="ghost" d="M18 21 L18 43 L34 32 Z" fill="#A78BFA" opacity="0.45"/>
+                <path class="main" d="M28 17 L28 47 L48 32 Z" fill="#6EE7B7"/>
+              </svg>
+            </div>
+            <div class="screen-chips">
+              <span class="hl">HDR10</span>
+              <span>2160p</span>
+              <span>10-bit</span>
+              <span>GPU decode</span>
+            </div>
+          </div>
+
+          <div class="player-controls">
+            <span class="ms ms-fill big" aria-hidden="true">play_arrow</span>
+            <div class="track" aria-hidden="true"><div class="track-fill"></div></div>
+            <span class="ptime">1:24:07 / 2:49:00</span>
+            <span class="ms" aria-hidden="true">volume_up</span>
+            <span class="ms" aria-hidden="true">fullscreen</span>
+          </div>
+        </div>
+
+        <div class="float-chip float-b"><span class="ms" aria-hidden="true">bolt</span> Hardware accelerated</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══ WHY ══ -->
+  <section class="section" id="why">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Why Chalchitra</span>
+        <h2 class="section-title">Your media. Your machine. Full stop.</h2>
+        <p class="section-sub">Most players want your email, your telemetry, your bandwidth and your attention. Chalchitra wants none of it. It opens a file and plays it — beautifully.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <article class="card reveal">
+          <div class="icon-box ib-mint"><span class="ms" aria-hidden="true">wifi_off</span></div>
+          <h3 class="card-title">Truly offline</h3>
+          <p class="card-text">No internet connection required — ever. No update pings, no license checks, no analytics, no phoning home. Unplug the cable and it works exactly the same.</p>
+        </article>
+
+        <article class="card reveal" style="transition-delay:60ms">
+          <div class="icon-box ib-violet"><span class="ms" aria-hidden="true">shield</span></div>
+          <h3 class="card-title">Nothing gets uploaded</h3>
+          <p class="card-text">Your videos are opened directly from your disk and decoded on your machine. There is no server, no cloud, no transcoding queue. Your files never leave your device.</p>
+        </article>
+
+        <article class="card reveal" style="transition-delay:120ms">
+          <div class="icon-box ib-pink"><span class="ms" aria-hidden="true">block</span></div>
+          <h3 class="card-title">No ads. No tracking.</h3>
+          <p class="card-text">Not a single banner, pop-up, upsell or "recommended" row. Chalchitra has no advertising code and no tracking code inside it at all.</p>
+        </article>
+
+        <article class="card reveal">
+          <div class="icon-box ib-amber"><span class="ms" aria-hidden="true">bolt</span></div>
+          <h3 class="card-title">Hardware accelerated</h3>
+          <p class="card-text">Decoding is handed to your GPU — AMD, Intel and NVIDIA all supported. Smooth 4K playback without cooking your CPU or draining your battery.</p>
+        </article>
+
+        <article class="card reveal" style="transition-delay:60ms">
+          <div class="icon-box ib-blue"><span class="ms" aria-hidden="true">auto_awesome</span></div>
+          <h3 class="card-title">Modern, minimal UI</h3>
+          <p class="card-text">No 2005-era menu bars, no confusing settings labyrinth. A clean, dark, distraction-free interface that stays out of the way of your movie.</p>
+        </article>
+
+        <article class="card reveal" style="transition-delay:120ms">
+          <div class="icon-box ib-cyan"><span class="ms" aria-hidden="true">extension</span></div>
+          <h3 class="card-title">Built on libmpv</h3>
+          <p class="card-text">Playback is powered by <code style="font-family:ui-monospace,monospace;font-size:.85em;color:var(--mint)">libmpv-2.dll</code> — the same battle-tested engine behind mpv, famous for playing literally anything you throw at it.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FORMATS ══ -->
+  <section class="section" id="formats">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Formats</span>
+        <h2 class="section-title">If it plays, Chalchitra plays it.</h2>
+        <p class="section-sub">Built on libmpv, Chalchitra ships with a huge range of demuxers, decoders and subtitle renderers bundled in. No codec packs, no extra installs, no "file not supported" — just press play.</p>
+      </div>
+
+      <div class="reveal">
+        <div class="fmt-group">
+          <span class="fmt-label">Containers</span>
+          <div class="chip-wrap">
+            <span class="chip set"><span class="ms" aria-hidden="true">movie</span>MP4</span>
+            <span class="chip set"><span class="ms" aria-hidden="true">movie</span>MKV</span>
+            <span class="chip set"><span class="ms" aria-hidden="true">movie</span>MOV</span>
+            <span class="chip set"><span class="ms" aria-hidden="true">movie</span>WebM</span>
+            <span class="chip">AVI</span>
+            <span class="chip">WMV</span>
+            <span class="chip">FLV</span>
+            <span class="chip">TS</span>
+            <span class="chip">M2TS</span>
+            <span class="chip">MPEG</span>
+            <span class="chip">OGV</span>
+            <span class="chip">3GP</span>
+            <span class="chip">M4V</span>
+          </div>
+        </div>
+
+        <div class="fmt-group">
+          <span class="fmt-label">Video codecs</span>
+          <div class="chip-wrap">
+            <span class="chip set">H.264 / AVC</span>
+            <span class="chip set">H.265 / HEVC</span>
+            <span class="chip set">ProRes</span>
+            <span class="chip set">VP9</span>
+            <span class="chip set">AV1</span>
+            <span class="chip">MPEG-2</span>
+            <span class="chip">MPEG-4</span>
+            <span class="chip">DNxHD / DNxHR</span>
+            <span class="chip">Theora</span>
+            <span class="chip">WMV3 / VC-1</span>
+            <span class="chip">MJPEG</span>
+          </div>
+        </div>
+
+        <div class="fmt-group">
+          <span class="fmt-label">Audio codecs</span>
+          <div class="chip-wrap">
+            <span class="chip set">AAC</span>
+            <span class="chip set">FLAC</span>
+            <span class="chip set">MP3</span>
+            <span class="chip set">Opus</span>
+            <span class="chip">Vorbis</span>
+            <span class="chip">AC-3 / E-AC-3</span>
+            <span class="chip">DTS</span>
+            <span class="chip">ALAC</span>
+            <span class="chip">WAV / PCM</span>
+            <span class="chip">TrueHD</span>
+          </div>
+        </div>
+
+        <div class="fmt-group">
+          <span class="fmt-label">HDR, resolution &amp; subtitles</span>
+          <div class="chip-wrap">
+            <span class="chip set">HDR10</span>
+            <span class="chip set">10-bit colour</span>
+            <span class="chip set">4K / 2160p</span>
+            <span class="chip">8K</span>
+            <span class="chip">HLG</span>
+            <span class="chip">SRT</span>
+            <span class="chip">ASS / SSA</span>
+            <span class="chip">WebVTT</span>
+            <span class="chip">PGS / VOBSUB</span>
+            <span class="chip">Multi-audio tracks</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ HARDWARE ACCELERATION ══ -->
+  <section class="section" id="performance">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Performance</span>
+        <h2 class="section-title">Your GPU does the heavy lifting.</h2>
+        <p class="section-sub">Chalchitra detects your graphics hardware automatically and uses the best available decode path. If your GPU can't handle a stream, it falls back to software decoding without you noticing.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <article class="card gpu-card reveal">
+          <div class="icon-box ib-orange"><span class="ms" aria-hidden="true">memory</span></div>
+          <h3 class="gpu-name">AMD</h3>
+          <p class="card-text">Radeon GPUs and APUs, accelerated through Direct3D 11 video decoding and AMF.</p>
+          <div class="gpu-tech"><span>D3D11VA</span><span>DXVA2</span><span>AMF</span></div>
+        </article>
+
+        <article class="card gpu-card reveal" style="transition-delay:60ms">
+          <div class="icon-box ib-blue"><span class="ms" aria-hidden="true">developer_board</span></div>
+          <h3 class="gpu-name">Intel</h3>
+          <p class="card-text">Intel HD, Iris Xe and Arc graphics with Quick Sync Video for efficient 4K and HEVC playback.</p>
+          <div class="gpu-tech"><span>Quick Sync</span><span>D3D11VA</span><span>VAAPI</span></div>
+        </article>
+
+        <article class="card gpu-card reveal" style="transition-delay:120ms">
+          <div class="icon-box ib-lime"><span class="ms" aria-hidden="true">videogame_asset</span></div>
+          <h3 class="gpu-name">NVIDIA</h3>
+          <p class="card-text">GeForce and RTX cards using NVDEC for buttery-smooth 4K HDR playback at minimal power draw.</p>
+          <div class="gpu-tech"><span>NVDEC</span><span>CUDA</span><span>D3D11VA</span></div>
+        </article>
+      </div>
+
+      <div class="notice reveal">
+        <span class="ms" aria-hidden="true">speed</span>
+        <p>Automatic GPU detection with zero configuration. Vulkan and OpenGL render backends, hardware deinterlacing, and a software fallback so playback never fails — even on older integrated graphics.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ DOWNLOAD ══ -->
+  <section class="section" id="download">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Download</span>
+        <h2 class="section-title">Get Chalchitra 1.0.0</h2>
+        <p class="section-sub">Free, open source and fully offline. Pick the installer or the portable build — both are the exact same player.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <article class="card dl-card featured reveal">
+          <div class="dl-head">
+            <div class="dl-os">
+              <div class="icon-box ib-violet"><span class="ms" aria-hidden="true">desktop_windows</span></div>
+              <div>
+                <h3 class="gpu-name">Windows</h3>
+                <p class="dl-note">10 / 11 · 64-bit</p>
+              </div>
+            </div>
+            <span class="status-pill status-live"><span class="ms" aria-hidden="true">check_circle</span>Available</span>
+          </div>
+
+          <p class="card-text">Installer with Start Menu shortcuts, or a portable ZIP you can drop on a USB stick and run anywhere.</p>
+
+          <div class="dl-actions">
+            <a class="btn btn-filled btn-block" href="https://github.com/airsilo/chalchitra/releases/latest/download/Chalchitra-Setup-1.0.0.exe" target="_blank" rel="noopener noreferrer">
+              <span class="ms" aria-hidden="true">download</span> Download .exe installer
+            </a>
+            <a class="btn btn-outlined btn-block" href="https://github.com/airsilo/chalchitra/releases/latest/download/Chalchitra-Portable-1.0.0.zip" target="_blank" rel="noopener noreferrer">
+              <span class="ms" aria-hidden="true">archive</span> Download portable .zip
+            </a>
+          </div>
+        </article>
+
+        <article class="card dl-card reveal" style="transition-delay:60ms">
+          <div class="dl-head">
+            <div class="dl-os">
+              <div class="icon-box ib-pink"><span class="ms" aria-hidden="true">laptop_mac</span></div>
+              <div>
+                <h3 class="gpu-name">macOS</h3>
+                <p class="dl-note">Apple Silicon &amp; Intel</p>
+              </div>
+            </div>
+            <span class="status-pill status-soon"><span class="ms" aria-hidden="true">schedule</span>Soon</span>
+          </div>
+          <p class="card-text">A native build is in the works, with VideoToolbox hardware decoding and a proper macOS window experience.</p>
+          <div class="dl-actions">
+            <a class="btn btn-outlined btn-block" href="https://github.com/airsilo/chalchitra" target="_blank" rel="noopener noreferrer" aria-disabled="true">
+              <span class="ms" aria-hidden="true">notifications</span> Notify me on GitHub
+            </a>
+          </div>
+        </article>
+
+        <article class="card dl-card reveal" style="transition-delay:120ms">
+          <div class="dl-head">
+            <div class="dl-os">
+              <div class="icon-box ib-amber"><span class="ms" aria-hidden="true">terminal</span></div>
+              <div>
+                <h3 class="gpu-name">Linux</h3>
+                <p class="dl-note">Debian, Arch, Fedora…</p>
+              </div>
+            </div>
+            <span class="status-pill status-soon"><span class="ms" aria-hidden="true">schedule</span>Soon</span>
+          </div>
+          <p class="card-text">Coming with VA-API and Vulkan acceleration. Until then, the source is open — build it yourself if you're impatient.</p>
+          <div class="dl-actions">
+            <a class="btn btn-outlined btn-block" href="https://github.com/airsilo/chalchitra" target="_blank" rel="noopener noreferrer">
+              <span class="ms" aria-hidden="true">code</span> Build from source
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ TECH / OPEN SOURCE ══ -->
+  <section class="section" id="opensource">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Under the hood</span>
+        <h2 class="section-title">Open source, no strings.</h2>
+        <p class="section-sub">Chalchitra is free software released under the GNU General Public License v3. Read it, audit it, fork it, build it — it's yours.</p>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec reveal">
+          <div class="spec-k">Playback engine</div>
+          <div class="spec-v"><code>libmpv-2.dll</code></div>
+        </div>
+        <div class="spec reveal" style="transition-delay:50ms">
+          <div class="spec-k">License</div>
+          <div class="spec-v">GPL v3 · Free &amp; open source</div>
+        </div>
+        <div class="spec reveal" style="transition-delay:100ms">
+          <div class="spec-k">Repository</div>
+          <div class="spec-v"><a href="https://github.com/airsilo/chalchitra" target="_blank" rel="noopener noreferrer" style="color:var(--secondary);text-decoration:none">github.com/airsilo/chalchitra</a></div>
+        </div>
+        <div class="spec reveal" style="transition-delay:150ms">
+          <div class="spec-k">Developed by</div>
+          <div class="spec-v"><a href="https://airsilo.pages.dev" target="_blank" rel="noopener noreferrer" style="color:var(--secondary);text-decoration:none">AirSilo</a></div>
+        </div>
+        <div class="spec reveal" style="transition-delay:200ms">
+          <div class="spec-k">Network access</div>
+          <div class="spec-v">None. Zero. Never.</div>
+        </div>
+        <div class="spec reveal" style="transition-delay:250ms">
+          <div class="spec-k">Telemetry</div>
+          <div class="spec-v">There is none</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FAQ ══ -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Questions</span>
+        <h2 class="section-title">Good to know</h2>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq reveal">
+          <summary>Does Chalchitra really work without internet? <span class="ms" aria-hidden="true">expand_more</span></summary>
+          <div class="faq-body">Yes. Chalchitra makes no network requests at all — no update checks, no license validation, no analytics, no ads. It is designed to run perfectly on an air-gapped machine. Disconnect your Wi-Fi and everything works exactly the same.</div>
+        </details>
+
+        <details class="faq reveal">
+          <summary>Are my videos uploaded anywhere? <span class="ms" aria-hidden="true">expand_more</span></summary>
+          <div class="faq-body">Never. Files are opened straight from your local disk and decoded on your own hardware. There is no cloud, no server and no transcoding queue — your media never leaves your device.</div>
+        </details>
+
+        <details class="faq reveal">
+          <summary>Which formats are supported? <span class="ms" aria-hidden="true">expand_more</span></summary>
+          <div class="faq-body">Chalchitra uses libmpv, so it handles MP4, MKV, MOV, WebM, AVI, WMV, FLV, TS, M2TS and more, with H.264, H.265/HEVC, ProRes, VP9, AV1, MPEG-2 and MPEG-4 video, plus AAC, FLAC, MP3, Opus, AC-3 and DTS audio. HDR10 and 10-bit content are supported, along with SRT, ASS, WebVTT and PGS subtitles.</div>
+        </details>
+
+        <details class="faq reveal">
+          <summary>Do I need to install codecs separately? <span class="ms" aria-hidden="true">expand_more</span></summary>
+          <div class="faq-body">No. Everything needed for playback is bundled with Chalchitra. There are no codec packs, no K-Lite installs and no "media player cannot play this file" errors.</div>
+        </details>
+
+        <details class="faq reveal">
+          <summary>Will it use my GPU? <span class="ms" aria-hidden="true">expand_more</span></summary>
+          <div class="faq-body">Yes. AMD, Intel and NVIDIA hardware acceleration is supported and auto-detected, so 4K and HDR playback stays smooth while your CPU stays cool. If hardware decoding isn't available for a stream, Chalchitra falls back to software decoding automatically.</div>
+        </details>
+
+        <details class="faq reveal">
+          <summary>What about macOS and Linux? <span class="ms" aria-hidden="true">expand_more</span></summary>
+          <div class="faq-body">Both are planned. Version 1.0.0 is Windows 64-bit only — as a setup <code style="font-family:ui-monospace,monospace;color:var(--mint)">.exe</code> or a portable <code style="font-family:ui-monospace,monospace;color:var(--mint)">.zip</code>. Follow the <a href="https://github.com/airsilo/chalchitra" target="_blank" rel="noopener noreferrer">GitHub repository</a> for release announcements.</div>
+        </details>
+
+        <details class="faq reveal">
+          <summary>Is it free? <span class="ms" aria-hidden="true">expand_more</span></summary>
+          <div class="faq-body">Completely. Chalchitra is free software under the GNU General Public License v3 — no paid tiers, no premium features, no subscription, no ads. You're also free to inspect, modify and redistribute the source code.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FINAL CTA ══ -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="final-cta reveal">
+        <h2>Stop streaming. Start playing.</h2>
+        <p>Grab Chalchitra for Windows and open literally any video file you own — offline, private and ad-free.</p>
+        <div class="cta-row">
+          <a class="btn btn-filled btn-lg" href="https://github.com/airsilo/chalchitra/releases/latest/download/Chalchitra-Setup-1.0.0.exe" target="_blank" rel="noopener noreferrer">
+            <span class="ms" aria-hidden="true">download</span> Download 1.0.0 (.exe)
+          </a>
+          <a class="btn btn-outlined btn-lg" href="https://github.com/airsilo/chalchitra/releases/latest/download/Chalchitra-Portable-1.0.0.zip" target="_blank" rel="noopener noreferrer">
+            <span class="ms" aria-hidden="true">archive</span> Portable (.zip)
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <svg class="brand-svg" viewBox="0 0 64 64" width="38" height="38" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Chalchitra logo">
+          <rect width="64" height="64" rx="14" fill="#0B0A0F"/>
+          <path d="M18 21 L18 43 L34 32 Z" fill="#A78BFA" opacity="0.45"/>
+          <path d="M28 17 L28 47 L48 32 Z" fill="#6EE7B7"/>
+        </svg>
+        <div>
+          <div class="footer-title">Chalchitra <span style="color:var(--on-surface-variant);font-weight:500">by AirSilo</span></div>
+          <div class="footer-note">
+            <span class="ms" aria-hidden="true">shield</span>
+            Made by AirSilo · 100% offline · No tracking
+          </div>
+        </div>
+      </div>
+
+      <nav class="footer-links" aria-label="Footer">
+        <a href="https://airsilo.pages.dev">
+          <span class="ms" aria-hidden="true">arrow_back</span> Back to AirSilo
+        </a>
+        <a href="https://github.com/airsilo/chalchitra" target="_blank" rel="noopener noreferrer">
+          <span class="ms" aria-hidden="true">code</span> GitHub
+        </a>
+        <a href="#download">
+          <span class="ms" aria-hidden="true">download</span> Download
+        </a>
+      </nav>
+    </div>
+
+    <div class="footer-bottom">
+      <span>Chalchitra v1.0.0 · GPL v3 · Powered by libmpv</span>
+      <span>© <span id="year">2025</span> AirSilo — made with ❤️</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ INFO MODAL ══ -->
+<div class="scrim" id="scrim" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div class="modal-head">
+      <div style="display:flex;align-items:center;gap:14px">
+        <svg viewBox="0 0 64 64" width="44" height="44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="border-radius:12px">
+          <rect width="64" height="64" rx="14" fill="#0B0A0F"/>
+          <path d="M18 21 L18 43 L34 32 Z" fill="#A78BFA" opacity="0.45"/>
+          <path d="M28 17 L28 47 L48 32 Z" fill="#6EE7B7"/>
+        </svg>
+        <div>
+          <div class="modal-title" id="modalTitle">Chalchitra by AirSilo</div>
+          <div class="modal-sub">Fully offline media player</div>
+        </div>
+      </div>
+      <button class="icon-btn" id="closeBtn" type="button" aria-label="Close dialog">
+        <span class="ms" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <p id="modalDesc">Chalchitra is a privacy-first, fully offline media player for Windows. It plays almost every popular video format, uses your GPU for hardware-accelerated decoding, and never connects to the internet — no uploads, no ads, no tracking, no boring UI.</p>
+
+    <div class="modal-rows">
+      <div class="modal-row"><span>Version</span><span>1.0.0</span></div>
+      <div class="modal-row"><span>Platform</span><span>Windows 10/11 · 64-bit (macOS &amp; Linux soon)</span></div>
+      <div class="modal-row"><span>Engine</span><span>libmpv-2.dll</span></div>
+      <div class="modal-row"><span>License</span><span>GPL v3 · Open source</span></div>
+      <div class="modal-row"><span>Developer</span><span><a href="https://airsilo.pages.dev" target="_blank" rel="noopener noreferrer">AirSilo</a></span></div>
+      <div class="modal-row"><span>Repository</span><span><a href="https://github.com/airsilo/chalchitra" target="_blank" rel="noopener noreferrer">airsilo/chalchitra</a></span></div>
+      <div class="modal-row"><span>Network access</span><span>None — 100% offline</span></div>
+    </div>
+
+    <div class="cta-row" style="margin:22px 0 0">
+      <a class="btn btn-filled" href="https://github.com/airsilo/chalchitra/releases/latest/download/Chalchitra-Setup-1.0.0.exe" target="_blank" rel="noopener noreferrer">
+        <span class="ms" aria-hidden="true">download</span> Installer (.exe)
+      </a>
+      <a class="btn btn-outlined" href="https://github.com/airsilo/chalchitra/releases/latest/download/Chalchitra-Portable-1.0.0.zip" target="_blank" rel="noopener noreferrer">
+        <span class="ms" aria-hidden="true">archive</span> Portable (.zip)
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ── Year ── */
+  var yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+  /* ── Scroll Progress Bar ── */
+  var progressBar = document.getElementById("progress-bar");
+  var navbar = document.getElementById("navbar");
+  
+  function updateScroll() {
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    if (progressBar) progressBar.style.width = progress + "%";
+    
+    if (navbar) {
+      if (scrollTop > 20) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+    }
+  }
+  
+  window.addEventListener("scroll", updateScroll, { passive: true });
+  updateScroll();
+
+  /* ── Scroll reveal ── */
+  var revealEls = document.querySelectorAll(".reveal");
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    revealEls.forEach(function (el) { el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    revealEls.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ── Modal ── */
+  var scrim = document.getElementById("scrim");
+  var infoBtn = document.getElementById("infoBtn");
+  var closeBtn = document.getElementById("closeBtn");
+  var lastFocused = null;
+
+  function openModal() {
+    if (!scrim) return;
+    lastFocused = document.activeElement;
+    scrim.hidden = false;
+    void scrim.offsetWidth;
+    scrim.classList.add("open");
+    document.body.style.overflow = "hidden";
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeModal() {
+    if (!scrim || !scrim.classList.contains("open")) return;
+    scrim.classList.remove("open");
+    document.body.style.overflow = "";
+    window.setTimeout(function () {
+      scrim.hidden = true;
+      if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
+    }, reduceMotion ? 0 : 400);
+  }
+
+  if (infoBtn) infoBtn.addEventListener("click", openModal);
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  if (scrim) {
+    scrim.addEventListener("click", function (e) {
+      if (e.target === scrim) closeModal();
+    });
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeModal();
+    if (e.key === "Tab" && scrim && scrim.classList.contains("open")) {
+      var focusables = scrim.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (!focusables.length) return;
+      var first = focusables[0];
+      var last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  /* ── Smooth anchor scrolling with sticky-header offset ── */
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      var id = link.getAttribute("href");
+      if (!id || id === "#") return;
+      var target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      var top = target.getBoundingClientRect().top + window.pageYOffset - 100;
+      window.scrollTo({ top: top, behavior: reduceMotion ? "auto" : "smooth" });
+    });
+  });
+})();
+</script>
+</body>
+</html>
